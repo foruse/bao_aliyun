@@ -1,0 +1,580 @@
+﻿#globalSearch {
+	position : fixed;
+}
+#globalSearch > section {
+	position : absolute;
+	top : 44px;
+	bottom : 0;
+	width : 100%;
+	overflow : hidden;
+}
+.globalSearch_header {
+	height : 44px;
+	width : 100%;
+	border : 8px solid transparent;
+	position : relative;
+}
+.globalSearch_header * {
+	height : 100%;
+}
+.globalSearch_header > * > * {
+	border : 0 none;
+	background-color : transparent;
+}
+.globalSearch_header > nav {
+	width : 32px;
+}
+.globalSearch_header > nav > button{
+	width : 100%;
+	padding : 7px 0;
+	background : transparent url(../../../common/image/width12.png) no-repeat 9px -105px content-box content-box;
+}
+.globalSearch_header > aside {
+	position : absolute;
+	left : 32px;
+	right : 0;
+	background-color : #fff;
+}
+.globalSearch_header > aside > * {
+	position : absolute;
+}
+.globalSearch_header input {
+	padding-left : 15px;
+	left : 0;
+	right : 34px;
+}
+.globalSearch_header > aside > button {
+	width : 34px;
+	right : 0;
+	padding : 6px 9px;
+	background : transparent url(../../../common/image/width24.png) 0 -475px no-repeat content-box content-box;
+}
+.globalSearch_content dl > dt {
+	height : 15px;
+	line-height : 15px;
+	text-indent : 5px;
+}
+.globalSearch_content .userAnchorList dl > dt {
+	height : 20px;
+}
+.globalSearch_content .userAnchorList {
+	background-color : #fff;
+}
+.globalSearch_content .userAnchorList > ul {
+	border : 0 none;
+}
+.globalSearch_content > ul > li:not(:last-child) {
+	border : 0 none;
+}
+.globalSearch_content > ul > li {
+	display : none;
+}
+#globalSearch .userAnchorList dt {
+	text-indent : 0;
+}
+
+
+#account {
+	padding : 10px;
+}
+#account > * {
+	margin-bottom : 5px;
+	background-color : #fff;
+}
+#account dl {
+	height : 45px;
+	line-height : 45px;
+	position : relative;
+}
+#account dl > * {
+	height : 100%;
+	font-size : 14px;
+}
+#account dl > dt {
+	width : 80px;
+	text-align : right;
+}
+#account dl > dd {
+	position : absolute;
+	left : 85px;
+	right : 5px;
+	top : 0;
+}
+#account section li:last-child {
+	display : none;
+}
+#account li:last-child > dl {
+	border : 0 none;
+}
+#account input {
+	height : 100%;
+	width : 100%;
+	border : 0 none;
+	overflow : hidden;
+	text-overflow : ellipsis;
+	background-color : transparent;
+}
+#account input:not([readonly]) {
+	color : inherit;
+}
+#account input[readonly] {
+	background-color : transparent;
+}
+#account > header > figure {
+	position : relative;
+	height : 90px;
+}
+#account > header aside, #account > header ul {
+	position : absolute;
+}
+#account > header aside {
+	left : 0;
+	width : 64px;
+	height : 64px;
+	padding : 13px 10px;
+	box-sizing : content-box;
+	border-top : 0 none;
+	border-left : 0 none;
+	border-bottom : 0 none;
+}
+#account > header ul {
+	left : 85px;
+	right : 0;
+	height : 100%;
+}
+#account > header dt {
+	width : 55px;
+}
+#account > header dd {
+	left : 60px;
+}
+#account .largeAvatarPanel > input {
+	position : relative;
+	top : -64px;
+	opacity : 0;
+}
+#account .largeAvatarPanel > input[readonly] {
+	display : none;
+}
+#account > footer, #account > footer > ul {
+	display : none;
+}
+#account > footer > nav {
+	height : 24px;
+	box-sizing : content-box;
+}
+#account > footer:not(.editable) > nav {
+	border : 0 none;
+}
+#account > footer.editable > nav {
+	border-bottom-left-radius : 0;
+	border-bottom-right-radius : 0;
+}
+#account > footer button {
+	width : 100%;
+	height : 100%;
+	background-color : transparent;
+	border : 0 none;
+}
+#account > footer.editable > ul {
+	display : block;
+	border-top-left-radius : 0;
+	overflow : hidden;
+	-webkit-animation : editPassword steps(14) 500ms 1;
+}
+@-webkit-keyframes editPassword {
+	from {
+		height : 0;
+	}
+	to {
+		height : 137px;
+	}
+}
+#titleBar button[action="editAccount"] {
+	border-color : #39a85a;
+	border-top-width : 10px;
+	border-bottom-width : 10px;
+	background : #39a85a url(../../../common/image/width24.png) 0 -425px no-repeat;
+}
+#titleBar button[action="submit account"] {
+	background-color : #ce312d;
+	border-color : #ce312d;
+}
+
+#aboutBaoPiQi, #QRCode {
+	top : 45%;
+}
+#aboutBaoPiQi {
+	height : 395px;
+	margin-top : -160px;
+}
+#aboutBaoPiQi > * {
+	margin : 0 auto;
+}
+#aboutBaoPiQi > header {
+	height : 140px;
+	width : 105px;
+}
+#aboutBaoPiQi > header p {
+	width : 105px;
+	height : 105px;
+	margin : 0 auto;
+	overflow : hidden;
+}
+#aboutBaoPiQi > header img {
+	width : 100%;
+	height : 100%;
+}
+#aboutBaoPiQi > header figcaption {
+	margin-top : 20px;
+	height : 15px;
+	font-size : 15px;
+	line-height : 1em;
+	color : #ab2424;
+	text-align : center;
+}
+#aboutBaoPiQi > section {
+	opacity : 0.3;
+	background-color : #f1f1f1;
+	width : 165px;
+	height : 120px;
+	margin-top : 15px;
+	padding : 15px;
+}
+#aboutBaoPiQi > section * {
+	display : block;
+}
+#aboutBaoPiQi > section > button {
+	width : 100%;
+	height : 38px;
+	line-height : 38px;
+	border : 0 none;
+	background-color : #ce312d;
+	border-radius : inherit;
+}
+#aboutBaoPiQi > section > button:last-child {
+	margin-top : 14px;
+}
+#aboutBaoPiQi > section a {
+	width : 100%;
+	height : 100%;
+}
+#aboutBaoPiQi > footer {
+	margin-top : 30px;
+	text-align : center;
+}
+#aboutBaoPiQi nav > * {
+	display : inline-block;
+}
+#aboutBaoPiQi > footer a:first-child {
+	color : #ab2424;
+	margin-bottom : 15px;
+}
+
+#QRCode {
+	height : 265px;
+	margin-top : -132px;
+}
+#QRCode > * {
+	margin : 0 auto;
+}
+#QRCode > header {
+	width : 210px;
+}
+#QRCode > header > figure {
+	height : 30px;
+	line-height : 30px;
+	width : 100%;
+}
+#QRCode > header .largeAvatarPanel {
+	border-color : #bf2525;
+	position : relative;
+	top : -16px;
+	z-index : 2;
+}
+#QRCode > header figcaption {
+	width : 152px;
+	height : 100%;
+	background-color : #ce312d;
+	font-size : 15px;
+	margin-left : -5px;
+	text-indent : 25px;
+	border-top-left-radius : 0;
+	border-bottom-left-radius : 0;
+}
+#QRCode > section {
+	width : 250px;
+	height : 240px;
+	padding : 25px 30px;
+	border : 1px solid #ce312d;
+	margin-top : -5px;
+	background-color : #fff;
+}
+#QRCode > section > img {
+	width : 100%;
+	height : 100%;
+}
+
+#todo {
+	bottom : 42px;
+}
+.todo_header {
+	padding : 10px 10px 0 10px;
+}
+.todo_header > dl{
+	padding : 5px 10px;
+}
+.todo_header dt {
+	height : 30px;
+	padding : 4px;
+}
+.todo_header dt > button {
+	height : 22px;
+	width : 34px;
+	padding : 3px 9px;
+	border : 1px solid #fff;
+	background : transparent url(../../../common/image/width24.png) 0 -800px no-repeat content-box content-box;
+}
+.todo_header dt > span {
+	margin-left : 8px;
+	font-size : 15px;
+	line-height : 22px;
+}
+.todo_header dd {
+	margin-top : 10px;
+}
+.todo_header dd > figure {
+	text-align : right;
+}
+.todo_header dd p {
+	padding : 0 8px;
+	text-align : left;
+}
+.todo_header dd aside {
+	margin-top : 20px;
+	display : inline-block;
+	padding : 5px;
+}
+.todo_header dd aside:empty {
+	display : none;
+}
+#todo > section {
+	padding-bottom : 10px;
+}
+#todo > section > figure {
+	padding : 0 10px;
+}
+
+#sendTodo {
+	padding : 10px;
+}
+#sendTodo > *:not(:first-child) {
+	margin-top : 5px;
+}
+#sendTodo > header {
+	padding : 10px 0;
+	overflow : hidden;
+	background-color : #fff;
+}
+#sendTodo > section {
+	overflow : hidden;
+	font-size : 14px;
+}
+#sendTodo > section input, #sendTodo > section textarea, #sendTodo > section > span {
+	display : block;
+	height : 42px;
+	width : 100%;
+	padding : 10px 15px;
+	border : 0 none;
+}
+#sendTodo > section input[type="date"] {
+	margin-top : -42px;
+	opacity : 0;
+}
+#sendTodo > section > span {
+	background-color : #fff;
+}
+#sendTodo > section[desc="remind"] {
+	position : relative;
+}
+#sendTodo > section > button {
+	width : 58px;
+	height : 24px;
+	background-color : #d29500;
+	position : absolute;
+	top : 9px;
+	right : 5px;
+	border : 1px solid transparent;
+}
+#sendTodo button > span {
+	float : right;
+	height : 22px;
+	width : 22px;
+	border-radius : 22px;
+	background-color : #fff;
+	opacity : 0.7;
+}
+#sendTodo button > span.reminded {
+	float : left;
+	opacity : 1;
+}
+#sendTodo > section textarea {
+	min-height : 100px;
+	max-height : 100px;
+}
+#sendTodo > section[desc="attachment"] > ul {
+	background-color : #fff;
+	display : inline-block;
+	padding : 5px;
+}
+#sendTodo > section[desc="attachment"] > ul:empty {
+	display : none;
+}
+#sendTodo > section[desc="attachment"] > footer {
+	text-align : right;
+	margin-top : 5px;
+}
+#titleBar button[action="sendTodoCompleted"] {
+	border-color : #f1af10;
+	background : #f1af10 url(../../../common/image/width24.png) 3px -248px no-repeat;
+}
+
+#workStream li > figure {
+	
+}
+
+#projectManagement {
+	padding : 10px;
+}
+#projectManagement > *:not(:first-child) {
+	margin-top : 10px;
+}
+#projectManagement > header {
+	max-height : 200px;
+	overflow : hidden;
+}
+#projectManagement > footer > button {
+	display : block;
+	width : 100%;
+	height : 42px;
+	font-size : 18px;
+}
+#projectManagement > footer > button:first-child {
+	background-color : transparent;
+	border : 1px solid #f1ba95;
+	color : #e16615;
+}
+#projectManagement > footer > button:last-child {
+	margin-top : 5px;
+	background-color : #ffc000;
+	border : 0 none;
+}
+#titleBar button[action="projectManagement_done"] {
+	background : #ffc000 url(../../../common/image/width24.png) no-repeat 7px -118px;
+	display : none;
+}
+
+#archive .anchorList > ul {
+	border-radius : 0;
+}
+#archive .anchorList > ul, #archive .anchorList li {
+	border-left : 0 none;
+	border-right : 0 none;
+}
+#archive .anchorList li {
+	background-image : -webkit-linear-gradient(left, transparent, transparent 10px, #fff 10px, #fff);
+}
+
+#archivedProjectView > header {
+	max-height : 180px;
+	overflow : hidden;
+}
+#archivedProjectView > header li {
+	width : 90px;
+	height : 90px;
+	margin : 0;
+}
+#archivedProjectView > header li[attachmenttype="voice"] {
+	border : 33px solid #fff;
+	padding : 0;
+	background-color : #fff;
+}
+#archivedProjectView > header > ul + p {
+	margin : 10px 20px;
+}
+#archivedProjectView ul + p {
+	display : none;
+	height : 45px;
+	line-height : 45px;
+	font-size : 15px;
+	text-align : center;
+	margin : 10px;
+	background-color : #fff;
+}
+#archivedProjectView ul:empty + p {
+	display : block;
+}
+#archivedProjectView > section {
+	position : absolute;
+	top : 190px;
+	bottom : 10px;
+	left : 10px;
+	right : 10px;
+	overflow : hidden;
+}
+#archivedProjectView li {
+	background-color : #fff;
+}
+#archivedProjectView li.expend {
+	height : auto;
+	padding-bottom : 8px;
+}
+#archivedProjectView li > nav a {
+	-webkit-transform : rotate(-90deg);
+}
+#archivedProjectView li.expend > nav {
+	height : 36px;
+}
+#archivedProjectView li.expend > nav a {
+	-webkit-transform : rotate(90deg);
+}
+.archivedProjectView_todoContent {
+	width : 100%;
+	padding : 9px;
+	box-sizing : content-box;
+	outline : 8px solid #e1e1e1;
+	margin : 10px 0 0 -10px;
+}
+.archivedProjectView_todoContent > dt {
+	height : 30px;
+	line-height : 30px;
+	font-size : 15px;
+	text-indent : 10px;
+}
+.archivedProjectView_todoContent > dd {
+	text-align : right;
+}
+.archivedProjectView_todoContent > dd > * {
+	margin-top : 5px;
+}
+.archivedProjectView_todoContent > dd > *:not(aside) {
+	text-align : left;
+}
+.archivedProjectView_todoContent > dd > span {
+	display : block;
+	text-indent : 10px;
+}
+.archivedProjectView_todoContent > dd > p {
+	padding : 5px 10px;
+}
+.archivedProjectView_todoContent > dd > aside {
+	display : inline-block;
+}
+.archivedProjectView_todoContent a[attachmenttype] {
+	height : 34px;
+	width : 34px;
+	display : inline-block;
+}
+#archivedProjectView > header > ul:empty, #archivedProjectView .anchorList > ul:empty {
+	display : none;
+}

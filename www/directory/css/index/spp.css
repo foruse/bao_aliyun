@@ -1,0 +1,355 @@
+﻿#SPP > * {
+	bottom : 60px;
+}
+
+#schedule {
+	
+}
+#schedule > header {
+	width : 100%;
+}
+#schedule .calendar {
+	z-index : 2;
+}
+#schedule .calendar.stretch aside[todoslength] {
+	display : none;
+}
+#schedule .calendar_month aside[todoslength] {
+	display : inline-block;
+	-webkit-column-width : 5px;
+	-webkit-column-gap : 0;
+	height : 40px;
+}
+#schedule .calendar_month aside[todoslength="0"], .schedule_list > li[todoslength="0"] {
+	display : none;
+}
+#schedule > section > nav {
+	position : absolute;
+	bottom : 0;
+	top : 115px;
+	left : 10px;
+	right : 10px;
+	display : none;
+}
+#schedule > section > nav.calendarStretched {
+	top : 292px;
+}
+.schedule_list {
+	min-height : 100%;
+}
+.schedule_list:empty {
+	display : none;
+}
+.schedule_list dt.whiteFont {
+	height : 20px;
+	padding : 3px 0;
+}
+.schedule_list dt.whiteFont > span {
+	display : block;
+	width : 105px;
+	height : 14px;
+	line-height : 14px;
+	margin : 0 auto;
+	text-align : center;
+}
+.calendar_month aside > span {
+	display : block;
+	width : 5px;
+	height : 10px;
+}
+
+
+#project {
+	
+}
+#project > ul {
+	margin : 0 auto;
+	padding : 5px;
+}
+#project li {
+	width : 50%;
+	padding-right : 2px;
+	margin-bottom : 5px;
+}
+#project li:nth-child(even) {
+	padding : 0 0 0 2px;
+	margin-left : -1px;
+	position : relative;
+	left : 1px;
+}
+#project figure {
+	overflow : hidden;
+	background-color : #fff;
+}
+#project figure[status="0"] figcaption {
+	background-color : #bbb;
+}
+#project figure[status="2"] {
+	opacity : 0.5;
+	background-color : #ddd;
+}
+#project figure[status="-1"] {
+	height : 37px;
+	box-sizing : content-box;
+	opacity : 0.5;
+	padding : 29px 0;
+	background : url(../../../common/image/width24.png) no-repeat center -275px content-box content-box;
+}
+#project figure[status="-1"] > * {
+	display : none;
+}
+#project figure[isimportant="true"] figcaption span {
+	background-position : 0 -15px;
+}
+#project figcaption {
+	height : 22px;
+	line-height : 22px;
+	color : #fff;
+	position : relative;
+}
+#project figcaption > * {
+	position : absolute;
+	height : 100%;
+}
+#project figcaption > span {
+	display : block;
+	right : 33px;
+	left : 0;
+	text-indent : 10px;
+}
+#project strong {
+	display : block;
+	right : 5px;
+	padding : 6px 0;
+	width : 33px;
+	text-indent : 0;
+	background : url(../../../common/image/width12.png) 0 -29px content-box content-box;
+	display : none;
+}
+#project strong > span {
+	height : 9px;
+	width : 9px;
+	margin-left : 3px;
+	background : url(../../../common/image/width12.png) no-repeat 0 -15px;
+}
+#project strong > span:first-child {
+	margin-left : 0;
+}
+#project dd {
+	height : 1px;
+	padding : 0 10px;
+}
+#project dd:first-of-type {
+	height : 48px;
+	margin : 0;
+	overflow : hidden;
+	margin : 3px;
+	padding : 0;
+}
+#project dd > a {
+	margin : 2px;
+}
+#project hr {
+	width : 100%;
+	border-top : 1px dashed #9a9a9a;
+	background-color : transparent;
+}
+#project dt {
+	height : 18px;
+	padding-left : 10px;
+	overflow : hidden;
+	font-size : 9px;
+}
+#project dt > span {
+	line-height : 18px;
+}
+#project dt a {
+	float : right;
+	height : 24px;
+	width : 24px;
+	border-radius : 24px;
+	position : relative;
+	left : 8px;
+	top : 3px;
+	text-align : center;
+	text-indent : -5px;
+	line-height : 15px;
+}
+#project dt a[unread="0"] {
+	display : none;
+}
+#titleBar button[action="addProject"] {
+	border-color : #ffc000;
+}
+#titleBar button[action="set"] {
+	background : #ffc000 url(../../../common/image/width24.png) 3px -372px no-repeat content-box content-box;
+	border-color : #ffc000;
+}
+.confirm[action="projectConfirm"] > article {
+	line-height : 25px;
+}
+.confirm button[action="remove"] {
+	margin-right : 8px;
+	background-color : #ce312d;
+	color : #fff;
+}
+
+#partner > ul > li {
+	position : relative;
+	z-index : 2;
+}
+#partner > ul > li:last-child {
+	z-index : 0;
+	position : absolute;
+	top : 50px;
+	bottom : 0;
+	left : 0;
+	right : 0;
+}
+#partner .navigator {
+	border-color : #00b0d6;
+}
+#partner .navigator > nav, #partner .navigator > nav > dl {
+	display : inline-block;
+}
+#partner .navigator > aside button.focused {
+	background-color : #00b0d6;
+}
+#partner .group {
+	padding : 5px 0;
+	height : 30px;
+	white-space : nowrap;
+}
+#partner .group > dt {
+	padding : 0 5px;
+	background-color : #f7f7f7;
+}
+#partner .group > dd {
+	padding : 1px 0;
+}
+#partner .group button {
+	width : auto;
+	height : 18px;
+	padding : 0 5px;
+	background-color : transparent;
+	margin-right : 14px;
+}
+#partner .group button[groupid] {
+	border : 0 none;
+}
+#partner .group button[groupid="-1"] {
+	margin : 1px 0;
+}
+#partner .group button[action="addGroup"] {
+	width : 58px;
+	height : 20px;
+	border : 1px solid #00b0d6;
+	color : #00b0d6;
+	padding : 3px 0px;
+	line-height : 0;
+	text-indent : 15px;
+	white-space : nowrap;
+	background : url(../../../common/image/width12.png) 3px -150px no-repeat content-box content-box;
+}
+#partner .group button.focused {
+	background-color : #00b0d6;
+	color : #fff;
+}
+#partner .group ul {
+	white-space : nowrap;
+}
+#partner .userIndexList aside {
+	bottom : 70px;
+}
+#mask[action~="添加组拍档"] header > span {
+	text-align : center;
+	padding-left : 0;
+	background-image : none;
+}
+#mask[action~="添加组拍档"] > article, #mask[action~="添加组拍档"] footer > button,
+#mask[action~="添加组拍档"] header > input, #mask[action~="添加组拍档"] .userIndexList p.selected,
+#mask[action~="添加组拍档"] .userIndexList p.selected > img {
+	border-color : #00b0d6;
+}
+#mask[action~="添加组拍档"] header > button, #mask[action~="添加组拍档"] footer > button {
+	background-color : #00b0d6;
+}
+#mask[action~="添加组拍档"] header, #mask[action~="添加组拍档"] .userIndexList aside {
+	color : #00b0d6;
+}
+#mask[action~="添加组拍档"] header > input {
+	padding-left : 24px;
+	background : url(../../../common/image/width24.png) 5px -442px no-repeat;
+}
+#titleBar button[action="addPartner"] {
+	background-color : #e26815;
+	display : none;
+}
+
+
+#tab_SPP {
+	display : block;
+	top : auto;
+	bottom : 0;
+	padding-bottom : 5px;
+	height : 60px !important;
+	background-image : -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 30%, rgba(255, 255, 255, 0.8));
+}
+#tab_SPP > ul {
+	width : 192px;
+	height : 50px;
+	padding : 5px;
+	background-image : url(../../image/navigator_button.png);
+	margin : 0 auto;
+}
+#tab_SPP li {
+	width : 40px;
+	height : 40px;
+	border-radius : 40px;
+	border : 1px solid #39a85a;
+	margin-right : 31px;
+	overflow : hidden;
+}
+#tab_SPP li[tab="schedule"].focused {
+	background-color : #39a85a;
+}
+#tab_SPP li[tab="project"] {
+	border-color : #f1af0f;
+	background : url(../../../common/image/width24.png) 9px -847px no-repeat;
+}
+#tab_SPP li[tab="project"].focused {
+	background-color : #f1af0f;
+	background-position : 9px -897px;
+}
+#tab_SPP li[tab="partner"] {
+	border-color : #00b0d6;
+	margin-right : 0;
+}
+#tab_SPP li[tab="partner"].focused {
+	background-color : #00b0d6;
+}
+#tab_SPP button {
+	width : 100%;
+	height : 100%;
+	border : 0 none;
+	display : block;
+	padding : 9px;
+	background : url(../../../common/image/width24.png) 0 0 no-repeat content-box content-box;
+}
+#tab_SPP li.focused > button {
+	background-position : 0 -825px;
+}
+#tab_SPP li[tab="project"] > button {
+	position : relative;
+	top : 2px;
+	background-position : 3px -325px;
+}
+#tab_SPP li[tab="project"].focused > button {
+	background-position : 3px -25px;
+}
+#tab_SPP li[tab="partner"] > button {
+	background-position : 1px -50px;
+}
+#tab_SPP li[tab="partner"].focused > button {
+	background-position : 1px -350px;
+}

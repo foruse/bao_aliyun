@@ -1,0 +1,184 @@
+стянуть все отсюда
+https://github.com/VisionSquared/baopiqi-cordova.git
+
+http://gbksoft.com/admin/erd/  ---> структура БД --->>> izraylevych_xiao
+
+
+GIT  заказчика https://github.com/VisionSquared
+URL для тетсирование http://build.izraylevych.gbksoft.com/index.html
+онлайн билд https://build.phonegap.com/apps
+    вход через гитаб
+    гитхаб логины (foruse/g1thubgbk)
+GIT https://github.com/foruse/build - для работы с онлайн билдом
+
+nodeJS url : gbksoft.com:5959
+
+frontend:
+        /api.js - вся логика
+        /helpers - функции хелперы
+        /callServer.js - прослойка между фрондендом китайца и фонгапом
+        /directory/page/main.html - копия /directory/page/index.htm только с подключениям нужных фонгап скриптов
+        /splash - сплашскрины
+        /icon.png - иконка
+        /splash.png - сплэш скрин дефолт для андроида
+        /config.xml - файл конфигов для онлайн билда
+        
+У онлайн билда есть онлайн дебагер для этого нужно подключить скрипт 
+<script src="http://debug.build.phonegap.com/target/target-script-min.js#c608ff18-19e3-11e3-a794-12313d16b935"></script> - где c608ff18-19e3-11e3-a794-12313d16b935 код проекта
+
+так же для работы приложения при компилированиии через онлайн билд нужно подключить из /directory/main.html
+<script type="text/javascript" src="../../phonegap.js"></script>
+
+для работы с онлайн дебагером рекомендуюю все скрипты подключать таким образом
+<script src="http://build.izraylevych.gbksoft.com/api.js" type="text/javascript"></script> чтобы можно было быстро поментяь код и он подтянеться в приложение
+
+!!! заказчику всегда надо отдавать билд с relative urls и в отдельном разделе
+!!! заказчику всегда надо отдавать билд с relative urls и в отдельном разделе
+!!! заказчику всегда надо отдавать билд с relative urls и в отдельном разделе
+!!! заказчику всегда надо отдавать билд с relative urls и в отдельном разделе и желательно на его серваке
+
+файл api.js:
+        
+объект CONFIG ---> сюда все конфиги (роуты и настройки)
+объект ROUTE ---> через него получаю урлы из конфигов
+
+фронтенд часть китайца срабатывает через событие
+var a = document.createEvent("HTMLEvents"); //fire up frontend part Event ---> event created
+a.initEvent("appload", true, true);
+событие срабатывает line 1981
+document.dispatchEvent(a);
+
+LINE 1982 прячем Splash screen if(!BROWSER_TEST_VERSION)navigator.splashscreen.hide();
+
+объект Models ---> все модели приложения к которым китаец обращаеться из своего кода напрямую или через файл callServer.js
+
+объект SERVER
+1) SOCKET - веб сокеты хтмл5 которые работают с nodejs библиотека socket.io
+2) DB - надстройка над WebSQL 
+3) API - API к серверу работает с локальной бд и сервером
+4) SESSION - надстройка над localStorage
+5) Phone - Phonegap API
+
+Socket ---> socket.io nodejs библиотека 
+    все запросы на сервер(кроме обновления чата и синхронизации) отправляются через метод request
+    для этого на сервере должен быть примающий код ....on("test", data, function(){socket.emit("test_result")}) ---> все ответы с сервера идут с _result  в конце
+    
+    метод connection_code ---> это хак который я использовал чтобы боротсья с двойными событиями(иногда мне китаец давал запрос два раза в некотррые методы а у socket.io есть недостаток в том,что каллбек не перезаписываеться)
+    
+DB ---> настройка над SQLite
+
+    метод _executeSQL()----> сам метод, который выполняется запрос к БД
+    _init_tables ---> массив куда мы добвляем все таблицы, этот массив используется для создания триггеров
+    _init_db ---> метод создания БД
+    _make_id --> генерирует локальную айди(сомтри методы орм есть методы с генерацией id есть без генерации)
+   все остальное - обычный орм
+   
+   Если нужно обратиться к одной таблице, то лучше использовать методы объекта API(так и должно быть)
+   Но иногда нужно сделать большую выборку из нескольких таблиц в этом случае мы в ручную синхронизируем БД с помощью API._sync([tables_array]) и потом делаем выборку с помошью объекута DB смотри примеры в коде
+   чтобы выполнить запрос через орм ---> DB.query  || DB.row || DB.col
+   
+API ---> API
+
+    _sync --> метод синхронизации локальной и удаленной БД 
+              считывает данные из таблиц sync и sync_delete
+              
+              использует метгоды _check_local_DB_and_fs && _make_socket_request
+              
+SESSION ---> localStorage
+PHONE ---> Phonegap (я думаю тут лучше смотреть доку фонгапа)
+
+
+
+ЭТОТ кусок кода
+
+            Models.Picture = {
+                camera: function(callback){
+                    console.log("camera")
+                    PHONE.Photos.camera(callback);
+                },
+                album: function(callback){
+                    console.log("album")
+                    PHONE.Photos.album(callback);
+                },
+                download: function(table, id, callback){
+                    DB.select('server_path');
+                    DB.from('xiao_'+table);
+                    DB.where('id = "'+id+'"');
+                    DB.col(function(server_path){
+                        if(server_path && server_path != ""){
+                            PHONE.Files.download(server_path, function(local_path){
+                                callback(local_path);
+                                DB.update('xiao_'+table, {local_path:local_path}, 'id = "'+id+'"', function(){
+//                                    API._remove_from_sync('xiao_'+table);
+                                });
+                            });
+                        }else{
+                            callback(false);
+                        }
+                    });
+                    API._clear_tables_to_sync();
+                }
+            };
+
+мы должны использовать Models.Picture.download метод для подгурзки картинок с сервера ---> сейчас не используетьбся так как китаец не успевал и калй сказал что пока без оффлайна
+логика такая
+-мы всегда работаем с полем local_path
+- если на фронтенде китаец видит что поле local_path пустое, то обрааеться к этому методу и картинка загружаеться в лок фс(в это время на фронтенде куртиться загрузка картнки)
+это дает нам то,что мы сначала отдаем все данные для отображения на фроненд а потом уже постепенно грузим картинки которых нет в локальной фс
+
+
+Пару слов об аутентификации
+    все делалось очень быстро поэтому она на данный момент недоработана
+        нет сессий (нужно использовать npm socket.io sessions)
+        нельзя зайти в оффлайне(там еще проблема что китаец на своей стороне при logout стирает localstorage и никаких данных не остаеться)
+        
+        
+        
+Backend
+
+    мы используем nodejs,
+        "express": "3.3.7",
+    "mysql": "2.0.0-alpha9",
+    "socket.io": "*",
+    "MD5": "*",
+    "socket-io.sessions": "*",
+    "nodemailer":"*"   --> список пакетов npm
+    
+    все npm пакеты нужно добвалять в файлик package.json  ----> Зачем? ---> при переносе сайта на другой сервер все npm пакеты устанавливаются одной коммандой npm install
+    КСТАТИ папку node_modules переносить не надо ---> это и есть пакеты и они много весят
+    
+    
+    струкутура 
+    
+    /app.js
+    /controllers/
+                auth.js
+                file.js
+                mail.js
+                sync.js
+    helpers/
+            config.js
+            database.js
+            helpers.js
+            orm.js
+    models/
+            sync_model.js
+            user_model.js
+
+в app.js все натсройки и роуты socket соединений
+в helpers все конфиги и функции помощники и орм
+
+
+в sync_model 
+    важно в методе read  прописывать логику для синхронизации каждой таблицы или они будут идти по умолчанию
+    важно в методе create  через delete удалить из массива те поля которых нет в бд  сервера( но нет в локальной)
+    
+    Также на сервере мы испоьзуем ffmpeg для конвертации amr-->wav
+    
+    
+    
+ТАКЖЕ
+
+    у китайца есть папки help и test в них можно натйи формат данных который нужен
+
+

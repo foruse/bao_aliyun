@@ -1,0 +1,267 @@
+﻿#guidance {
+	background-color : #fff;
+	font-size : 15px;
+	top : 0;
+}
+#guidance > article {
+	top : 5px;
+	height : 100%;
+}
+
+.guidance_header {
+	display : block !important;
+	bottom : auto !important;
+	position : relative !important;
+	z-index : 2;
+}
+.guidance_header > ul {
+	height : 5px;
+}
+.guidance_header li {
+	width : 14.285%;
+	height : 100%;
+}
+
+#login {
+	width : 250px;
+	left : 50%;
+	margin-left : -125px;
+	padding-top : 30px;
+}
+#login > header {
+	line-height : 25px;
+	vertical-align : bottom;
+}
+#login > header > * {
+	font-size : 36px;
+	line-height : 1em;
+}
+#login > header > p {
+	color : #7f7f81;
+}
+#login > header > span {
+	color : #39bead;
+	padding-right : 8px;
+}
+#login > section {
+	margin-top : 15px;
+}
+#login > section li {
+	margin-bottom : 8px;
+}
+#login > section input {
+	height : 40px;
+	background-color : #f9f8f5;
+	width : 100%;
+	padding : 8px;
+	line-height : 24px;
+}
+#login > section input[desc="name"], #login > section input[desc="repwd"] {
+	display : none;
+}
+#login > section.register input[desc="name"], #login > section.register input[desc="repwd"] {
+	display : block;
+}
+#login > section > p {
+	font-size : 12px;
+}
+#login > section button {
+	width : 64px;
+	height : 24px;
+	background-color : #e26817;
+	border : 0 none;
+}
+#login > section button:last-child {
+	float : right;
+	background-color : #39bead;
+}
+
+#uploadAvatar {
+	padding : 70px 40px 0 40px;
+}
+#uploadAvatar > header, #uploadAvatar > footer {
+	text-align : center;
+}
+#uploadAvatar > header > button {
+	width : 135px;
+	height : 135px;
+	border-radius : 140px;
+	border : 1px solid #dfdfdf;
+	padding : 5px;
+	box-sizing : content-box;
+}
+#uploadAvatar > header img {
+	width : 100%;
+	height : 100%;
+	border-radius : 135px;
+}
+#uploadAvatar > header input {
+	position : relative;
+	top : -135px;
+}
+#uploadAvatar > header > span {
+	display : block;
+	margin-top : 10px;
+	font-size : 15px;
+}
+#uploadAvatar > section {
+	margin-top : 20px;
+}
+#uploadAvatar > section > input {
+	width : 100%;
+	height : 36px;
+	padding : 8px 15px;
+	line-height : 20px;
+}
+#uploadAvatar > footer {
+	margin-top : 40px;
+}
+#uploadAvatar > footer > button {
+	width : 100px;
+	height : 30px;
+	background-color : #39bead;
+	border : 0 none;
+}
+
+#createFirstProject, #invitation {
+	padding : 15px 10px;
+}
+#createFirstProject > header, #invitation > header {
+	text-align : center;
+	margin-bottom : 10px;
+}
+#createFirstProject > section, #invitation > section {
+	margin-bottom : 20px;
+}
+#createFirstProject > section li {
+	margin-bottom : 5px;
+}
+#createFirstProject section li:last-child {
+	height : 125px;
+}
+#createFirstProject > section li:nth-child(2) {
+	position : relative;
+}
+#createFirstProject > section input, #createFirstProject > section textarea {
+	background-color : transparent;
+	border : 0 none;
+	min-height : 100%;
+	max-height : 100%;
+	min-width : 100%;
+	max-width : 100%;
+}
+#createFirstProject > section span {
+	font-size : 14px;
+	width : 56px;
+}
+#createFirstProject > section aside {
+	position : absolute;
+	left : 56px;
+	right : 0;
+	text-align : center;
+}
+#createFirstProject > footer, #invitation > footer {
+	text-align : center;
+}
+#createFirstProject > footer > button, #invitation > footer > button {
+	width : 100px;
+	height : 28px;
+	border : 0 none;
+	background-color : #c2c2c2;
+}
+
+#invitation > section li {
+	height : 35px;
+	margin-bottom : 10px;
+	padding : 0 20px 0 40px;
+	background : url(../../../common/image/width24.png) 10px -496px no-repeat;
+}
+#invitation > section li:last-child {
+	margin-bottom : 0;
+}
+#invitation > section input {
+	height : 100%;
+	width : 100%;
+	padding : 10px;
+}
+#invitation > section input:focus {
+	border : 1px solid #6f6966;
+}
+
+#demo .navigator {
+	height : 100%;
+}
+#demo .navigator > nav {
+	width : 300%;
+	height : 100%;
+	padding-bottom : 90px;
+	-webkit-column-count : 3;
+	-webkit-column-gap : 0;
+}
+#demo .navigator img {
+	background-image : url(../../image/demo_bg_1.jpg);
+	background-size : 100% 100%;
+	height : 100%;
+	width : 100%;
+}
+#demo .navigator img:nth-child(2) {
+	background-image : url(../../image/demo_bg_2.jpg);
+}
+#demo .navigator img:nth-child(3) {
+	background-image : url(../../image/demo_bg_3.jpg);
+}
+#demo .navigator > aside {
+	position : relative;
+	top : -90px;
+	z-index : 2;
+	height : 90px;
+	background-color : #e8e8e8;
+	padding : 0 30px;
+}
+#demo .navigator ol {
+	height : 40px;
+	padding : 15px 0;
+}
+#demo .navigator li {
+	padding : 0;
+}
+#demo button {
+	border-radius : 10px;
+	width : 10px;
+	height : 10px;
+	background-color : #a1a1a1;
+}
+#demo button.focused {
+	background-color : #fff;
+}
+#demo .navigator p {
+	height : 50px;
+	line-height : 20px;
+	white-space : normal;
+}
+
+#guidance_footer {
+	position : fixed !important;
+	left : 20px;
+	right : 20px;
+	width : auto !important;
+	top : auto !important;
+	bottom : 50px !important;
+	display : block !important;
+}
+#guidance_footer > button {
+	height : 38px;
+	width : 38px;
+	border-radius : 38px;
+	padding : 2px 0;
+	border-width : 7px;
+	background-image : url(../../../common/image/width24.png);
+	background-position : 0 -550px;
+	background-repeat : no-repeat;
+	background-origin : content-box;
+	
+}
+#guidance_footer > button[desc="next"] {
+	float : right;
+	-webkit-transform : rotate(180deg);
+}

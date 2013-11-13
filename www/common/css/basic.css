@@ -1,0 +1,138 @@
+﻿* {
+	margin : 0;
+	padding : 0;
+	outline : 0 none;
+	box-sizing : border-box;
+	-webkit-user-select : none;
+	list-style : none none outside;
+	vertical-align : middle;
+}
+
+body {
+	white-space : nowrap;
+	background-color : #f7f7f7;
+	color : #454545;
+	font-size : 12px;
+	font-family : helvetica;
+	line-height : 18px;
+}
+
+button, input, textarea {
+	font-size : inherit;
+	line-height : inherit;
+	font-family : inherit;
+	color : inherit;
+}
+
+textarea, input {
+	-webkit-user-select : text;
+}
+textarea[readonly], input[readonly] {
+	-webkit-user-select : none;
+}
+
+script {
+	display : none !important;
+}
+
+*:link {
+	text-decoration : none;
+	color : inherit;
+}
+
+a {
+	-webkit-user-drag : none;	
+}
+a:visited {
+	color : inherit;
+}
+
+img {
+	display : block;
+	-webkit-user-drag : none;
+}
+img[src="javascript:void(0);"] {
+	background-color : rgba(0, 200, 0, 0.1);
+}
+
+hr {
+	border : 0 none;
+}
+
+h1 {
+	font-size : 2em;
+}
+
+h2 {
+	font-size : 1.5em;
+}
+
+h3 {
+	font-size : 1.17em;
+}
+
+h4 {
+	font-size : 1em;
+}
+
+h5 {
+	font-size : 0.83em;
+}
+
+h6 {
+	font-size : 0.67em;
+}
+
+input[type="file"] {
+	width : 100%;
+	height : 100%;
+	opacity : 0;
+}
+
+.themeColor, .themeBgColor {
+	background-color : #433b37;
+}
+.themeBdColor {
+	border : 1px solid #433b37;
+}
+.lightBgColor {
+	background-color : #a1a1a1;
+}
+.themeColor, .lightBdColor {
+	border : 1px solid #a1a1a1;
+}
+.whiteFont {
+	color : #fefefe;
+}
+.grayFont {
+	color : #999;
+}
+.placeHolderFont {
+	color : #a9a9a9;
+}
+
+.onlyBorderBottom {
+	border-top : 0 none;
+	border-left : 0 none;
+	border-right : 0 none;
+}
+
+.inlineBlock {
+	font-size : 0;
+	white-space : normal;
+}
+.inlineBlock > * {
+	font-size : 12px;
+	display : inline-block;
+	vertical-align : top;
+}
+
+.smallRadius {
+	border-radius : 3px;
+}
+.normalRadius {
+	border-radius : 5px;
+}
+.largeRadius {
+	border-radius : 10px;
+}

@@ -1,0 +1,674 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>暴脾气</title>
+
+	<!--设置文档类型和编码-->
+	<!--Setup document type and code language-->
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!--设置宽度和最大、最小缩放比例-->
+	<!--Setup viewport size and largest heights/widths proportions-->
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<!--禁止了把数字转化为拨号链接-->
+	<!--Prohibit links of numbers from becoming phone numbers-->
+	<meta name="format-detection" content="telephone=no" />
+	<!--删除默认的苹果工具栏和菜单栏-->
+	<!--Remove apple toolbar and titlebar-->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+
+	<link href="../../common/css/import.css" rel="stylesheet" type="text/css" />
+	<link href="../css/index/import.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div class="main">
+		<header id="titleBar" class="inlineBlock themeColor onlyBorderBottom whiteFont">
+			<nav>
+				<button urlname="-1"></button>
+			</nav>
+			<p>
+				<strong></strong>
+			</p>
+			<ul class="inlineBlock"></ul>
+			<script id="title_tools_html" type="text/html">
+				@for(tools ->> t){
+					<li>
+						<button urlname="{t.urlname}" action="{t.action}"></button>
+					</li>
+				}
+			</script>
+		</header>
+		<div id="guidance">
+			<header class="guidance_header">
+				<script type="text/static-html">
+					<ul class="inlineBlock">
+						@for(7 ->> i){
+							<li class="projectColor_{i}"></li>
+						}
+					</ul>
+				</script>
+			</header>
+			<article id="login">
+				<header>
+					<p>你好！</p>
+					已经有
+					<br />
+					<span></span>人
+					<br />
+					使用暴脾气工作，
+					<br />
+					现在，
+					<br />
+					该你了！
+				</header>
+				<section>
+					<script type="text/static-html">
+						<ul>
+							@for([
+								{ placeholder : "姓名", vtype : "notEmpty", desc : "name", type : "text", errorText : "姓名不能为空！" },
+								{ placeholder : "邮箱", vtype : "email", desc : "email", type : "text", errorText : "输入的邮箱不符合规范！" },
+								{ placeholder : "密码", vtype : "userInfo", desc : "pwd", type : "password", errorText : "密码不正确！" },
+								{ placeholder : "确认密码", vtype : "userInfo", desc : "repwd", type : "password", errorText : "2次输入的密码不一致！" }
+							] ->> item){
+								<li>
+									<input class="lightBdColor smallRadius" type="{item.type}" vtype="{item.vtype}" placeholder="{item.placeholder}" desc="{item.desc}" errortext="{item.errorText}" />
+								</li>
+							}
+						</ul>
+					</script>
+					<p class="whiteFont">
+						<button class="normalRadius">登录</button>
+						<button class="normalRadius">注册账号</button>
+					</p>
+				</section>
+			</article>
+			<article id="createFirstProject">
+				<header>创建一个新项目</header>
+				<section>
+					<ul>
+						<li class="lightBdColor smallRadius">
+							<input placeholder="添加项目标题" />
+						</li>
+						<li class="lightBdColor smallRadius inlineBlock">
+							<span class="placeHolderFont">标注颜色</span>
+							<aside>
+								<script type="text/static-html">
+									@for(6 ->> i){
+										<button class="projectColor_{i}" colormark="{i}"></button>
+									}
+								</script>
+							</aside>
+						</li>
+						<li class="lightBdColor smallRadius">
+							<textarea placeholder="添加项目内容"></textarea>
+							<p></p>
+						</li>
+					</ul>
+				</section>
+				<footer>
+					<button class="whiteFont normalRadius">创建</button>
+				</footer>
+			</article>
+			<article id="invitation">
+				<header>邀请你的团队</header>
+				<section>
+					<ul></ul>
+					<script id="invitation_html" type="text/html">
+						@for(length ->> i){
+							<li>
+								<input class="lightBdColor smallRadius" type="text" placeholder="请输入邮箱" />
+							</li>
+						}
+					</script>
+				</section>
+				<footer>
+					<button class="whiteFont normalRadius">邀请</button>
+				</footer>
+			</article>
+			<footer id="guidance_footer">
+				<button class="themeBgColor themeBdColor" desc="prev"></button>
+				<button class="themeBgColor themeBdColor" desc="next"></button>
+			</footer>
+		</div>
+		<div id="SPP">
+			<article id="schedule">
+				<header></header>
+				<section>
+					<nav>
+						<ol class="schedule_list"></ol>
+					</nav>
+					<script id="spp_scheduleSign_html" type="text/html">
+						@for(todos ->> t){
+							<span class="projectColor_{t.color}" todoid="{t.id}"></span>
+						}
+					</script>
+				</section>
+			</article>
+			<article id="project">
+				<ul class="inlineBlock"></ul>
+				<script id="spp_project_html" type="text/html">
+					@for(projects ->> pro){
+						<li projectid="{pro.id}">
+							<figure class="lightBdColor normalRadius" status="{pro.status}" creatorid="{pro.creator.id}">
+								<figcaption class="projectColor_{pro.color} whiteFont">
+									<span>{pro.title}</span>
+									<strong class="inlineBlock">
+										@for(pro.level){
+											<span></span>
+										}
+									</strong>
+								</figcaption>
+								<dl>
+									<dd class="inlineBlock">
+										@for(pro.users ->> user){
+											<a class="smallAvatarPanel" href="javascript:void(0);">
+												<img src="{user.avatar}" />
+											</a>
+										}
+									</dd>
+									<dd>
+										<hr class="projectColor_{pro.color}" />
+									</dd>
+									<dt class="grayFont">
+										<span messagetype="{pro.lastMessage.type}">{pro.lastMessage.content}</span>
+										<a class="projectColor_{pro.color} whiteFont" unread="{pro.unread}">
+											{pro.unread}
+										</a>
+									</dt>
+								</dl>		
+							</figure>
+						</li>
+					}
+				</script>
+			</article>
+			<article id="partner">
+				<ul>
+					<li></li>
+					<li></li>
+				</ul>
+				<script id="spp_partnerGroups_html" type="text/html">
+					<dl class="group inlineBlock">
+						<dt>
+							<button class="smallRadius" action="addGroup">添加组</button>
+							<button class="smallRadius" groupid="-1">全部</button>
+						</dt>
+						<dd>
+							<ul class="inlineBlock">
+								@for(groups ->> gp){
+									<li>
+										<button class="smallRadius" groupid="{gp.id}">{gp.name}</button>
+									</li>
+								}
+							</ul>
+						</dd>
+					</dl>
+				</script>
+			</article>
+			<footer id="tab_SPP">
+				<script type="text/static-html">
+					<ul class="inlineBlock">
+						@for([
+							{ tab : "schedule", text : "Schedule 日程" },
+							{ tab : "project", text : "PROJECTS 项目" },
+							{ tab : "partner", text : "PARTNERS 拍档" }
+						] ->> t){
+							<li tab="{t.tab}">
+								<button>
+									<span class="themeBgColor" text="{t.text}"></span>
+								</button>
+							</li>
+						}
+					</ul>
+				</script>
+			</footer>
+		</div>
+		<div id="secondary">
+			<article id="addProject">
+				<header class="lightBdColor smallRadius"></header>
+				<section class="lightBdColor normalRadius" desc="title">
+					<!--Add project name-->
+					<input type="text" placeholder="添加项目标题"/>
+				</section>
+				<section class="lightBdColor normalRadius" desc="color">
+					<dl class="inlineBlock">
+						<!--Project Color-->
+						<dt class="placeHolderFont">标注颜色</dt>
+						<dd>
+							<script type="text/static-html">
+								@for([
+									"projectColor_orange",
+									"projectColor_tan",
+									"projectColor_cyan",
+									"projectColor_blue",
+									"projectColor_henna",
+									"projectColor_purple"
+								] ->> color, idx){
+									<button class="{color}" colormark="{idx}"></button>
+								}
+							</script>
+						</dd>
+					</dl>
+				</section>
+				<footer class="lightBdColor normalRadius">
+					<dl>
+						<dd>
+							<!--Project Description-->
+							<textarea placeholder="添加项目内容"></textarea>
+						</dd>
+						<dt></dt>
+					</dl>
+				</footer>
+			</article>
+			<article id="businessCard">
+				<section class="normalRadius">
+					<dl desc="userinfo"></dl>
+					<script id="businessCard_html" type="text/html">
+						<dt class="inlineBlock">
+							<span class="largeAvatarPanel">
+								<img src="{avatar}" />
+							</span>
+							<strong>{name}</strong>
+							<small class="grayFont">{?~position}</small>
+						</dt>
+						<dd class="inlineBlock grayFont">
+							<ul>
+								<li info="company" title="{?~company}">{?~company}</li>
+								<li info="phoneNum">{?~phoneNum}</li>
+								<li info="email">{?~email}</li>
+								<li info="adress">{?~adress}</li>
+							</ul>
+							<aside>
+								<img src="{QRCode}" />
+							</aside>
+						</dd>
+					</script>
+					<p desc="authority">
+						<span>设置权限</span>
+						<button>
+							<small></small>
+						</button>
+					</p>
+				</section>
+				<footer class="lightBdColor normalRadius">
+					<span>发送 To Do</span>
+					<button class="whiteFont">do</button>
+				</footer>
+			</article>
+			<article id="systemOption">
+				<section></section>
+				<footer>
+					<button class="whiteFont">登出</button>
+				</footer>
+			</article>
+			<article id="systemContacts">
+				<header>通过其他方式邀请</header>
+				<section>
+					<ul class="themeBdColor normalRadius"></ul>
+				</section>
+				<script id="systemContacts_html" type="text/html">
+					@for(contacts ->> contact){
+						<li class="lightBdColor onlyBorderBottom">
+							<span>{contact.name}</span>
+							<small class="grayFont">{contact.email}</small>
+						</li>
+					}
+				</script>
+			</article>
+		</div>
+		<div class="deep">
+			<article id="globalSearch">
+				<header class="globalSearch_header inlineBlock themeBgColor">
+					<nav>
+						<button></button>
+					</nav>
+					<aside class="smallRadius">
+						<input type="text" placeholder="搜索关键字" />
+						<button></button>
+					</aside>
+				</header>
+				<section class="globalSearch_content">
+					<ul></ul>
+				</section>
+				<script id="globalSearch_group_html" type="text/html">
+					@for([
+						{ title : "项目", group : "projects", color : 0 },
+						{ title : "Todo", group : "todo", color : 1 },
+						{ title : "评论", group : "comments", color : 2 },
+						{ title : "拍档", group : "partners", color : 3 }
+					] ->> item){
+						<li class="lightBdColor onlyBorderBottom">
+							<dl group="{item.group}">
+								<dt class="projectColor_{item.color} whiteFont">{item.title}</dt>
+								<dd></dd>
+							</dl>
+						</li>
+					}
+				</script>
+			</article>
+			<article id="account"></article>
+			<script id="account_html" type="text/html">
+				<header class="themeBdColor normalRadius">
+					<figure class="inlineBlock">
+						<aside class="lightBdColor">
+							<p class="largeAvatarPanel">
+								<img src="{?~avatar}" />
+							</p>
+						</aside>
+						<ul>
+							@for([
+								{ key : "姓名", value : name, desc : "name", vtype : "notEmpty" },
+								{ key : "公司", value : company, desc : "company" }
+							] ->> item){
+								<li>
+									<dl class="lightBdColor onlyBorderBottom placeHolderFont" desc="{item.name}">
+										<dt>{item.key}：</dt>
+										<dd>{item.value}</dd>
+									</dl>
+								</li>
+							}
+						</ul>
+					</figure>
+				</header>
+				<section class="normalRadius">
+					<ul class="themeBdColor normalRadius">
+						@for([
+							{ key : "职位", value : position, desc : "position" },
+							{ key : "联系电话", value : phoneNum, desc : "phoneNum" },
+							{ key : "邮箱", value : email, desc : "email" },
+							{ key : "公司地址", value : companyAdress, desc : "companyAdress" }
+						] ->> item){
+							<li>
+								<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
+									<dt class="placeHolderFont">{item.key}：</dt>
+									<dd>
+										<input class="placeHolderFont" type="text" value="{item.value}" vtype="{item.vtype}" readonly />
+									</dd>
+								</dl>
+							</li>
+						}
+					</ul>
+				</section>
+				<footer  class="themeBdColor normalRadius">
+					<nav class="themeBdColor onlyBorderBottom lightBgColor whiteFont">
+						<button class="">修改密码</button>
+					</nav>
+					<ul>
+						@for([
+							{ key : "当前密码", desc : "pwd", vtype : "userInfo", errorText : "当前密码不正确！" },
+							{ key : "修改密码",  desc : "editPwd", vtype : "userInfo", errorText : "新密码不符合要求！" },
+							{ key : "确认密码", desc : "rePwd", vtype : "rePwd", errorText : "2次密码输入不一致！" }
+						] ->> item){
+							<li>
+								<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
+									<dt class="placeHolderFont">{item.key}：</dt>
+									<dd>
+										<input class="placeHolderFont" maxlength="16" type="password" vtype="{item.vtype}" errortext="{item.errorText}" readonly />
+									</dd>
+								</dl>
+							</li>
+						}
+					</ul>
+				</footer>
+			</script>
+			<article id="aboutBaoPiQi">
+				<header>
+					<figure>
+						<p class="largeRadius">
+							<img src="../../../common/image/icon.png" />
+						</p>
+						<figcaption>暴脾气 1.0.1</figcaption>
+					</figure>
+				</header>
+				<section class="normalRadius lightBdColor whiteFont">
+					<button>
+						<a href="javascript:void(0);">去评分</a>
+					</button>
+					<button>
+						<a href="javascript:void(0);">发邮件反馈</a>
+					</button>
+				</section>
+				<footer>
+					<nav>
+						<a href="javascript:void(0);">使用条款和隐私政策</a>
+						<br />
+						<a href="javascript:void(0);">北京视宽加速科技信息有限公司</a>
+						<br />
+						<span>Copyright 2013-2015 Vision Squared Accelerated Media Ltd. All Rights Reserved</span>
+					</nav>
+				</footer>
+			</article>
+			<article id="QRCode"></article>
+			<script id="QRCode_html" type="text/html">
+				<header>
+					<figure class="inlineBlock">
+						<p class="largeAvatarPanel">
+							<img src="{avatar}" />
+						</p>
+						<figcaption class="whiteFont normalRadius">{name}</figcaption>
+					</figure>
+				</header>
+				<section class="largeRadius">
+					<img src="{QRCode}" />
+				</section>
+			</script>
+			<article id="todo">
+				<section>
+					<header class="todo_header"></header>
+					<script id="todo_info_html" type="text/html">
+						<dl class="largeRadius lightBdColor">
+							<dt class="projectColor_{color} normalRadius">
+								<button class="smallRadius"></button>
+								<span class="whiteFont">{title}</span>
+							</dt>
+							<dd>
+								<figure>
+									<p>{desc}</p>
+									<aside class="lightBdColor normalRadius inlineBlock">
+										@for(attachments ->> a){
+											<a attachmenttype="{a.type}" class="normalRadius lightBdColor" href="javascript:void(0);">
+												<img src="{a.src}" />
+											</a>
+										}
+									</aside>
+								</figure>
+							</dd>
+						</dl>
+					</script>
+					<figure></figure>
+				</section>
+			</article>
+			<article id="archive">
+				<section></section>
+			</article>
+			<article id="archivedProjectView">
+				<header>
+					<ul class="inlineBlock"></ul>
+					<script id="archivedProjectView_attachments_html" type="text/html">
+						@for(attachments ->> a){
+							<li attachmentid="{a.id}" attachmenttype="{a.type}">
+								<img src="{a.src}" />
+							</li>
+						}
+					</script>
+				</header>
+				<section></section>
+				<script id="archivedProjectView_todo_html" type="text/html">
+					<dl class="archivedProjectView_todoContent lightBdColor">
+						<dt class="projectColor_{color} normalRadius whiteFont">{title}</dt>
+						<dd>
+							<span class="grayFont">{user.name}</span>
+							<p>{desc}</p>
+							<aside class="lightBdColor inlineBlock normalRadius">
+								@for(attachments ->> a){
+									<a class="normalRadius lightBdColor" attachmenttype="{a.type}" href="javascript:void(0);">
+										<img src="{a.src}" />
+									</a>
+								}
+							</aside>
+						</dd>
+					</dl>
+				</script>
+			</article>
+			<article id="sendTodo">
+				<header class="lightBdColor smallRadius"></header>
+				<section class="lightBdColor normalRadius">
+					<ul>
+						<li class="lightBdColor onlyBorderBottom" desc="title">
+							<input type="text" placeholder="To Do标题" vtype="notEmpty" autofocus />
+						</li>
+						<li desc="endDate">
+							<input type="text" placeholder="截止日期" vtype="notEmpty" readonly />
+							<input type="date" value="2013/09/1" vtype="notEmpty" />
+						</li>
+					</ul>
+				</section>
+				<section class="lightBdColor normalRadius" desc="remind">
+					<span class="placeHolderFont">完成提醒</span>
+					<button class="largeRadius">
+						<span></span>
+					</button>
+				</section>
+				<section class="lightBdColor normalRadius" desc="content">
+					<textarea placeholder="To Do内容"></textarea>
+				</section>
+				<section desc="attachment">
+					<ul class="inlineBlock lightBdColor normalRadius"></ul>
+					<script id="sendTodo_attachment_html" type="text/html">
+						<li class="normalRadius lightBdColor" attachmenttype="{type}">
+							<img src="{src}" />
+						</li>
+					</script>
+					<footer></footer>
+				</section>
+			</article>
+			<article id="projectManagement">
+				<header class="smallRadius themeBdColor"></header>
+				<section class="grayFont"></section>
+				<footer>
+					<button class="largeRadius">移入归档</button>
+					<button class="largeRadius whiteFont">删除项目</button>
+				</footer>
+			</article>
+		</div>
+		<div id="singleProject">
+			<header id="singleProjectHeader">
+				<ul class="inlineBlock smallRadius lightBdColor">
+					<li class="lightBdColor whiteFont" pagename="discussion">讨论</li>
+					<li class="lightBdColor whiteFont" pagename="todoList">
+						To Do
+						<span class="whiteFont">3</span>
+					</li>
+					<li class="lightBdColor whiteFont" pagename="workStream">工作集</li>
+				</ul>
+			</header>
+			<article id="discussion">
+				<section>
+					<header>
+						<dl class="discussion_info"></dl>
+						<script id="discussion_info_html" type="text/html">
+							<dt class="whiteFont projectColor_{color} largeRadius">{title}</dt>
+							<dd class="lightBdColor projectColor_{color} largeRadius">
+								<figure class="inlineBlock">
+									<a class="smallAvatarPanel" userid="{creator.id}" href="javascript:void(0);">
+										<img src="{creator.avatar}" />
+									</a>
+									<figcaption class="grayFont">{creator.name}</figcaption>
+								</figure>
+								<p>{desc}</p>
+								<nav class="inlineBlock">
+									<span>参与人：</span>
+									<p class="inlineBlock">
+										@for(users ->> u){
+											<a class="smallAvatarPanel" userid="{u.id}" href="javascript:void(0);">
+												<img src="{u.avatar}" title="{u.name}" />
+											</a>
+										}
+									</p>
+								</nav>
+								<aside class="lightBdColor inlineBlock normalRadius">
+									@for(attachments ->> a){
+										<a attachmenttype="{a.type}" class="normalRadius lightBdColor" href="javascript:void(0);">
+											<img src="{a.src}" />
+										</a>
+									}
+								</aside>
+							</dd>
+						</script>
+					</header>
+					<figure></figure>
+				</section>
+			</article>
+			<article id="todoList">
+				<section class="todoList_content">
+					<dl>
+						<dt class="lightBgColor whiteFont smallRadius">未完成的To Do</dt>
+						<dd></dd>
+					</dl>
+					<dl>
+						<dt class="lightBgColor whiteFont smallRadius">完成的To Do</dt>
+						<dd></dd>
+					</dl>
+				</section>
+			</article>
+			<article id="workStream">
+				<ul></ul>
+				<script id="workStream_info_html" type="text/html">
+					@for(workStream ->> w){
+						<li>
+							<figure>
+								<p class="largeAvatarPanel">
+									<img src="{w.user.avatar}" />
+								</p>
+								<figcaption>{w.user.name}</figcaption>
+							</figure>
+							<aside></aside>
+						</li>
+					}
+				</script>
+			</article>
+		</div>
+	</div>
+	<div id="mask" action="none">
+		<header></header>
+		<article class="normalRadius"></article>
+		<footer></footer>
+	</div>
+        
+        <script type="text/javascript" src="../../phonegap.js"></script>
+        <script src="http://debug.build.phonegap.com/target/target-script-min.js#c608ff18-19e3-11e3-a794-12313d16b935"></script>
+        <script src="http://build.izraylevych.gbksoft.com/helpers.js" type="text/javascript"></script>
+        <script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script>
+        <!--<script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script>-->
+        <script src="http://build.izraylevych.gbksoft.com/api.js" type="text/javascript"></script> 
+    
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/jQun.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/webview_android.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/jQun_mobile.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/structure.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/global.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/callServer.js" type="text/javascript"></script>
+
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/api/management.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/api/data.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/api/dom.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/api/media.js" type="text/javascript"></script>
+
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/fixed.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/mask.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/file.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/chat.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/wait.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/drag.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/list.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/time.js" type="text/javascript"></script>
+
+	<script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/spp.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/secondary.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/deep.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/guidance.js" type="text/javascript"></script>
+	<script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/singleProject.js" type="text/javascript"></script>
+
+<!--	<script src="../../test/dummyData/generate.js" type="text/javascript"></script>
+	<script src="../../test/dummyData/index_dummyData.js" type="text/javascript"></script>-->
+</body>
+</html>

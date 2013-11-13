@@ -1,0 +1,51 @@
+﻿.loadingBar {
+	width : 100%;
+	height : 100%;
+	padding : 10px 0;
+	display : block !important;
+}
+.loadingBar > dl > dt {
+	width : 24px;
+	height : 24px;
+	margin : 0 auto;
+}
+.loadingBar[type="loading"] > dl > dt {
+	background : url(../../../common/image/width24.png) no-repeat 0 -75px;
+	-webkit-animation : loading 1s steps(14) infinite;
+}
+@-webkit-keyframes loading {
+	from {
+		-webkit-transform : rotate(360deg);
+	}
+	to {
+		-webkit-transform : rotate(0deg);
+	}
+}
+.loadingBar dt > button {
+	width : 100%;
+	height : 100%;
+	background : url(../../../common/image/width24.png) 2px -401px no-repeat;
+	border : 0 none;
+}
+.loadingBar[type="loading"] dt > button {
+	display : none;
+}
+.loadingBar > dl > dd {
+	display : block;
+	line-height : 16px;
+	text-align : center;
+	margin-top : 5px;
+	white-space : normal;
+}
+#mask[action="loadingBar"] {
+	left : 50%;
+	top : 40%;
+	width : 72px;
+	height : 72px;
+	margin : -36px;
+	border-radius : 10px;
+	background-color : rgba(0, 0, 0, 0.4);
+}
+#mask[action="loadingBar"] > article {
+	overflow : hidden;
+}

@@ -1,0 +1,332 @@
+﻿.anchorList li {
+	height : 50px;
+	padding : 8px 18px 5px 18px;
+}
+.anchorList[descriptstatus="hide"] li {
+	padding : 13px 18px;
+	height : 46px;
+}
+.anchorList li:last-child {
+	border : none;
+}
+.anchorList nav {
+	width : 100%;
+	height : 100%;
+	position : relative;
+}
+.anchorList nav > * {
+	position : absolute;
+}
+.anchorList aside {
+	height : 100%;
+	right : 7px;
+	left : 0;
+	top : 0;
+}
+.anchorList aside dt {
+	font-size : 15px;
+	height : 20px;
+}
+.anchorList aside dt > span {
+	vertical-align : top;
+	white-space : nowrap;
+	overflow : hidden;
+	text-overflow : ellipsis;
+	display : block;
+}
+.anchorList aside dd {
+	height : 16px;
+	text-overflow : ellipsis;
+	overflow : hidden;
+}
+.anchorList[descriptstatus="hide"] aside dd {
+	display : none;
+}
+.anchorList aside small {
+	float : right;
+	height : 20px;
+	line-height : 20px;
+}
+.anchorList aside small:empty {
+	display : none;
+}
+.anchorList nav > p {
+	width : 5px;
+	height : 13px;
+	right : 0;
+	top : 0;
+	margin-top : 4px;
+}
+.anchorList a {
+	display : block;
+	background : url(../image/width12.png) 0 -90px no-repeat;
+	height : 100%;
+	width : 100%;
+}
+.anchorList_level {
+	background : url(../image/width12.png) 0 -29px;
+	width : 33px;
+	height : 9px;
+	display : none;
+}
+.anchorList_level > li {
+	height : 9px;
+	width : 9px;
+	padding : 0;
+	margin-left : 3px;
+	background : url(../image/width12.png) no-repeat 0 -15px;
+}
+.anchorList_level > li:first-child {
+	margin-left : 0;
+}
+.anchorList > ul + p {
+	background-color : #fff;
+	height : 45px;
+	line-height : 45px;
+	margin : 10px;
+	text-align : center;
+	font-size : 15px;
+	display : none;
+}
+.anchorList > ul:empty + p {
+	display : block;
+}
+
+.userAnchorList li {
+	padding : 0;
+	height : 55px;
+	padding : 3px 16px 3px 10px;
+}
+.userAnchorList .normalAvatarPanel {
+	border : 0 none;
+}
+.userAnchorList .normalAvatarPanel > img {
+	border : 0 none;
+	width : 48px;
+	height : 48px;
+	border-radius : 48px;
+}
+.userAnchorList aside > dl {
+	position : absolute;
+	left : 64px;
+	right : 0;
+	height : 100%;
+	padding : 4px 0;
+}
+.userAnchorList dl > dd {
+	margin-top : 4px;
+}
+.userAnchorList nav > p {
+	top : 17px;
+}
+
+
+.userList figure {
+	padding : 3px 6px;
+	padding-bottom : 22px;
+}
+.userList.normalAvatar figure {
+	padding : 3px 4px;
+}
+.userList figcaption {
+	height : 20px;
+	margin-top : 10px;
+	text-align : center;
+	text-overflow : ellipsis;
+	overflow : hidden;
+}
+
+.userIndexList > ol > li {
+	padding-top : 2px;
+}
+.userIndexList dt {
+	padding : 6px 0 15px 0;
+	height : 22px;
+	margin : 0 24px;
+	background-clip : content-box;
+	background-color : #ddd;
+}
+.userIndexList strong {
+	display : block;
+	height : 18px;
+	width : 18px;
+	line-height : 18px;
+	border-radius : 18px;
+	position : relative;
+	top : -8px;
+	left : -18px;
+	color : #fff;
+	background-color : #ccc;
+	text-align : center;
+	font-family : Helvetica;
+}
+.userIndexList aside {
+	width : 1em;
+	position : fixed;
+	right : 10px;
+	top : 90px;
+	font-family : Helvetica;
+	font-weight : bold;
+}
+.userIndexList ol {
+	-webkit-column-count : auto;
+	height : 100%;
+}
+.userIndexList aside li {
+	text-align : center;
+	font-size : 10px;
+	line-height : 12px;
+	height : 3.846%;
+}
+.userIndexList aside li[idx="-1"] {
+	opacity : 0.5;
+}
+
+.userManagementList {
+	overflow : hidden;
+	min-height : 74px;
+	padding : 10px 5px;
+}
+.userManagementList dt {
+	width : 112px;
+	height : 54px;
+	position : relative;
+	z-index : 2;
+	margin-top : -54px;
+	top : 54px;
+	padding : 3px 4px;
+}
+.userManagementList dt > button {
+	width : 48px;
+	height : 48px;
+	border-radius : 52px;
+	border : 3px dashed #ffd040;
+	padding : 13px;
+	margin-right : 8px;
+	box-shadow : none;
+	background : url(../image/width24.png) 1px -149px no-repeat content-box content-box;
+}
+.userManagementList dt > button:last-child {
+	background-position : 1px -169px;
+}
+.userManagementList > dl > dd {
+	text-indent : 112px;
+}
+.userManagementList.readyToDel .userList {
+	-webkit-animation : readyToDel steps(28) 2s infinite;
+}
+@-webkit-keyframes readyToDel {
+	0% {
+		opacity : 1;
+	}
+	30% {
+		opacity : 0.2;
+	}
+	100% {
+		opacity : 1;
+	}
+}
+.userManagementList figcaption {
+	display : none;
+}
+
+
+.levelAnchorList aside dd {
+	height : 10px;
+}
+.levelAnchorList > ul > li {
+	height : 45px;
+	padding-bottom : 0;
+}
+
+
+.userSelectionList > header , .userSelectionList .userIndexList aside {
+	color : #e26816;
+}
+.userSelectionList > * > button {
+	width : 26px;
+	height : 26px;
+	border-radius : 26px;
+	border : 0 none;
+	background-color : #f1af0f;
+}
+.userSelectionList > header > span {
+	display : block;
+	height : 18px;
+	padding-left : 18px;
+	line-height : 18px;
+	text-indent : 5px;
+	background : url(../image/width24.png) 0 -200px no-repeat;
+}
+.userSelectionList > header > button {
+	float : right;
+	position : relative;
+	top : -48px;
+	left : 22px;
+	background-image : url(../image/width24.png);
+	background-position : 6px -219px;
+}
+.userSelectionList > article {
+	position : absolute;
+	bottom : 0;
+	top : 50px;
+	left : 0;
+	right : 0;
+	overflow : hidden;
+	box-sizing : content-box;
+	padding-bottom : 55px;
+}
+.userSelectionList > article > .userIndexList {
+	margin : 0 10px;
+}
+.userSelectionList .userIndexList aside {
+	right : 30px;
+	top : 95px;
+}
+.userSelectionList .userIndexList p.selected, .userSelectionList .userIndexList p.selected > img {
+	border-color : #f1af0f;
+}
+.userSelectionList > footer {
+	position : absolute;
+	left : 0;
+	bottom : 0;
+	height : 38px;
+	width : 100%;
+	text-align : center;
+	background-color : rgba(0, 0, 0, 0.3);
+}
+.userSelectionList > footer > button {
+	height : 48px;
+	width : 48px;
+	border : 12px solid #f1af0f;
+	border-radius : 48px;
+	margin-top : -15px;
+	background : #f1af0f url(../image/width24.png) 3px -247px no-repeat;
+}
+#mask[action~="userSelectionList"] > article {
+	background-color : #fff;
+	border : 2px solid #f1af0f;
+	left : 15px;
+	right : 15px;
+	top : 30px;
+	bottom : 30px;
+	padding : 20px 15px;
+	box-sizing : content-box;
+}
+
+.inputSelectionList > header > input {
+	height : 35px;
+	margin-bottom : 12px;
+	width : 100%;
+	border : 2px solid #f1af0f;
+	text-indent : 5px;
+}
+.inputSelectionList > header > button {
+	top : -95px;
+}
+.inputSelectionList > article {
+	top : 95px;
+}
+.inputSelectionList .userIndexList aside {
+	top : 140px;
+}

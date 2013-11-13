@@ -1,0 +1,51 @@
+﻿.confirm {
+	width : 200px;
+	height : 100%;
+	background-color : rgba(0, 0, 0, 0.7);
+	padding : 10px;
+	border-radius : 5px;
+	margin : -50%;
+}
+.confirm > header {
+	height : 0;
+	text-align : right;
+}
+.confirm > header > button {
+	width : 26px;
+	height : 26px;
+	border-radius : 26px;
+	background : #f1af0f url(../image/width24.png) 6px -219px no-repeat;
+	border : 0 none;
+	position : relative;
+	left : 20px;
+	top : -18px;
+}
+.confirm > article {
+	margin-top : 5px;
+	text-align : center;
+	height : 50px;
+	line-height : 50px;
+	font-size : 15px;
+	white-space : normal;
+	overflow : hidden;
+}
+.confirm > footer {
+	margin-top : 15px;
+	text-align : center;
+}
+.confirm > footer > button {
+	height : 30px;
+	border : 0 none;
+	background-color : #fff;
+	width : 84px;
+}
+#mask[action="confirm"] {
+	background-color : rgba(0, 0, 0, 0.4);
+	overflow : hidden;
+}
+#mask[action="confirm"] > article {
+	top : 50%;
+	left : 50%;
+	right : auto;
+	bottom : auto;
+}

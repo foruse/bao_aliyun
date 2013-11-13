@@ -1,0 +1,157 @@
+﻿#singleProject > * {
+	padding : 0 10px;
+	top : 36px;
+	overflow : hidden;
+}
+
+#singleProjectHeader {
+	display : block;
+	position : relative;
+	top : 0;
+	z-index : 2;
+	background-color : #f7f7f7;
+	height : 36px;
+	padding : 5px 0;
+}
+#singleProjectHeader > ul {
+	background-color : #fff;
+	margin : 0 2px;
+	height : 26px;
+}
+#singleProjectHeader > ul > li {
+	width : 33.33%;
+	height : 24px;
+	padding : 2px 0;
+	line-height : 20px;
+	text-align : center;
+	border-left : 0 none;
+	border-top : 0 none;
+	border-bottom : 0 none;
+}
+#singleProjectHeader > ul > li:last-child {
+	border : 0 none;
+}
+#singleProjectHeader > ul > li.focused {
+	background-color : #f1af0f;
+}
+#singleProjectHeader > ul > li:not(.focused) {
+	color : inherit;
+}
+#singleProjectHeader > ul span {
+	width : 20px;
+	height : 20px;
+	border-radius : 20px;
+	background-color : #e26816;
+	margin-left : 5px;
+	display : inline-block;
+	vertical-align : top;
+	font-size : 16px;
+	display : none;
+}
+#singleProjectHeader > ul span:empty {
+	display : none;
+}
+
+#discussion {
+	bottom : 52px;
+	overflow : visible;
+}
+#discussion > section {
+	min-height : 100%;
+}
+.discussion_info > dt {
+	height : 30px;
+	line-height : 30px;
+	font-size : 18px;
+	text-indent : 1em;
+	border-bottom-left-radius : 0;
+	border-bottom-right-radius : 0;
+}
+.discussion_info > dd {
+	background-color : transparent;
+	border-top-left-radius : 0;
+	border-top-right-radius : 0;
+	padding : 5px 10px;
+	text-align : right;
+}
+.discussion_info > dd > * {
+	text-align : left;
+}
+.discussion_info figure {
+	height : 20px;
+	line-height : 20px;
+}
+.discussion_info figcaption {
+	margin-left : 5px;
+}
+.discussion_info dd > p {
+	margin-top : 8px;
+	height : 56px;
+	white-space : normal;
+	word-break : break-all;
+	line-height : 14px;
+	overflow : hidden;
+}
+.discussion_info nav {
+	line-height : 20px;
+	margin-top : 15px;
+	white-space : nowrap;
+}
+.discussion_info nav > span {
+	width : 48px;
+}
+.discussion_info nav > p {
+	width : 100%;
+	padding-left : 48px;
+	position : relative;
+	left : -48px;
+}
+.discussion_info nav a {
+	margin : 0 3px 3px 0;
+}
+.discussion_info aside {
+	text-align : right !important;
+	margin-top : 10px;
+}
+.discussion_info aside {
+	padding : 5px;
+	display : none;
+}
+.discussion_info aside:empty {
+	display : none;
+}
+
+.todoList_content > dl:last-child {
+	margin-top : 5px;
+}
+.todoList_content > dl > dt {
+	text-align : center;
+}
+.todoList_content > dl > dd {
+	margin-top : 5px;
+}
+
+#workStream > ul > li {
+	margin-top : 5px;
+	min-height : 80px;
+}
+#workStream li > figure {
+	width : 64px;
+	height : 80px;
+}
+#workStream li figcaption {
+	line-height : 18px;
+	text-align : center;
+}
+#workStream li > aside {
+	margin-top : -80px;
+	padding-left : 70px;
+}
+#workStream .anchorList > ul {
+	background-color : #fff;
+}
+
+#titleBar button[action="projectManagement"] {
+	border : 11px solid #f1af0f;
+	background : #f1af0f url(../../../common/image/width24.png) no-repeat 0 -1075px content-box content-box;
+}

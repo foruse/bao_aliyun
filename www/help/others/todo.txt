@@ -1,0 +1,35 @@
+﻿★★★★★
+	* 日历下方滚动的bug、分批加载数据的bug
+	* 修改账号增加数据提交的判断
+	* 优化callServer，对存数据的时候，也需要缓存
+	* 转义任何可输入的文本
+	* 聊天区域，当图像加载完成时候，高度会有所改变，所以要重新确认可视区域。
+	* 优化SingleProject的项目id问题，记录一次，分配到所有子panel，要逻辑清晰，类与类之间不要太多纠葛。
+	* MY PROJECTS添加监听
+	* 二维码
+	* MY PARTNERS添加成员页面
+	* 输入文字的时候高度问题
+	* 创建project,不能选择用户
+	* 移动用户分组
+	* 所有数据都要分批加载
+	* 返回按钮，点3次就会跳到project页面
+	* 添加的附件(todo, project)
+
+★★★★
+	* img元素未加载完成前先隐藏
+	* 预加载
+	* 将所有类的onxx属性替换成事件监听(UserIndexList, spp, spp.tab)
+	* navigate类优化：监听oncontinuousgesture或onfastgesture,并优化切换标签的算法
+	* CallServer加载失败的处理
+
+★★★
+	* 考虑是否所有的页面都要滚动
+	* 优化CallServer,对某些包含性的访问，例如project : { users : [] }，就要把project和user都存起来。
+	* 优化CallServer,上传和下载的判断：new UploadUrl() 或 new DownloadUrl();
+
+
+★★
+	1. position:relative的top性能可能比margin-top低，但是更符合逻辑。为了性能，考虑是否换成margin-top
+
+
+★

@@ -1,0 +1,32 @@
+﻿开发本项目的程序员必须具备的知识点
+
+以下排序不分先后
+
+★★★★★
+	1. position
+	2. prototype
+	3. OOP
+	4. MVC
+	5. CSS3
+	6. HTML5
+	7. chrome、firefox的调试
+	8. API
+	9. UI
+	10. 高性能
+	11. response design
+
+★★★★
+	1. ps等工具
+
+
+★★★
+	1. ++i 与 i++的区别。如： for(var i = 0;i < 1;i++){console.log(i);} 与 for(var i = 0;i < 1;++i){console.log(i);}
+	2. === 与 ==
+	3. 会一种后台语言(c#、java等)
+	4. 会一种数据库(sql server、my sql)
+
+★★
+	1. float 比 inline-block要耗性能的多的多
+
+
+★

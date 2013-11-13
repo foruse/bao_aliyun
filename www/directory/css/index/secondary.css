@@ -1,0 +1,207 @@
+﻿#addProject {
+	font-size : 14px;
+	padding : 10px;
+}
+#addProject > * {
+	margin-top : 5px;
+}
+#addProject > *:first-child {
+	margin-top : 0;
+}
+#addProject > header {
+	height : auto;
+	padding : 0;
+	max-height : 200px;
+}
+
+#addProject textarea, #addProject input {
+	display : block;
+	border : 0 none;
+	height : 100%;
+	width : 100%;
+}
+#addProject > section.inlineBlock > * {
+	font-size : 14px;
+}
+#addProject > section > dl, #addProject > section dd {
+	height : 100%;
+}
+#addProject > section dt {
+	width : 25%;
+}
+#addProject > section dd {
+	width : 75%;
+	text-align : center;
+}
+#addProject > footer {
+	height : auto;
+}
+#addProject > footer textarea {
+	max-height : 105px;
+	min-height : 105px;
+	max-width : 100%;
+	min-width : 100%;
+}
+
+#businessCard {
+	font-size : 15px;
+}
+#businessCard > section {
+	background-color : #00b0d6;
+	padding : 8px;
+}
+#businessCard > section > * {
+	background-color : #fff;
+	padding : 10px 15px;
+}
+#businessCard dl[desc="userinfo"] {
+	height : 180px;
+	background : url(../../image/businessCard_background.png) #fff 0 55px no-repeat;
+}
+#businessCard dl[desc="userinfo"] > dt {
+	height : 64px;
+	line-height : 64px;
+}
+#businessCard dl[desc="userinfo"] strong {
+	font-size : 20px;
+	padding : 0 8px 0 10px;
+}
+#businessCard dl[desc="userinfo"] small {
+	position : relative;
+	top : 3px;
+}
+#businessCard dl[desc="userinfo"] > dd {
+	height : 90px;
+	position : relative;
+	margin-top : 6px;
+}
+#businessCard dl[desc="userinfo"] ul {
+	padding : 12px 0 6px 0;
+	position : absolute;
+	left : 0;
+	right : 115px;
+}
+#businessCard dl[desc="userinfo"] li {
+	height : 18px;
+	line-height : 18px;
+	background : url(../../../common/image/width12.png) 1px -115px no-repeat;
+	padding-left : 15px;
+	text-overflow : ellipsis;
+	overflow : hidden;
+	white-space : nowrap;
+}
+#businessCard dl[desc="userinfo"] li[info="phoneNum"] {
+	background-position : 2px -132px;
+}
+#businessCard aside {
+	width : 90px;
+	height : 90px;
+	margin-left : 20px;
+	float : right;
+}
+#businessCard aside > img {
+	width : 100%;
+	height : 100%;
+}
+#businessCard p[desc="authority"] button {
+	float : right;
+	background-color : #00b0d6;
+	padding : 1px;
+	border : 0 none;
+	border-radius : 25px;
+	width : 58px;
+	height : 25px;
+}
+#businessCard p[desc="authority"] small {
+	float : right;
+	display : block;
+	width : 23px;
+	height : 23px;
+	border-radius : 23px;
+	background-color : #fff;
+}
+#businessCard > footer {
+	margin : 8px 10px;
+}
+#businessCard > footer li {
+	height : 46px;
+	line-height : 24px;
+	margin-bottom : 5px;
+	background-color : #fff;
+	padding : 10px 15px;
+	display : none;
+}
+#businessCard li[action="removePartner"] {
+	text-align : center;
+	background-color : #00b0d7;
+}
+#businessCard > footer span {
+	display : inline-block;
+}
+#businessCard > footer button {
+	float : right;
+}
+#businessCard li[action="sendTodo"] > button {
+	width : 24px;
+	height : 24px;
+	line-height : 24px;
+	border-radius : 24px;
+	border : 0 none;
+	background-color : #ce312d;
+}
+
+#systemOption {
+	padding : 10px 15px;
+}
+#systemOption > footer {
+	text-align : center;
+	margin-top : 35px;
+}
+#systemOption > footer > button {
+	width : 72px;
+	height : 72px;
+	border-radius : 72px;
+	border : 5px solid #cf312e;
+	padding : 3px;
+	background-color : #cf312e;
+	background-clip : content-box;
+	font-size : 20px;
+}
+#systemOption li[key="globalSearch"], #systemOption li[key="accountConnection"],
+#systemOption li[key="qrCode"]{
+	display : none;
+}
+
+
+#systemContacts {
+	padding : 10px 0;
+}
+#systemContacts > header {
+	padding : 0 20px;
+	color : #cc2c27;
+	height : 20px;
+	line-height : 20px;
+}
+#systemContacts > section {
+	margin-top : 10px;
+	position : absolute;
+	top : 30px;
+	bottom : 10px;
+	left : 0;
+	right : 0;
+	padding : 0 20px;
+	overflow : hidden;
+}
+#systemContacts > section li {
+	padding : 10px;
+}
+#systemContacts > section span {
+	font-size : 15px;
+}
+#systemContacts > section small {
+	display : block;
+	margin-top : 5px;
+}
+#titleBar button[action="systemContacts_done"] {
+	background : #cc2c27 url(../../../common/image/width24.png) no-repeat 7px -118px;
+}
