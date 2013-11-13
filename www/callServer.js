@@ -256,7 +256,6 @@
                 console.log(params);
 //                 Mdls.Todo.read({project_id: params.id}, complete);
                 Mdls.Todo.read(params, function(data) {
-                    console.log(data);
                     complete(data);
                 });
             },

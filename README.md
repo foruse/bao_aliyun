@@ -1,4 +1,2 @@
-bao_aliyun
-==========
-
-Bao @ Aliyun server
+baopiqi-cordova
+================

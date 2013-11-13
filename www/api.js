@@ -194,11 +194,14 @@ function onDeviceReady() {
                     } else if (id) {
                         console.log("partner by id");
                         // partner by id
-                        DB.select("u.id, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
                         DB.join("xiao_company_partners AS p", "p.user_id = u.id");
                         DB.join("xiao_companies AS c", "p.company_id = c.id");
                         DB.where('u.id ="' + id + '"');
+						/*API.row(function(data){
+							console.log(data);
+						});*/
                         API.row(callback);
                     }
                 },
@@ -1147,7 +1150,7 @@ console.log(data);
                 },
                 
                 archive: function(id, callback){
-                    callback ? API.update("xiao_projects", {archived:1}, 'id="'+id+'"', callback) : API.update("xiao_projects", {archived:1}, 'id="'+id+'"');
+                    callback ? API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"', callback) : API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"');
                 }
                 
             };
@@ -1188,7 +1191,7 @@ console.log(data);
                                             id: mess.id,
                                             text: mess.content,
                                             poster: {
-                                                id: mess.cl_id,
+                                                id: mess.uid,
                                                 name: mess.name,
                                                 pinyin: mess.pinyin,
                                                 avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
@@ -1424,7 +1427,11 @@ console.log(data);
                                 API.sync(['xiao_todos','xiao_todo_attachments']);
                             });
                         }else{
-                            API.sync(['xiao_todos']);
+							console.log(API);
+							setTimeout(function() {
+								console.log(API);
+							}, 0);
+                            API._sync(['xiao_todos']);
                         }
                     });
                 },
@@ -1564,7 +1571,7 @@ console.log(data);
                         
                         // existing messages
 //                        DB.select("tc.id, tc.content, tc.type, tc.server_path, tc.local_path, tc.todo_id, tc.user_id, tc.time, tc.read, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
-                        DB.select("tc.id, tc.content, tc.type, tc.server_path, tc.local_path, tc.todo_id, tc.user_id, strftime('%d %m %Y %H:%M:%S', tc.time) as time, tc.read, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
+                        DB.select("tc.id, tc.content, tc.type, tc.server_path, tc.local_path, tc.todo_id, tc.user_id, strftime('%d %m %Y %H:%M:%S', tc.time) as time, tc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
                         DB.from("xiao_todo_comments AS tc");
                         DB.left_join("xiao_users AS u", "u.id = tc.user_id");
                         DB.left_join("xiao_companies AS c", "u.company_id = c.id");
@@ -1594,7 +1601,8 @@ console.log(data);
                                                 name: mess.name,
                                                 pinyin: mess.pinyin,
 //                                                avatar: mess.avatar,
-                                                avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
+                                                //avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
+												avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
                                                 company: mess.company,
                                                 companyAdress: mess.companyAdress,
                                                 position: mess.position,
@@ -1796,6 +1804,7 @@ console.log(data);
             Models.Archive = {
                     read : function(params, callback){
                         var logged_user = SESSION.get("user_id");
+						
                         if (params !== null && params.id !== null) {
                             API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments"], function() {
                                 var result = {project:{},todoList:[]}, counter = 3;
@@ -1901,6 +1910,8 @@ console.log(data);
                                 DB.group_by('p.id');
                                 DB.query(function(projects) {
                                     projects.length > 0 ? projects.forEach(function(pr) {
+										
+										console.log(pr);
 
                                         DB.select("u.id as uid, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
                                         DB.from("xiao_projects AS p");
@@ -1909,6 +1920,8 @@ console.log(data);
                                         DB.join("xiao_companies AS c", "u.company_id = c.id");
                                         DB.where('p.id ="' + pr.id + '"');
                                         DB.query(function(partners) {
+											
+											console.log(partners);
 
                                             result.push({
                                                 id: pr.id,
@@ -1919,6 +1932,7 @@ console.log(data);
                                                 level: pr.level,
                                                 color: pr.color,
                                                 creationTime: pr.creationTime,
+												completeDate: pr.completeDate,
                                                 unread: 0,
                                                 lastMessage: "",
                                                 creator: {
@@ -2396,7 +2410,13 @@ console.log(data);
                                                                 if (i != 0) {
                                                                     sql += ",";
                                                                 }
-                                                                sql += key + '="' + data[key] + '"';
+																// ---
+																if (data[key] == 'datetime()') {
+																	sql += key + '=' + data[key];
+																} else {
+																	sql += key + '="' + data[key] + '"';
+																}
+																// ---
                                                                 ++i;
                                                             }
                                                             if (where != "" && where != false) {
