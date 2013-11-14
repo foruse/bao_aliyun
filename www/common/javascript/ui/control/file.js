@@ -259,7 +259,7 @@ this.SelectImage = (function(Confirm, ImageFile){
 	this.ImageFile
 ));
 
-this.SelectionImageArea = (function(Global, Direction, selecetAreaEvent, round, selectionPanel, getLoadFunction){
+this.SelectionImageArea = (function(Global, Direction, callBack, round, selectionPanel, getLoadFunction){
 	function MoveArea(selector, _direction){
 		var moveArea = this,
 		
@@ -335,20 +335,27 @@ this.SelectionImageArea = (function(Global, Direction, selecetAreaEvent, round, 
 			context : canvas.getContext("2d")
 		});
 
-		canvas.width = 64;
-		canvas.height = 64;
+		this.resetSize(128, 128);
 	};
 	CutImage = new StaticClass(CutImage, null, {
 		canvas : undefined,
-		context : undefined
+		context : undefined,
+		resetSize : function(height, width){
+			var canvas = this.canvas;
+
+			canvas.width = width;
+			canvas.height = height;
+		}
 	});
 
 	CutImage.properties({
 		cut : function(img, x, y, width, height){
-			var context = this.context;
+			var canvas = this.canvas, context = this.context,
 
-			context.clearRect(0, 0, 64, 64);
-			context.drawImage(img, x, y, width, height, 0 , 0, 64, 64);
+				h = canvas.height, w = canvas.width;
+
+			context.clearRect(0, 0, w, h);
+			context.drawImage(img, x, y, width, height, 0 , 0, w, h);
 			return this.canvas.toDataURL();
 		}
 	});
@@ -383,13 +390,17 @@ this.SelectionImageArea = (function(Global, Direction, selecetAreaEvent, round, 
 
 					if(SelectionImageArea.direction === Direction.none)
 						return;
-console.log(
-					CutImage.cut.apply(
-						CutImage,
-						(SelectionImageArea.direction === Direction.Horizontal ? horizontalMoveArea : verticalMoveArea).getCutParams()
-					)
+
+					if(!callBack)
+						return;
+
+					callBack(
+						CutImage.cut.apply(
+							CutImage,
+							(SelectionImageArea.direction === Direction.Horizontal ? horizontalMoveArea : verticalMoveArea).getCutParams()
+						)
 					);
-					selecetAreaEvent.trigger(targetEl[0]);
+					callBack = null;
 				}
 			}
 		});
@@ -401,8 +412,10 @@ console.log(
 		hide : function(){
 			Global.mask.hide();
 		},
-		loadImage : function(src){
-			this.setDirection(Direction.none);
+		loadImage : function(src, _callBack){
+			callBack = _callBack;
+
+			this.setDirection(Direction.None);
 			selectionPanel.find("img").src = src;
 		},
 		setDirection : function(direction){
@@ -423,8 +436,8 @@ console.log(
 	Bao.Global,
 	// Direction
 	new jQun.Enum({ None : 0, Horizontal : 1, Vertical : 2 }),
-	// selecetAreaEvent
-	new Event("selectarea"),
+	// callBack
+	null,
 	Math.round,
 	// selectionPanel
 	new HTML([

@@ -121,7 +121,7 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 	}
 ));
 
-this.Account = (function(Panel, Global, ValidationList, SelectImage){
+this.Account = (function(Panel, Global, ValidationList, SelectImage, SelectionImageArea){
 	function InputPanel(){};
 	InputPanel = new NonstaticClass(InputPanel, null, Panel.prototype);
 
@@ -146,8 +146,12 @@ this.Account = (function(Panel, Global, ValidationList, SelectImage){
 
 		selectImage.attach({
 			imageloaded : function(e){
-				header.find(".largeAvatarPanel>img").src = e.base64;
-				header.newSrc = e.src;
+				SelectionImageArea.show();
+				SelectionImageArea.loadImage(e.base64, function(src){
+					header.newSrc = src;
+					header.find(".largeAvatarPanel>img").src = src;
+					SelectionImageArea.hide();
+				});
 			}
 		});
 
@@ -348,7 +352,8 @@ this.Account = (function(Panel, Global, ValidationList, SelectImage){
 	Bao.API.DOM.Panel,
 	Bao.Global,
 	Bao.API.DOM.ValidationList,
-	Bao.UI.Control.File.SelectImage
+	Bao.UI.Control.File.SelectImage,
+	Bao.UI.Control.File.SelectionImageArea
 ));
 
 this.QRCode = (function(){
@@ -876,13 +881,21 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 				}
 
 				if(targetEl.between(">footer>button:last-child", this).length > 0){
-					if(confirm("确定将此项目删除吗？")){
-						CallServer.open("removeProject", {
-							id : projectManagement.id
-						}, function(){
-							Global.history.go("project");
-						});
-					}
+					new Confirm("确定将此项目删除吗？", [
+						{ action : "ok", text : "是", autoClose : true },
+						{ action : "cancle", text : "否", autoClose : true }
+					]).attach({
+						clickbutton : function(e){
+							if(e.maskButton.action !== "ok")
+								return;
+
+							CallServer.open("removeProject", {
+								id : projectManagement.id
+							}, function(){
+								Global.history.go("project");
+							});
+						}
+					}).show();
 
 					return;
 				}

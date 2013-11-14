@@ -108,7 +108,9 @@
 }
 .selectionImageArea > nav {
 	position : absolute;
-	bottom : 0;
+	bottom : 15px;
+	width : 100%;
+	height : 50px;
 }
 .selectionImageArea button {
 	width : 50px;
@@ -116,4 +118,12 @@
 	border-radius : 50px;
 	border : 1px solid #fff;
 	background-color : transparent;
+}
+.selectionImageArea button:first-child {
+	float : left;
+	margin-left : 25px;
+}
+.selectionImageArea button:last-child {
+	float : right;
+	margin-right : 25px;
 }

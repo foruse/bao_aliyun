@@ -196,11 +196,11 @@
 	color : #fff;
 }
 
-#partner > ul > li {
+#partner > header {
 	position : relative;
 	z-index : 2;
 }
-#partner > ul > li:last-child {
+#partner > section {
 	z-index : 0;
 	position : absolute;
 	top : 50px;

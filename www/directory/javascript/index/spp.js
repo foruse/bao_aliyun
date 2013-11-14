@@ -457,7 +457,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 		});
 	
 		// 添加navigator
-		navigator.appendTo(this.find(">ul>li:first-child")[0]);
+		navigator.appendTo(this.header[0]);
 
 		// 监听事件
 		this.attach({
@@ -489,7 +489,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 			}
 		});
 
-		userIndexList.appendTo(this.find(">ul>li:last-child")[0]);
+		userIndexList.appendTo(this.section[0]);
 	};
 	Partner = new NonstaticClass(Partner, null, PagePanel.prototype);
 

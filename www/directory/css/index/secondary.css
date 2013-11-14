@@ -61,10 +61,15 @@
 #businessCard dl[desc="userinfo"] > dt {
 	height : 64px;
 	line-height : 64px;
+	white-space : nowrap;
+	overflow : hidden;
 }
 #businessCard dl[desc="userinfo"] strong {
 	font-size : 20px;
 	padding : 0 8px 0 10px;
+	max-width : 180px;
+	text-overflow : ellipsis;
+	overflow : hidden;
 }
 #businessCard dl[desc="userinfo"] small {
 	position : relative;
@@ -84,14 +89,17 @@
 #businessCard dl[desc="userinfo"] li {
 	height : 18px;
 	line-height : 18px;
-	background : url(../../../common/image/width12.png) 1px -115px no-repeat;
+	background : url(../../../common/image/width12.png) 4px -115px no-repeat;
 	padding-left : 15px;
 	text-overflow : ellipsis;
 	overflow : hidden;
 	white-space : nowrap;
 }
+#businessCard dl[desc="userinfo"] li[info="company"] {
+	background-position : 3px -176px;
+}
 #businessCard dl[desc="userinfo"] li[info="phoneNum"] {
-	background-position : 2px -132px;
+	background-position : 5px -132px;
 }
 #businessCard aside {
 	width : 90px;

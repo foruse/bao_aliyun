@@ -254,6 +254,8 @@ this.UploadAvatar = (function(ImageFile, SelectionImageArea, Validation){
 			
 			uploadAvatar = this,
 
+			avatarSrc = null,
+
 			imageFile = new ImageFile();
 
 		imageFile.appendTo(this.header.find(">button")[0]);
@@ -264,12 +266,12 @@ this.UploadAvatar = (function(ImageFile, SelectionImageArea, Validation){
 
 		this.attach({
 			imageloaded : function(e){
-				if(false){
-					SelectionImageArea.show();
-					SelectionImageArea.loadImage(e.base64);
-				}
-				
-				uploadAvatar.header.find("img").src = e.base64;
+				SelectionImageArea.show();
+				SelectionImageArea.loadImage(e.base64, function(src){
+					avatarSrc = src;
+					uploadAvatar.header.find("img").src = src;
+					SelectionImageArea.hide();
+				});
 			},
 			userclick : function(e, targetEl){
 				if(targetEl.between(">footer>button", this).length > 0){
@@ -279,7 +281,7 @@ this.UploadAvatar = (function(ImageFile, SelectionImageArea, Validation){
 					CallServer.open("registerUserInfo", {
 						id : Global.loginUser.id,
 						name : validation.validationEl.value,
-						avatar : imageFile.selectedSrc
+						avatar : avatarSrc
 					}, function(userData){
 						Global.loginUser = userData;
 						Global.history.go("demo");

@@ -83,9 +83,9 @@
 	text-align : center;
 }
 #uploadAvatar > header > button {
-	width : 135px;
-	height : 135px;
-	border-radius : 140px;
+	width : 128px;
+	height : 128px;
+	border-radius : 133px;
 	border : 1px solid #dfdfdf;
 	padding : 5px;
 	box-sizing : content-box;

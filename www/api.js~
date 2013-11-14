@@ -1,4 +1,8 @@
-// this file consists of:
+// Rewriting atob() and btoa() using TypedArrays and UTF-8 @ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Base64_encoding_and_decoding
+// Added by GBKSoft developer 13.11.13
+function b64ToUint6(e){return e>64&&e<91?e-65:e>96&&e<123?e-71:e>47&&e<58?e+4:e===43?62:e===47?63:0}function base64DecToArr(e,t){var n=e.replace(/[^A-Za-z0-9\+\/]/g,""),r=n.length,i=t?Math.ceil((r*3+1>>2)/t)*t:r*3+1>>2,s=new Uint8Array(i);for(var o,u,a=0,f=0,l=0;l<r;l++){u=l&3;a|=b64ToUint6(n.charCodeAt(l))<<18-6*u;if(u===3||r-l===1){for(o=0;o<3&&f<i;o++,f++){s[f]=a>>>(16>>>o&24)&255}a=0}}return s}function uint6ToB64(e){return e<26?e+65:e<52?e+71:e<62?e-4:e===62?43:e===63?47:65}function base64EncArr(e){var t,n="";for(var r=e.length,i=0,s=0;s<r;s++){t=s%3;if(s>0&&s*4/3%76===0){n+="\r\n"}i|=e[s]<<(16>>>t&24);if(t===2||e.length-s===1){n+=String.fromCharCode(uint6ToB64(i>>>18&63),uint6ToB64(i>>>12&63),uint6ToB64(i>>>6&63),uint6ToB64(i&63));i=0}}return n.replace(/A(?=A$|$)/g,"=")}function UTF8ArrToStr(e){var t="";for(var n,r=e.length,i=0;i<r;i++){n=e[i];t+=String.fromCharCode(n>251&&n<254&&i+5<r?(n-252)*1073741824+(e[++i]-128<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>247&&n<252&&i+4<r?(n-248<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>239&&n<248&&i+3<r?(n-240<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>223&&n<240&&i+2<r?(n-224<<12)+(e[++i]-128<<6)+e[++i]-128:n>191&&n<224&&i+1<r?(n-192<<6)+e[++i]-128:n)}return t}function strToUTF8Arr(e){var t,n,r=e.length,i=0;for(var s=0;s<r;s++){n=e.charCodeAt(s);i+=n<128?1:n<2048?2:n<65536?3:n<2097152?4:n<67108864?5:6}t=new Uint8Array(i);for(var o=0,u=0;o<i;u++){n=e.charCodeAt(u);if(n<128){t[o++]=n}else if(n<2048){t[o++]=192+(n>>>6);t[o++]=128+(n&63)}else if(n<65536){t[o++]=224+(n>>>12);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<2097152){t[o++]=240+(n>>>18);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<67108864){t[o++]=248+(n>>>24);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else{t[o++]=252+n/1073741824;t[o++]=128+(n>>>24&63);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}}return t}
+
+// // // this file consists of:
 // 1) Models section (AppModel function and inside Models ) - have models and methods to comunicate with server and db
 // 2) server section:
 //    a) API - sync local db sqlite with server
@@ -44,7 +48,7 @@
 // PLEASE MENTION THAT SOCKET no interten method should be improved with .on("error"  ...etc   ---> in production
 
 var CURRENT_DEVICE;
-BROWSER_TEST_VERSION = function check_dev() {
+var BROWSER_TEST_VERSION = function check_dev() {
     var ua = navigator.userAgent.toLowerCase(), device;
     if (ua.match(/(iphone|ipod|ipad)/i)) {
         device = "ios";
@@ -3340,10 +3344,17 @@ console.log(data);
 //                                                             image_format = image_format[1];
 //                                                                var image_data = Base64.decode( replace("/data:[a-z]*\/[a-z]*;base64,/", "", base64_str) ),
 //                                                                var image_data = Base64.decode( base64_str.replace(/data:[a-z]*\/[a-z]*;base64,/, "") ),
-                                                            var image_data = Base64.decode( base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, "") ); 
+                                                            var image_data = Base64.decode(base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, "")); 
+															
+															// Converting from Base64-encoded binary data to byte array
+															var bytes_array = base64DecToArr(image_data);
+															
+															// Converting from byte array to binary array
+															var utf8_str = new Uint8Array(bytes_array);	// Convert to UTF-8...
+															var binary_arr = utf8_str.buffer;			// Convert to buffer...
                                                                 
                                                             this._create_file({name:SERVER.SESSION.get("user_name"), format:image_format}, function(file_path, entry){
-                                                                _this._file_writer(entry, image_data, function(){
+                                                                _this._file_writer(entry, binary_arr, function(){
                                                                     callback(file_path);
                                                                 });
                                                             });
@@ -3773,3 +3784,5 @@ console.log(data);
 
 //                            }
                 }
+				
+			

@@ -194,9 +194,9 @@ this.TodoList = (function(ProjectPanel, AnchorList, formatKey){
 				var project = e.project;
 
 				CallServer.open("getTodoList", { id : project.id }, function(data){
-					var completedEl = todoList.find(">section>dl:first-child>dd"),
+					var uncompletedEl = todoList.find(">section>dl:first-child>dd"),
 
-						uncompletedEl = todoList.find(">section>dl:last-child>dd");
+						completedEl = todoList.find(">section>dl:last-child>dd");
 
 					data = formatKey(data);
 
