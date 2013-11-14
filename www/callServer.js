@@ -290,19 +290,19 @@
                 );
             },
             getAllArchives: function(params, complete){
-                console.log(params);
+                //console.log(params);
                 Mdls.Archive.read(params, complete);
             },
             getArchivedProject: function(params, complete){
-                console.log(params)
+                //console.log(params)
                 Mdls.Archive.read(params, complete);
             },
             ArchiveDetail: function(params, complete){
-                console.log(params)
+                //console.log(params)
 //                Mdls.Project.getArchive(params, complete)
             },
             getSystemContacts   : function(params, complete){
-                console.log(params)
+                //console.log(params)
 //                Mdls.Contacts.read(complete)
                 Mdls.Contacts.read(function(data){
                     console.log(data);
@@ -310,7 +310,7 @@
                 });
             },
             editAccount : function(params, complete){
-                console.log(params)
+                //console.log(params)
                 var _params = {};
                 for(var el in params){
                     if(params[el] !== null)_params[el] = params[el];
