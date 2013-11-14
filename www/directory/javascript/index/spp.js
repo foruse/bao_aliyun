@@ -230,8 +230,10 @@ this.Project = (function(CallServer, Confirm){
 				if(!this.isEqual("pageIndex", "pageMax"))
 					return;
 				
+				return;
+
 				// 添加空文件夹
-				// project.addEmptyFolders(1);
+				project.addEmptyFolders(1);
 				// 添加未解锁的项目
 				project.addEmptyFolders(this.getParam("pageSize") - data.projects.length, true);
 			});

@@ -113,17 +113,19 @@
 	height : 50px;
 }
 .selectionImageArea button {
-	width : 50px;
-	height : 50px;
-	border-radius : 50px;
-	border : 1px solid #fff;
-	background-color : transparent;
+	width : 44px;
+	height : 44px;
+	border-radius : 44px;
+	padding : 7px;
+	border : 2px solid #fff;
 }
 .selectionImageArea button:first-child {
 	float : left;
 	margin-left : 25px;
+	background : transparent url(../../common/image/width24.png) 6px -219px no-repeat content-box content-box;
 }
 .selectionImageArea button:last-child {
 	float : right;
 	margin-right : 25px;
+	background : transparent url(../../common/image/width24.png) 4px -246px no-repeat content-box content-box;
 }
