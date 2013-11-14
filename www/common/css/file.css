@@ -68,3 +68,52 @@
 	left : 0;
 	top : 0;
 }
+
+.selectionImageArea {
+	width : 100%;
+	height : 100%;
+	background-image : -webkit-radial-gradient(circle, rgba(0, 0, 0, 0) 148px, rgba(0, 0, 0, 0.4) 148px, rgba(0, 0, 0, 0.8));
+	overflow : hidden;
+}
+.selectionImageArea > figure {
+	display : none;
+	border : 2px solid #fff;
+	width : 300px;
+	height : 300px;
+	border-radius : 300px;
+	position : relative;
+	top : 50%;
+	left : 50%;
+	margin : -150px;
+}
+.selectionImageArea > figure:first-child {
+	
+}
+.selectionImageArea[direction="1"] > figure:first-of-type,
+.selectionImageArea[direction="2"] > figure:last-of-type {
+	display : block;
+}
+.selectionImageArea img {
+	position : relative;
+	z-index : -1;
+}
+.selectionImageArea > figure:first-of-type img {
+	height : 100%;
+}
+.selectionImageArea > figure:last-of-type img {
+	width : 100%;
+}
+.selectionImageArea p {
+	
+}
+.selectionImageArea > nav {
+	position : absolute;
+	bottom : 0;
+}
+.selectionImageArea button {
+	width : 50px;
+	height : 50px;
+	border-radius : 50px;
+	border : 1px solid #fff;
+	background-color : transparent;
+}

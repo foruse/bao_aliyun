@@ -63,7 +63,7 @@ this.ImageFile = (function(Models, Mask, inputHtml, fileReader, imageLoadedEvent
 					return;
 				}
 
-				if(!file.name.match(/\.(png|jpg|jpeg|bmp|gif)$/)){
+				if(!file.name.match(/\.(png|jpg|jpeg|bmp|gif)$/i)){
 					new Mask.Alert("请选择图像文件！").show();
 					this.value = "";
 					return;
@@ -257,6 +257,190 @@ this.SelectImage = (function(Confirm, ImageFile){
 }(
 	Bao.UI.Control.Mask.Confirm,
 	this.ImageFile
+));
+
+this.SelectionImageArea = (function(Global, Direction, selecetAreaEvent, round, selectionPanel, getLoadFunction){
+	function MoveArea(selector, _direction){
+		var moveArea = this,
+		
+			imgEl = this.find(">img"), imgStyle = imgEl.style,
+
+			isHorizontal = _direction === Direction.Horizontal;
+
+		this.assign({
+			direction : _direction,
+			imgStyle : imgStyle
+		});
+
+		imgEl.attach({
+			load : function(){
+				var img = imgEl[0],
+
+					scale = isHorizontal ? img.naturalWidth / img.naturalHeight : img.naturalHeight / img.naturalWidth;
+
+				imgStyle[isHorizontal ? "left" : "top"] = round((300 * scale - 300) / -2) + "px";
+			}
+		});
+
+		this.attach({
+			continuousgesture : function(e){
+				var offset = moveArea.getOffset() + e["gestureOffset" + (isHorizontal ? "X" : "Y")];
+
+				if(offset > 0){
+					offset = 0;
+				}
+				else {
+					var max = isHorizontal ? moveArea.width() - imgEl.width() : moveArea.height() - imgEl.height();
+
+					if(offset < max){
+						offset = max;
+					}
+				}
+
+				imgStyle[isHorizontal ? "left" : "top"] = offset + "px";
+			}
+		});
+	};
+	MoveArea = new NonstaticClass(MoveArea, null, Panel.prototype);
+
+	MoveArea.properties({
+		direction : 0,
+		imgStyle : undefined,
+		getCutParams : function(){
+			var imgEl = this.find(">img");
+
+			if(this.direction === Direction.Horizontal){
+				var height = imgEl.get("naturalHeight");
+
+				return [imgEl[0], round(this.getOffset() * -1 * (height / 300)), 0, height, height];
+			}
+
+			var width = imgEl.get("naturalWidth");
+
+			return [imgEl[0], 0, round(this.getOffset() * -1 * (width / 300)), width, width];
+		},
+		getOffset : function(){
+			return this.imgStyle[this.direction === Direction.Horizontal ? "left" : "top"].toString().split("px").join("") - 0;
+		}
+	});
+
+	MoveArea = MoveArea.constructor;
+
+
+	function CutImage(){
+		var canvas = document.createElement("canvas");
+
+		this.assign({
+			canvas : canvas,
+			context : canvas.getContext("2d")
+		});
+
+		canvas.width = 64;
+		canvas.height = 64;
+	};
+	CutImage = new StaticClass(CutImage, null, {
+		canvas : undefined,
+		context : undefined
+	});
+
+	CutImage.properties({
+		cut : function(img, x, y, width, height){
+			var context = this.context;
+
+			context.clearRect(0, 0, 64, 64);
+			context.drawImage(img, x, y, width, height, 0 , 0, 64, 64);
+			return this.canvas.toDataURL();
+		}
+	});
+
+
+	function SelectionImageArea(src){
+		var horizontalMoveArea, verticalMoveArea, SelectionImageArea = this;
+			
+		horizontalMoveArea = new MoveArea(
+			selectionPanel.find(">figure:first-of-type")[0],
+			Direction.Horizontal
+		);
+			
+		verticalMoveArea = new MoveArea(
+			selectionPanel.find(">figure:last-of-type")[0],
+			Direction.Vertical
+		);
+
+		horizontalMoveArea.find(">img").attach({
+			load : function(){
+				SelectionImageArea.setDirection(this.naturalWidth > this.naturalHeight ? Direction.Horizontal : Direction.Vertical);
+			}
+		});
+
+		selectionPanel.find(">nav").attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between("button", this).length > 0){
+					if(targetEl.getAttribute("action") === "cancel"){
+						SelectionImageArea.hide();
+						return;
+					}
+
+					if(SelectionImageArea.direction === Direction.none)
+						return;
+console.log(
+					CutImage.cut.apply(
+						CutImage,
+						(SelectionImageArea.direction === Direction.Horizontal ? horizontalMoveArea : verticalMoveArea).getCutParams()
+					)
+					);
+					selecetAreaEvent.trigger(targetEl[0]);
+				}
+			}
+		});
+	};
+	SelectionImageArea = new StaticClass(SelectionImageArea, fullName("SelectionImageArea"));
+
+	SelectionImageArea.properties({
+		direction : Direction.None,
+		hide : function(){
+			Global.mask.hide();
+		},
+		loadImage : function(src){
+			this.setDirection(Direction.none);
+			selectionPanel.find("img").src = src;
+		},
+		setDirection : function(direction){
+			this.direction = direction;
+
+			selectionPanel.setAttribute("direction", direction);
+		},
+		show : function(){
+			var mask = Global.mask;
+
+			mask.fillBody(selectionPanel[0]);
+			mask.show();
+		}
+	});
+
+	return SelectionImageArea;
+}(
+	Bao.Global,
+	// Direction
+	new jQun.Enum({ None : 0, Horizontal : 1, Vertical : 2 }),
+	// selecetAreaEvent
+	new Event("selectarea"),
+	Math.round,
+	// selectionPanel
+	new HTML([
+		'<div class="selectionImageArea" direction="0">',
+			'<figure>',
+				'<img />',
+			'</figure>',
+			'<figure>',
+				'<img />',
+			'</figure>',
+			'<nav>',
+				'<button action="cancel"></button>',
+				'<button action="ok"></button>',
+			'</nav>',
+		'</div>'
+	].join("")).create()
 ));
 
 File.members(this);

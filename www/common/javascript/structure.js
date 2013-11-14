@@ -98,6 +98,7 @@ this.Bao = (function(Bao){
 					Attachment : null,
 					ImageFile : null,
 					SelectImage : null,
+					SelectionImageArea : null,
 					VoiceRecorder : null
 				}),
 				List : new Namespace().members({ // ui/control/list.js

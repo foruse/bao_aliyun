@@ -188,6 +188,7 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 		hideBackButton : true,
 		title : "MY CALENDAR 日程",
 		tools : [
+			/*{ urlname : "sendTodo", action : "sendTodo" },*/
 			{ urlname : "systemOption", action : "set" }
 		]
 	});

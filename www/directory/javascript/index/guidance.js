@@ -248,7 +248,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 	new Event("login")
 ));
 
-this.UploadAvatar = (function(ImageFile, Validation){
+this.UploadAvatar = (function(ImageFile, SelectionImageArea, Validation){
 	function UploadAvatar(selector){
 		var validation,
 			
@@ -264,6 +264,11 @@ this.UploadAvatar = (function(ImageFile, Validation){
 
 		this.attach({
 			imageloaded : function(e){
+				if(false){
+					SelectionImageArea.show();
+					SelectionImageArea.loadImage(e.base64);
+				}
+				
 				uploadAvatar.header.find("img").src = e.base64;
 			},
 			userclick : function(e, targetEl){
@@ -293,6 +298,7 @@ this.UploadAvatar = (function(ImageFile, Validation){
 	return UploadAvatar.constructor;
 }(
 	Bao.UI.Control.File.ImageFile,
+	Bao.UI.Control.File.SelectionImageArea,
 	Bao.API.DOM.Validation
 ));
 
