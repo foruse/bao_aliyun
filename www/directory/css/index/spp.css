@@ -81,6 +81,16 @@
 	overflow : hidden;
 	background-color : #fff;
 }
+#project figure.shake {
+	-webkit-animation : shakeProject steps(6) 150ms infinite;
+}
+@-webkit-keyframes shakeProject {
+	0% { -webkit-transform : rotate(0deg); }
+	25% { -webkit-transform : rotate(2deg); }
+	50% { -webkit-transform : rotate(0deg); }
+	75% { -webkit-transform : rotate(-2deg); }
+	100% { -webkit-transform : rotate(0deg); }
+}
 #project figure[status="0"] figcaption {
 	background-color : #bbb;
 }
@@ -179,13 +189,13 @@
 	display : none;
 }
 #titleBar button[action="addProject"] {
-	border-color : #ffc000;
-	background : #ffc000 url(../../../common/image/width24.png) 4px -1098px no-repeat content-box content-box;
+	border-color : #f1af0f;
+	background : #f1af0f url(../../../common/image/width24.png) 4px -1098px no-repeat content-box content-box;
 	margin-right : 3px;
 }
 #titleBar button[action="set"] {
-	background : #ffc000 url(../../../common/image/width24.png) 3px -372px no-repeat content-box content-box;
-	border-color : #ffc000;
+	background : rgba(0, 0, 0, 0.2) url(../../../common/image/width24.png) 3px -372px no-repeat content-box content-box;
+	border-color : rgba(0, 0, 0, 0.2);
 }
 .confirm[action="projectConfirm"] > article {
 	line-height : 25px;

@@ -45,6 +45,7 @@
 
 #businessCard {
 	font-size : 15px;
+	padding : 5px;
 }
 #businessCard > section {
 	background-color : #00b0d6;

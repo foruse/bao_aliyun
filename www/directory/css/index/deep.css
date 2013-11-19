@@ -192,8 +192,8 @@
 }
 #titleBar button[action="editAccount"] {
 	border-color : #39a85a;
-	border-top-width : 10px;
-	border-bottom-width : 10px;
+	border-top-width : 7px;
+	border-bottom-width : 7px;
 	background : #39a85a url(../../../common/image/width24.png) 0 -425px no-repeat;
 }
 #titleBar button[action="submit account"] {

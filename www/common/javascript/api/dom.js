@@ -203,7 +203,15 @@ this.Panel = (function(HTMLElementList){
 	jQun.HTMLElementList
 ));
 
-this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEvent, afterHideEvent){
+this.TitleBarColor = (function(Enum){
+	return new Enum(
+		{ None : 0, Schedule : 1, Project : 2, Partner : 3 }
+	);
+}(
+	jQun.Enum
+));
+
+this.PagePanel = (function(Panel, TitleBarColor, beforeShowEvent, afterShowEvent, beforeHideEvent, afterHideEvent){
 	function PagePanel(selector){};
 	PagePanel = new NonstaticClass(PagePanel, "Bao.API.DOM.PagePanel", Panel.prototype);
 
@@ -218,6 +226,7 @@ this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEve
 		showTitleBar : true,
 		// 标题
 		title : "",
+		titleBarColor : TitleBarColor.None,
 		// 工具
 		tools : undefined
 	});
@@ -264,6 +273,7 @@ this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEve
 	return PagePanel.constructor;
 }(
 	this.Panel,
+	this.TitleBarColor,
 	// beforeShowEvent
 	new Event("beforeshow", function(){
 		this.attachTo("*");
@@ -300,9 +310,8 @@ this.OverflowPanel = (function(Panel, IntervalTimer, setTopEvent, leaveborder){
 			panelStyle : panelStyle
 		});
 		
-		this.set("overflow", "", "attr");
-		
-		panelStyle.position = "relative";
+		this.setAttribute("overflow", "");
+		this.setCSSPropertyValue("position", "relative");
 
 		this.attach({
 			touchstart : function(){

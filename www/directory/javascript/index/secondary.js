@@ -1,4 +1,4 @@
-﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel, CallServer){
+﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel, CallServer, TitleBarColor){
 this.AddProject = (function(Global, Validation, UserManagementList){
 	function AddProject(selector){
 		///	<summary>
@@ -73,6 +73,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 			this.find(">footer textarea").value = "";
 		},
 		title : "添加项目",
+		titleBarColor : TitleBarColor.project,
 		tools : [{ urlname : "javascript:void(0);", action : "submit" }]
 	});
 
@@ -155,7 +156,8 @@ this.BusinessCard = (function(Global, Confirm, clickAvatarEvent){
 		restore : function(){
 			this.find(">section>dl").innerHTML = "";
 		},
-		title : "个人名片"
+		title : "个人名片",
+		titleBarColor : TitleBarColor.Partner
 	});
 
 	BusinessCard.properties({
@@ -249,6 +251,7 @@ this.SystemContacts = (function(OverflowPanel, Global){
 
 	SystemContacts.override({
 		title : "邀请朋友",
+		titleBarColor : TitleBarColor.Partner,
 		tools : [{ urlname : "javascript:void(0);", action : "systemContacts_done" }]
 	});
 
@@ -265,5 +268,6 @@ Secondary.members(this);
 	jQun.NonstaticClass,
 	jQun.StaticClass,
 	Bao.API.DOM.PagePanel,
-	Bao.CallServer
+	Bao.CallServer,
+	Bao.API.DOM.TitleBarColor
 ));

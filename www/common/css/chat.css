@@ -235,6 +235,10 @@
 	background-image : none;
 	background-color : #fff;
 }
+.chatList_footer > p > button.recording {
+	background-color : #e33;
+	color : #fff;
+}
 .chatList_footer:not(.voice) > p > button {
 	display : none;
 }

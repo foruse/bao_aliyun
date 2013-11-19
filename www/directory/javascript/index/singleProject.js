@@ -1,5 +1,5 @@
 ﻿(function(SingleProject, NonstaticClass, Panel, OverflowPanel, Event, CallServer, Global){
-this.ProjectPanel = (function(PagePanel, loadProjectEvent){
+this.ProjectPanel = (function(PagePanel, TitleBarColor, loadProjectEvent){
 	function ProjectPanel(selector){
 		var projectPanel = this;
 
@@ -14,6 +14,7 @@ this.ProjectPanel = (function(PagePanel, loadProjectEvent){
 	ProjectPanel = new NonstaticClass(ProjectPanel, "Bao.Page.Index.SingleProject.ProjectPanel", PagePanel.prototype);
 
 	ProjectPanel.override({
+		titleBarColor : TitleBarColor.Project,
 		tools : [{ urlname : "javascript:void(0);", action : "projectManagement" }]
 	});
 
@@ -40,6 +41,7 @@ this.ProjectPanel = (function(PagePanel, loadProjectEvent){
 	return ProjectPanel.constructor;
 }(
 	Bao.API.DOM.PagePanel,
+	Bao.API.DOM.TitleBarColor,
 	// loadProjectEvent
 	new Event("loadproject")
 ));

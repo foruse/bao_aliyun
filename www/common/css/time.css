@@ -1,5 +1,5 @@
 ﻿.calendar {
-	height : 105px;
+	height : 110px;
 	overflow : hidden;
 	position : relative;
 	box-sizing : content-box;
@@ -12,11 +12,18 @@
 }
 @-webkit-keyframes stretchCalendar {
 	from {
-		height : 105px;
+		height : 110px;
 	}
 	to {
 		height : 285px;
 	}
+}
+.calendar .calendarHeader {
+	-webkit-column-count : 7;
+	-webkit-column-gap : 0;
+}
+.calendar .calendarHeader > span {
+	display : block;
 }
 .calendar .inlineBlock > * {
 	width : 14.285%;
@@ -89,10 +96,13 @@
 }
 .calendar_month li {
 	height : 45px;
-	font-size : 24px;
+	font-size : 16px;
 	text-align : right;
 	padding : 3px;
+	/*
 	border : 1px solid #ddd;
+	*/
+	box-shadow : #ddd 1px 1px 0;
 }
 .calendar_month li[datestatus="-1"] > * {
 	display : none;
@@ -105,7 +115,7 @@
 	display : none;
 }
 .calendar_month li > p {
-	width : 1.1em;
+	width : 2em;
 	height : 100%;
 	float : right;
 }

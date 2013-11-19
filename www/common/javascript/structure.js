@@ -8,6 +8,7 @@ this.Bao = (function(Bao){
 				OverflowPanel : null,
 				PagePanel : null,
 				Panel : null,
+				TitleBarColor : null,
 				Validation : null,
 				ValidationList : null
 			}),

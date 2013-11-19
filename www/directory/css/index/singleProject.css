@@ -17,9 +17,10 @@
 	background-color : #fff;
 	margin : 0 2px;
 	height : 26px;
+	-webkit-column-count : 3;
+	-webkit-column-gap : 0;
 }
 #singleProjectHeader > ul > li {
-	width : 33.33%;
 	height : 24px;
 	padding : 2px 0;
 	line-height : 20px;
@@ -152,6 +153,6 @@
 }
 
 #titleBar button[action="projectManagement"] {
-	border : 11px solid #f1af0f;
+	border : 8px solid #f1af0f;
 	background : #f1af0f url(../../../common/image/width24.png) no-repeat 0 -1075px content-box content-box;
 }

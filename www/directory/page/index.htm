@@ -22,7 +22,7 @@
 </head>
 <body>
 	<div class="main">
-		<header id="titleBar" class="inlineBlock themeColor onlyBorderBottom whiteFont">
+		<header id="titleBar" class="inlineBlock whiteFont" color="1">
 			<nav>
 				<button urlname="-1"></button>
 			</nav>
@@ -33,7 +33,7 @@
 			<script id="title_tools_html" type="text/html">
 				@for(tools ->> t){
 					<li>
-						<button urlname="{t.urlname}" action="{t.action}"></button>
+						<button class="smallRadius" urlname="{t.urlname}" action="{t.action}"></button>
 					</li>
 				}
 			</script>
@@ -585,7 +585,7 @@
 		</div>
 		<div id="singleProject">
 			<header id="singleProjectHeader">
-				<ul class="inlineBlock smallRadius lightBdColor">
+				<ul class="smallRadius lightBdColor">
 					<li class="lightBdColor whiteFont" pagename="discussion">讨论</li>
 					<li class="lightBdColor whiteFont" pagename="todoList">
 						To Do

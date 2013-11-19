@@ -270,6 +270,9 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 					return;
 				}
 	
+				if(!calendar.isStretched())
+					return;
+
 				dateTable.top();
 				calendar.shrink();
 			}
@@ -315,7 +318,7 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 	new HTML([
 		'<div class="calendar lightBdColor">',
 			'<dl>',
-				'<dt class="inlineBlock whiteFont">',
+				'<dt class="calendarHeader whiteFont">',
 					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title, day){',
 						'<span day="{day}">{title}</span>',
 					'}',

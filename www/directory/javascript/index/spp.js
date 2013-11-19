@@ -1,4 +1,4 @@
-﻿(function(SPP, NonstaticClass, Panel, PagePanel, OverflowPanel, Control, LoadingBar, BatchLoad, Global){
+﻿(function(SPP, NonstaticClass, Panel, PagePanel, OverflowPanel, Control, LoadingBar, BatchLoad, Global, TitleBarColor){
 this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 	function Grouping(data){
 		this.combine(groupingHtml.create({
@@ -187,6 +187,7 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 	Schedule.override({
 		hideBackButton : true,
 		title : "MY CALENDAR 日程",
+		titleBarColor : TitleBarColor.Schedule,
 		tools : [
 			/*{ urlname : "sendTodo", action : "sendTodo" },*/
 			{ urlname : "systemOption", action : "set" }
@@ -329,6 +330,7 @@ this.Project = (function(CallServer, Confirm){
 	Project.override({
 		hideBackButton : true,
 		title : "MY PROJECTS 项目",
+		titleBarColor : TitleBarColor.Project,
 		tools : [
 			{ urlname : "addProject", action : "addProject" },
 			{ urlname : "systemOption", action : "set" }
@@ -498,6 +500,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 	Partner.override({
 		hideBackButton : true,
 		title : "MY PARTNERS 拍档",
+		titleBarColor : TitleBarColor.Partner,
 		tools : [
 			{ urlname : "javascript:void(0);", action : "addPartner" },
 			{ urlname : "systemOption", action : "set" }
@@ -673,5 +676,6 @@ SPP.members(this);
 	Bao.UI.Control,
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.API.Data.BatchLoad,
-	Bao.Global
+	Bao.Global,
+	Bao.API.DOM.TitleBarColor
 ));

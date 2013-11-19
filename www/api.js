@@ -1,3 +1,22 @@
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+// For Lavrentiy:
+// FROM xiao_todos TABLE field color have been removed  ---> also remove it from MySQL
+// ALSO remove field from table from http://gbksoft.com/admin/erd/
+// Done - Lavrentiy
+
+
+// For me : 
+// _______Calendar___BuGs________
+// take a look of calendars they don't work
+// I made some comments how to modify them in Models.Calendar
+// also see callserver.js lines 443 - 445 I commented those lines as they seems not working and thought error
+// we need to disscuss with Michael this stuff
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
 // Rewriting atob() and btoa() using TypedArrays and UTF-8 @ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Base64_encoding_and_decoding
 // Added by GBKSoft developer 13.11.13
 function b64ToUint6(e){return e>64&&e<91?e-65:e>96&&e<123?e-71:e>47&&e<58?e+4:e===43?62:e===47?63:0}function base64DecToArr(e,t){var n=e.replace(/[^A-Za-z0-9\+\/]/g,""),r=n.length,i=t?Math.ceil((r*3+1>>2)/t)*t:r*3+1>>2,s=new Uint8Array(i);for(var o,u,a=0,f=0,l=0;l<r;l++){u=l&3;a|=b64ToUint6(n.charCodeAt(l))<<18-6*u;if(u===3||r-l===1){for(o=0;o<3&&f<i;o++,f++){s[f]=a>>>(16>>>o&24)&255}a=0}}return s}function uint6ToB64(e){return e<26?e+65:e<52?e+71:e<62?e-4:e===62?43:e===63?47:65}function base64EncArr(e){var t,n="";for(var r=e.length,i=0,s=0;s<r;s++){t=s%3;if(s>0&&s*4/3%76===0){n+="\r\n"}i|=e[s]<<(16>>>t&24);if(t===2||e.length-s===1){n+=String.fromCharCode(uint6ToB64(i>>>18&63),uint6ToB64(i>>>12&63),uint6ToB64(i>>>6&63),uint6ToB64(i&63));i=0}}return n.replace(/A(?=A$|$)/g,"=")}function UTF8ArrToStr(e){var t="";for(var n,r=e.length,i=0;i<r;i++){n=e[i];t+=String.fromCharCode(n>251&&n<254&&i+5<r?(n-252)*1073741824+(e[++i]-128<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>247&&n<252&&i+4<r?(n-248<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>239&&n<248&&i+3<r?(n-240<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>223&&n<240&&i+2<r?(n-224<<12)+(e[++i]-128<<6)+e[++i]-128:n>191&&n<224&&i+1<r?(n-192<<6)+e[++i]-128:n)}return t}function strToUTF8Arr(e){var t,n,r=e.length,i=0;for(var s=0;s<r;s++){n=e.charCodeAt(s);i+=n<128?1:n<2048?2:n<65536?3:n<2097152?4:n<67108864?5:6}t=new Uint8Array(i);for(var o=0,u=0;o<i;u++){n=e.charCodeAt(u);if(n<128){t[o++]=n}else if(n<2048){t[o++]=192+(n>>>6);t[o++]=128+(n&63)}else if(n<65536){t[o++]=224+(n>>>12);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<2097152){t[o++]=240+(n>>>18);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<67108864){t[o++]=248+(n>>>24);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else{t[o++]=252+n/1073741824;t[o++]=128+(n>>>24&63);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}}return t}
@@ -63,24 +82,24 @@ var BROWSER_TEST_VERSION = function check_dev() {
     } else {
         device = "desktop";
     }
-    console.log(device);
+    // console.log(device);
     return device === "desktop" ? true : false;
 //    return true;
 }();
 Models = {}; // Models are needed to be created in the following method. As they are used before the device ready actually. They are filled later.
-Models.UsersCounter = {  // moved out here while login is not finished
-                // uncomment all the stuff below for PRODUCTION
-                read: function(callback) {
-//                    SOCKET.request("counter", {}, function(result) {
-//                        if (result) {
-//                            callback(result);
-//                        } else {
-                    callback({count: 100000, validationImage: "src"});
-//                        }
-//                    });
-                }
+// Models.UsersCounter = {  // moved out here while login is not finished
+//                 // uncomment all the stuff below for PRODUCTION
+//                 read: function(callback) {
+// //                    SOCKET.request("counter", {}, function(result) {
+// //                        if (result) {
+// //                            callback(result);
+// //                        } else {
+//                     callback({count: 100000, validationImage: "src"});
+// //                        }
+// //                    });
+//                 }
 
-            };
+//             };
 //BROWSER_TEST_VERSION ? onDeviceReady() : document.addEventListener("deviceready", onDeviceReady, false);
 
 onDeviceReady();
@@ -98,10 +117,10 @@ function onDeviceReady() {
             file_upload_url: "upload",
             sockets: ""
         },
-        server_url: "http://115.28.131.52:3000",
-//        server_url: "http://192.168.200.110:3000",
-//        server_url: "http://212.8.40.254:5959",
-//                server_url: "http://gbksoft.com:5959",
+      server_url: "http://115.28.131.52:3000",
+//      server_url: "http://212.8.40.254:5959",
+//		server_url: "http://gbksoft.com:5959",
+//		server_url: "http://192.168.0.103:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -167,27 +186,33 @@ function onDeviceReady() {
                 }
             };
 
-//            Models.UsersCounter = {
-//                // uncomment all the stuff below for PRODUCTION
-//                read: function(callback) {
-//                    SOCKET.request("counter", {}, function(result) {
-//                        if (result) {
-//                            callback(result);
-//                        } else {
-//                            callback({count: 100000, validationImage: "src"});
-//                        }
-//                    });
-//                }
-//
-//            };
+           Models.UsersCounter = {
+               // uncomment all the stuff below for PRODUCTION
+               read: function(callback) {
+				   console.log('++++++++++++++++++++++++++++++++++++Saved user data');
+                    if(!SESSION.get("saved_user_data")){
+                        SESSION._init_storage(1);
+                        DB._init_db(1);  
+                    }
+                     
+                    SOCKET.request("counter", {}, function(result) {
+                        if (result) {
+                           callback(result);
+                        } else {
+                           callback({count: 100000, validationImage: "src"});
+                        }
+                    });
+               }
+
+           };
 
             Models.Partner = {
                 read: function(id, callback) { // if id is specified we get one partner else all partners
-                    if (typeof(id) === "function") {// no id
+					if (typeof(id) === "function") {// no id
                         callback = id;
                         console.log("all partners");
                         // all partners
-                        DB.select("u.id, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                         DB.from("xiao_company_partners AS p");
                         DB.join("xiao_users AS u", "u.id = p.user_id");
                         DB.join("xiao_companies AS c", "u.company_id = c.id");
@@ -198,7 +223,7 @@ function onDeviceReady() {
                     } else if (id) {
                         console.log("partner by id");
                         // partner by id
-                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
                         DB.join("xiao_company_partners AS p", "p.user_id = u.id");
                         DB.join("xiao_companies AS c", "p.company_id = c.id");
@@ -206,9 +231,47 @@ function onDeviceReady() {
 						/*API.row(function(data){
 							console.log(data);
 						});*/
-                        API.row(callback);
+                        callback(row);
                     }
                 },
+
+                get_project_partners : function(project_id, callback){
+                    DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                    DB.from("xiao_project_partners AS pp");
+                    DB.join("xiao_users AS u", "u.id = pp.user_id");
+                    DB.join("xiao_companies AS c", "u.company_id = c.id");
+                    DB.where('pp.project_id = "' + project_id + '"');
+                    DB.where('pp.user_id <> "' + SESSION.get("user_id") + '"');
+                    API.read(callback);
+                },
+						
+				poweruser: function(id, value) {
+					DB.update('xiao_users', {poweruser: value}, 'id="' + id + '"');
+				},
+						
+				check_admin_for_user: function(user_id, callback) {
+					DB.select("u.company_id");
+					DB.from("xiao_users AS u");
+					DB.where('u.id ="' + user_id + '"');
+					API.row(function(row) {
+						var p_company_id = row.company_id;
+						var a_user_id = SESSION.get("user_id");
+
+						DB.select("c.creator_id");
+						DB.from("xiao_companies AS c");
+						DB.where("c.id = " + p_company_id);
+						API.row(function(company_row) {
+							row.change_rights = false;
+
+							if (company_row.creator_id == a_user_id && company_row.creator_id != id) {
+								callback(true);
+							} else {
+								callback(false);
+							}
+						});
+					});
+				},
+
                 remove: function(user_id, callback) {
                     // remove partner from company
 //                        API.remove("xiao_company_partners", 'user_id="' + user_id + '"', callback);
@@ -281,6 +344,14 @@ function onDeviceReady() {
             };
             Models.User = {
                 
+				saveBlobAvatar: function(base64, callback) {
+					if (base64.indexOf('data:image/') != -1) {
+						SERVER.PHONE.Files.base64image_to_file(base64, null, callback);
+					} else {
+						callback(base64);
+					}
+				},
+				
                 update: function(data, callback) {
 
 //                        data = {
@@ -300,32 +371,76 @@ function onDeviceReady() {
 //                        alert(i);
 //                        alert(data[i]);
 //                    }
+
+					console.log('Update user data');
+					console.log(data);
+
+                    // WHY here??? -->> this will never work here
+//					 if (data.avatar_update == 1) {
+//                         if (data.local_path.indexOf('data:image/')) {
+//                             SERVER.PHONE.Files.base64image_to_file(data.local_path, null, callback);
+//                         }
+//                     }
+					
+					
                     if("avatar" in data && data.avatar == "" && data.avatar === null){
 //                        alert("avatar empty")
                         delete data.avatar;
                     }
+
+                    if("password" in data){
+                        data.pwd = data.password;
+                        delete data.password;
+                    }
+                    if("name" in data){
+                        data.pinyin = data.name.substring(0, 1).toLowerCase();
+                    }
+                    // console.log("update_user_data")
+                    // console.log(data)
+					// console.log('do it');
+					
+					// console.log('Manually create trigger :(');
+					// var sql = 'INSERT INTO sync (table_name, row_id) VALUES ("xiao_users", ' + SESSION.get("user_id") + ')';
+					// SERVER.DB._executeSQL(sql, function(sync_data) {
+						// console.log('Trigger created');
+					
                     if("avatar" in data && data.avatar != "" && data.avatar !== null){
 //                        alert("avatar not emt")
                         data.local_path = data.avatar;
                         delete data.avatar;
 //                        data.server_path = ""; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
                         data.avatar_update = "1"; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
-                    }
-                    if("password" in data){
-                        data.pwd = data.password;
-                        delete data.password;
-                    }
-                    console.log("update_user_data")
-                    console.log(data)
-					console.log('do it');
-					
-					console.log('Manually create trigger :(');
-					var sql = 'INSERT INTO sync (table_name, row_id) VALUES ("xiao_users", ' + SESSION.get("user_id") + ')';
-					SERVER.DB._executeSQL(sql, function(sync_data) {
-						console.log('Trigger created');
-						
-						callback ?
-							API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
+
+                        //avatar creation
+
+                        this.saveBlobAvatar(data.local_path, function(blob_local_path){
+							
+                            data.local_path = blob_local_path;
+
+                            callback ?
+                                API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
+                                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                                    DB.from("xiao_users AS u");
+                                    DB.left_join("xiao_companies AS c", "u.company_id = c.id");
+                                    DB.where('u.id ="' + SESSION.get("user_id") + '"');
+                                    DB.row(function(new_user_data){
+                                        new_user_data.avatar = (new_user_data.local_path != "" && new_user_data.local_path != CONFIG.default_user_avatar) ? new_user_data.local_path : new_user_data.server_path;
+                                        callback(new_user_data);
+                                    });
+                                }) :
+                                API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"');
+                            
+                        });
+
+                        // if (data.avatar_update == 1) {
+                        // if (data.local_path.indexOf('data:image/')) {
+                        //     SERVER.PHONE.Files.base64image_to_file(data.local_path, null, callback);
+                        // }
+                        // }
+                    }else{
+
+                        callback ?
+                            API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
                                 DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                                 DB.from("xiao_users AS u");
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
@@ -336,11 +451,16 @@ function onDeviceReady() {
                                 });
                             }) :
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"');
-					});
+
+                    }
+
+
+						
+					// });
                 },
                 read: function(callback) {
                     // get user data
-                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, c.title as company, c.companyAdress");
                     DB.from("xiao_users AS u");
                     DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                     DB.where('u.id ="' + SESSION.get("user_id") + '"');
@@ -398,37 +518,43 @@ function onDeviceReady() {
 //                        callback(JSON.parse(SESSION.get("saved_user_data")))
 //                    }else{
 
-
+                    // console.log(data)
                     if(SESSION.get("user_pass")){
                         var old_user_data = SESSION.get("saved_user_data"),
                             json_old_user_data = JSON.parse(old_user_data);
-                        console.log({
-                            status  :   0,
-                            user    :   json_old_user_data
-                        });
+                        // console.log({
+                        //     status  :   0,
+                        //     user    :   json_old_user_data
+                        // });
+                        if(SESSION.get("login_once") == 1) json_old_user_data.isNewUser = 0;
+
+                        SESSION.set("login_once",1);
+
+                        API.update("xiao_users", {isNewUser: 0}, 'id="' + json_old_user_data.id + '"');
                         callback({
                             status  :   0,
                             user    :   json_old_user_data
                         });
                     }else{
                         SOCKET.request("login", data, function(result) {
-                            console.log(result);
+                            // console.log(result);
                             if (result !== false) {
                                 if (result.user) {
-                                    SERVER.SESSION._init_storage(1);
-                                    SERVER.DB._init_db(1);                   
+                                    // SERVER.SESSION._init_storage(1);
+                                    // SERVER.DB._init_db(1);                   
 //                                    result.user.isNewUser = 0;
                                     SESSION.set("saved_user_data", JSON.stringify(result.user));
                                     SESSION.set("user_id", result.user.id);
                                     SESSION.set("user_name", result.user.name);
                                     SESSION.set("user_email", result.user.email);
                                     SESSION.set("user_pwd", result.user.pwd);
+                                    // result.user.isNewUser = 0;
                                     callback(result);
     //                                    if (result.user.isNewUser == 1){
     //    //                                    alert("cool");
-    //                                        API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
+                                           API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
     //                                    }
-                                    console.log(result);
+                                    console .log(result);
                                     //                                callback(result);
                                 } else if (result.error) {
                                     console.log(result);
@@ -477,8 +603,11 @@ function onDeviceReady() {
                         
                 logout: function(callback){
                     //session
-//                    SESSION.clear();
+                    // SESSION.clear();
+                     
                     callback();
+                    SESSION._init_storage(1);
+                    DB._init_db(1); 
                 },
                         
                 create: function(data, callback) {
@@ -491,27 +620,43 @@ function onDeviceReady() {
 //                            phoneNum: "testuser_123",
 //                            position: "testuser_123"
 //                        };
-console.log('CREATE LOG');
-console.log(data);
+                    // SERVER.SESSION._init_storage(1);
+                    // SERVER.DB._init_db(1);   
+
+
+                    console.log('CREATE LOG');
+                    console.log(data);
                     if("avatar" in data){
                         data.local_path = data.avatar;
                         delete data.avatar;
                         data.server_path = "";
                     }
+
                     SOCKET.request("registration", data, function(result) {
 						console.log(result);
                         if (result !== false) {
                             if (result.user) {
-                                API._sync(['xiao_users', 'xiao_company_partners'], function() {
-									
-									var normal_result = result.user;
-									delete normal_result.pwd;
-									
-									
-                                    DB.insert_with_id('xiao_users', normal_result);
-                                    API._clear_tables_to_sync();
-                                    SESSION.set("user_id", result.user.id);
-                                    SESSION.set("user_name", result.user.name);
+
+                                var normal_result = result.user;
+                                    delete normal_result.pwd;
+
+                                // DB.insert_with_id('xiao_users', normal_result, function(){
+
+                                    API._sync(['xiao_users', 'xiao_company_partners'], function() {
+
+                                        SESSION.set("user_pass", result.user.pwd);
+                                        SESSION.set("saved_user_data", JSON.stringify(result.user));
+
+                                        
+                                    
+                                    
+
+                                        // API._clear_tables_to_sync();
+                                        SESSION.set("user_id", result.user.id);
+                                        SESSION.set("user_name", result.user.name);
+                                    
+                                    // });
+
                                     callback({
                                         status: 0,
                                         user: result.user
@@ -705,14 +850,18 @@ console.log(data);
                         // get inside project page
                         var result = {};
                         API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies"], function() {
-                            DB.select("p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
+							DB.select("p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
                             DB.from("xiao_projects AS p");
                             DB.join("xiao_project_partners AS pp", "pp.project_id = p.id");
                             DB.join("xiao_users AS u", "u.id = pp.user_id");
                             DB.join("xiao_companies AS c", "u.company_id = c.id");
                             DB.where('p.id ="' + params.id + '"');
+							
+							console.log('Project');
 
                             DB.query(function(partners) {
+								console.log('project partners');
+								console.log(partners);
                                 var project = {};
                                 if (partners.length > 0) {
                                     project = {
@@ -808,6 +957,126 @@ console.log(data);
                             }
                         });
                     } else {
+                        // SELECT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 1 as status  FROM xiao_project_partners AS pp INNER JOIN xiao_projects AS p ON pp.project_id = p.id INNER JOIN xiao_users AS u ON u.id = pp.user_id INNER JOIN xiao_companies AS c ON u.company_id = c.id WHERE pp.user_id = "4" AND p.archived <> "1" GROUP BY p.id UNION SELECT DISTINCT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 2 as status  FROM xiao_projects AS p LEFT JOIN xiao_project_partners AS pp ON pp.project_id = p.id LEFT JOIN xiao_users AS u ON u.id = pp.user_id LEFT JOIN xiao_companies AS c ON u.company_id = c.id WHERE p.archived <> "1" GROUP BY p.id HAVING p.id NOT IN ( SELECT project_id FROM xiao_project_partners WHERE user_id = "4" ) LIMIT 10
+                        // var result = [], logged_user = SESSION.get("user_id");
+                        //     params.othersOffset = (params.othersOffset ? params.othersOffset : 0);
+
+                        // params.pageIndex === 1 ? 
+                        // API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments"], get_project_page) : get_project_page();
+                        // function get_project_page(){
+                        //     DB._executeSQL('SELECT * FROM (SELECT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr,\n\
+                        //                         u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email,\n\
+                        //                         u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 1 as status \n\
+                        //                     FROM xiao_project_partners AS pp \n\
+                        //                     INNER JOIN xiao_projects AS p ON pp.project_id = p.id \n\
+                        //                     INNER JOIN xiao_users AS u ON u.id = pp.user_id \n\
+                        //                     INNER JOIN xiao_companies AS c ON u.company_id = c.id \n\
+                        //                     WHERE pp.user_id = "' + logged_user + '" AND p.archived <> "1" \n\
+                        //                     GROUP BY p.id \n\
+                        //                     UNION SELECT DISTINCT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, \n\
+                        //                         u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email,\n\
+                        //                         u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 2 as status \n\
+                        //                     FROM xiao_projects AS p \n\
+                        //                     LEFT JOIN xiao_project_partners AS pp ON pp.project_id = p.id \n\
+                        //                     LEFT JOIN xiao_users AS u ON u.id = pp.user_id \n\
+                        //                     LEFT JOIN xiao_companies AS c ON u.company_id = c.id \n\
+                        //                     WHERE p.archived <> "1" \n\
+                        //                     GROUP BY p.id \n\
+                        //                     HAVING p.id NOT IN (\n\
+                        //                         SELECT project_id \n\
+                        //                         FROM xiao_project_partners \n\
+                        //                         WHERE user_id = "4" \n\
+                        //                     ) ORDER BY status) LIMIT 10 OFFSET '+ ( (params.pageIndex - 1) * params.pageSize ) + '' ,
+                        //     function(projects){
+                        //         if (projects.length > 0) {
+
+                        //             projects.forEach(function(pr) {
+
+                        //                 DB.select("DISTINCT u.id as uid, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
+                        //                 DB.from("xiao_projects AS p");
+                        //                 DB.join("xiao_project_partners AS pp", "pp.project_id = p.id");
+                        //                 DB.join("xiao_users AS u", "u.id = pp.user_id");
+                        //                 DB.join("xiao_companies AS c", "u.company_id = c.id");
+                        //                 DB.where('p.id ="' + pr.id + '"');
+                        //                 DB.query(function(partners) {
+
+                        //                     DB.select('SUM(r) FROM (\n\
+                        //                                 SELECT COUNT(tc.read) as r \n\
+                        //                                 FROM xiao_todo_comments AS tc \n\
+                        //                                 INNER JOIN xiao_todos as t ON t.id = tc.todo_id \n\
+                        //                                 WHERE t.project_id = "'+pr.id+'" AND tc.read = "0" AND (t.user_id = "'+logged_user+'" OR t.creator_id = "'+logged_user+'" ) \n\
+                        //                                 UNION SELECT COUNT(pc.read) as r \n\
+                        //                                 FROM xiao_project_comments as pc \n\
+                        //                                 WHERE pc.project_id = "'+pr.id+'" AND pc.read = "0"\n\
+                        //                             )');
+                        //                     DB.col(function(unread1) {
+
+                        //                         DB.select("pc.content, pc.type");
+                        //                         DB.from("xiao_project_comments AS pc");
+                        //                         DB.where('pc.project_id ="' + pr.id + '"');
+                        //                         DB.order_by_desc('pc.time');                                                            
+                        //                         DB.row(function(last_message) {
+                        //                             if(typeof(last_message) === "undefined"){
+                        //                                 last_message = {content : "", type:"text"};
+                        //                             }
+                        //                             result.push({
+                        //                                 status: pr.status,
+                        //                                 id: pr.id,
+                        //                                 level: pr.level,
+                        //                                 title: pr.title,
+                        //                                 color: pr.color,
+                        //                                 creationTime: pr.creationTime,
+                        //                                 completeDate: pr.completeDate,
+                        //                                 unread: parseInt(unread1,10),
+                        //                                 desc: pr.descr,
+                        //                                 lastMessage: last_message,
+                        //                                 creator: {
+                        //                                     id: pr.uid,
+                        //                                     name: pr.name,
+                        //                                     pinyin: pr.pinyin,
+                        //                                     avatar: (pr.local_path != "" && pr.local_path != CONFIG.default_user_avatar) ? pr.local_path : pr.server_path,
+                        //                                     company: pr.company,
+                        //                                     companyAdress: pr.companyAdress,
+                        //                                     position: pr.position,
+                        //                                     phoneNum: pr.phoneNum,
+                        //                                     email: pr.email,
+                        //                                     adress: pr.adress,
+                        //                                     isNewUser: pr.isNewUser,
+                        //                                     isLeader: "1",
+                        //                                     QRCode: pr.QRCode
+                        //                                 },
+                        //                                 users: partners
+                        //                             });
+                        //                             if (result.length == projects.length) {
+
+                        //                                 callback({
+                        //                                     projects: result,
+                        //                                     pageIndex: params.pageIndex,
+                        //                                     pageSize: params.pageSize,
+                        //                                     emptyFolders: params.pageSize - projects.length
+                        //                                 });
+
+                        //                             }
+                        //                         });
+                        //                     });
+
+                        //                     API._clear_tables_to_sync();
+                        //                 });
+                        //                 API._clear_tables_to_sync();
+                        //             });
+
+                        //         } else {
+                        //             callback({
+                        //                 projects: [],
+                        //                 pageIndex: params.pageIndex,
+                        //                 pageSize: params.pageSize,
+                        //                 emptyFolders: params.pageSize - projects.length
+                        //             });
+                        //         }
+                        //     });
+                        // }
+
+                        
                         // get ALL projects page
                         if (params.pageIndex === this.last_page_index && params.pageIndex !== 1)
                             return;
@@ -828,7 +1097,7 @@ console.log(data);
                                 DB.where('p.archived <> "1"');
                                 DB.group_by('p.id');
 //                                DB.having('pp.user_id = "' + logged_user + '"');
-                                DB.limit(params.pageSize, (params.pageIndex - 1) * params.pageSiz9e);
+                                DB.limit(params.pageSize, (params.pageIndex - 1) * params.pageSize);
 
                                 DB.query(function(projects) {
                                     var others_limit = params.pageSize - projects.length;
@@ -851,7 +1120,7 @@ console.log(data);
 
                                                 projects.forEach(function(pr) {
 
-                                                    DB.select("u.id as uid, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
+                                                    DB.select("DISTINCT u.id as uid, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
 //                                                    DB.select("u.id as uid, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
                                                     DB.from("xiao_projects AS p");
                                                     DB.join("xiao_project_partners AS pp", "pp.project_id = p.id");
@@ -1155,18 +1424,104 @@ console.log(data);
                 
                 archive: function(id, callback){
                     callback ? API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"', callback) : API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"');
-                }
+                },
+						
+				check_poweruser_for_project: function(project_id, callback) {
+					var res = false;
+			
+					var a_user_id = SESSION.get("user_id");
+					DB.select("u.poweruser");
+					DB.from("xiao_users AS u");
+					DB.where("u.id = " + a_user_id);
+					API.row(function(row) {
+						if (row.poweruser) {
+							DB.select("pp.user_id");
+							DB.from("xiao_project_partners AS pp");
+							DB.where("u.id = '" + a_user_id + "'");
+							DB.query(function(project_partners) {
+								for (var i in project_partners) {
+									if (project_partners[i].user_id == a_user_id) {
+										res = true;
+									}
+								}
+							});
+						}
+					});
+					
+					callback(res);
+				},
+				
+				can_create_projects: function(callback) {
+					var a_company_id = SESSION.get("company_id");
+					var a_user_id = SESSION.get("user_id");
+					
+					DB.select("c.creator_id");
+					DB.from("xiao_companies AS c");
+					DB.where("c.id = " + a_user_id);
+					API.row(function(c_row) {
+						DB.select("u.poweruser");
+						DB.from("xiao_users AS u");
+						DB.where("u.id = " + a_user_id);
+						API.row(function(u_row) {
+							if (c_row.creator_id == a_user_id || u_row.poweruser == 1) {
+								callback(true);
+							} else {
+								callback(false);
+							}
+						})
+					});
+				}
                 
             };
+			Models.Smileys = {
+				get_smileys: function(callback) {
+					API._sync(['xiao_smileys'], function() {
+						DB.select("sm.code, sm.image");
+						DB.from("xiao_smileys AS sm");
+						DB.where("sm.deleted = 0");
+						DB.order_by("sort ASC");
+						DB.query(function(smileys) {
+							callback(smileys);
+						});
+					});
+				},
+				convert_smileys: function(message, callback, smileys_list) {
+					if (!smileys_list) {
+						API._sync(['xiao_smileys'], function() {
+							DB.select("sm.code, sm.image");
+							DB.from("xiao_smileys AS sm");
+							DB.where("sm.deleted = 0");
+							DB.query(function(smileys) {
+								for (var i in smileys) {
+									message = message.split(smileys[i].code).join('<img style="display: inline;" src="../../smileys/' + smileys[i].image + '" width="16" />');
+								}
+
+								callback(message);
+							});
+						});
+					} else {
+						for (var i in smileys_list) {
+							message = message.split(smileys_list[i].code).join('<img style="display: inline;" src="../../smileys/' + smileys_list[i].image + '" width="16" />');
+						}
+
+						if (callback) {
+							callback(message);
+						}
+						return message;
+					}
+				}
+			};
             Models.ProjectChat = {
 //                _inited_chats: [],
                 chat_init: function(project_id, callback) {
+					var _this = this;
+					
                     console.log("chat_init");
 //                    if(this._inited_chats.indexOf(project_id) > 0 )return;
 //                    this._inited_chats.push(project_id);
                     // existing messages
                     var login_user = SESSION.get("user_id");
-                    API._sync(["xiao_project_comments", "xiao_users", "xiao_companies", "xiao_project_comments_likes"], function() {
+                    API._sync(["xiao_project_comments", "xiao_users", "xiao_companies", "xiao_project_comments_likes", "xiao_smileys"], function() {
                         
 //                        DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, pc.time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
                         DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
@@ -1183,82 +1538,88 @@ console.log(data);
                         DB.order_by(' pc.time, pc.id');
     //                    API.read(function(messages) {
                         DB.query(function(messages) {
-                            console.log("__________messages")
-                            var mess_result = [], unread = 0, indexes = [];
-                            if (messages.length > 0) {
-                                messages.forEach(function(mess) {
-                                    console.log(mess)
-                                    if(indexes.lastIndexOf(mess.id) === -1){
-                                        indexes.push(mess.id);
-                                        unread += (mess.read == 0 ? 1 : 0);
-                                        mess_result.push({
-                                            id: mess.id,
-                                            text: mess.content,
-                                            poster: {
-                                                id: mess.uid,
-                                                name: mess.name,
-                                                pinyin: mess.pinyin,
-                                                avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
-                                                company: mess.company,
-                                                companyAdress: mess.companyAdress,
-                                                position: mess.position,
-                                                phoneNum: mess.phoneNum,
-                                                email: mess.email,
-                                                adress: mess.adress,
-                                                isNewUser: mess.isNewUser,
-                                                isLoginUser: login_user == mess.uid,
-                                                QRCode: mess.QRCode
-                                            },
-                                            attachment: {
-                                                id: mess.id,
-                                                type: mess.type,
-                                                src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-//                                                src: mess.server_path,
-                                                from: "project"
-                                            },
-                                            praise: [],
-                                            time: new Date(websql_date_to_number(mess.time)).getTime(),
-                                            type: mess.type
-                                        });
-                                        
-                                        if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
-                                            mess_result[mess_result.length-1].praise.push({
-                                                id: mess.cl_uid,
-                                                name: mess.cl_name,
-                                                pinyin: mess.cl_pinyin,
-//                                                avatar: mess.cl_avatar,
-                                                avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                                company: mess.cl_company,
-                                                companyAdress: mess.cl_companyAdress,
-                                                position: mess.cl_position,
-                                                phoneNum: mess.cl_phoneNum,
-                                                email: mess.cl_email,
-                                                adress: mess.cl_adress,
-                                                isNewUser: mess.cl_isNewUser,
-                                                isLoginUser: login_user == mess.cl_uid,
-                                                QRCode: mess.cl_QRCode
-                                            });
-                                    }else{
-                                        mess_result[mess_result.length-1].praise.push({
-                                            id: mess.cl_uid,
-                                            name: mess.cl_name,
-                                            pinyin: mess.cl_pinyin,
-                                            avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                            company: mess.cl_company,
-                                            companyAdress: mess.cl_companyAdress,
-                                            position: mess.cl_position,
-                                            phoneNum: mess.cl_phoneNum,
-                                            email: mess.cl_email,
-                                            adress: mess.cl_adress,
-                                            isNewUser: mess.cl_isNewUser,
-                                            isLoginUser: login_user == mess.cl_uid,
-                                            QRCode: mess.cl_QRCode
-                                        });
-                                    }
-                                });
-                            }
-                            console.log(mess_result);
-                            callback(mess_result);
+							Models.Smileys.get_smileys(function(smileys) {
+								console.log("__________messages");
+								var mess_result = [], unread = 0, indexes = [];
+								if (messages.length > 0) {
+									// Found no way to change iteration object in jQun forEach
+									messages.forEach(function(mess) {
+										if(indexes.lastIndexOf(mess.id) === -1){
+											indexes.push(mess.id);
+											unread += (mess.read == 0 ? 1 : 0);
+
+											var message = mess.content;
+											message = Models.Smileys.convert_smileys(message, null, smileys);
+
+											mess_result.push({
+												id: mess.id,
+												text: message,
+												poster: {
+													id: mess.uid,
+													name: mess.name,
+													pinyin: mess.pinyin,
+													avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
+													company: mess.company,
+													companyAdress: mess.companyAdress,
+													position: mess.position,
+													phoneNum: mess.phoneNum,
+													email: mess.email,
+													adress: mess.adress,
+													isNewUser: mess.isNewUser,
+													isLoginUser: login_user == mess.uid,
+													QRCode: mess.QRCode
+												},
+												attachment: {
+													id: mess.id,
+													type: mess.type,
+													src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+	//                                                src: mess.server_path,
+													from: "project"
+												},
+												praise: [],
+												time: new Date(websql_date_to_number(mess.time)).getTime(),
+												type: mess.type
+											});
+
+											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
+												mess_result[mess_result.length-1].praise.push({
+													id: mess.cl_uid,
+													name: mess.cl_name,
+													pinyin: mess.cl_pinyin,
+	//                                                avatar: mess.cl_avatar,
+													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+													company: mess.cl_company,
+													companyAdress: mess.cl_companyAdress,
+													position: mess.cl_position,
+													phoneNum: mess.cl_phoneNum,
+													email: mess.cl_email,
+													adress: mess.cl_adress,
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.cl_uid,
+													QRCode: mess.cl_QRCode
+												});
+										}else{
+											mess_result[mess_result.length-1].praise.push({
+												id: mess.cl_uid,
+												name: mess.cl_name,
+												pinyin: mess.cl_pinyin,
+												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+												company: mess.cl_company,
+												companyAdress: mess.cl_companyAdress,
+												position: mess.cl_position,
+												phoneNum: mess.cl_phoneNum,
+												email: mess.cl_email,
+												adress: mess.cl_adress,
+												isNewUser: mess.cl_isNewUser,
+												isLoginUser: login_user == mess.cl_uid,
+												QRCode: mess.cl_QRCode
+											});
+										}
+									});
+								}
+								console.log(mess_result);
+								callback(mess_result);
+							});
     //                            make_callback({messages: mess_result, unread: unread});
     //SELECT pc.id, pc.content, pc.type, pc.server_path, pc.project_id, pc.user_id, u.id as uid, u.name, u.pinyin, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id,    clu.id as cl_id, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode  FROM xiao_project_comments AS pc LEFT JOIN xiao_users AS u ON u.id = pc.user_id LEFT JOIN xiao_companies AS c ON u.company_id = c.id LEFT JOIN xiao_project_comments_likes AS cl ON cl.comment_id = pc.id LEFT JOIN xiao_users AS clu ON clu.id = cl.user_id WHERE pc.project_id ="20131028100530255489Rd_xiao_projects" ORDER BY pc.id
                         });
@@ -1287,79 +1648,88 @@ console.log(data);
                             DB.order_by('pc.time, pc.id');
                             API._clear_tables_to_sync();
                             DB.query(function(messages) {
-                                var mess_result = [], indexes = [];
-                                messages.forEach(function(mess) {
-                                    if(indexes.lastIndexOf(mess.id) === -1){
-                                        indexes.push(mess.id);
-    //                                    var leader = mess.company_creator_id == mess.uid ? true : false,
-    //                                            new_user = mess.isNewUser == 0 ? true : false;
-                                        mess_result.push({
-                                            id: mess.id,
-                                            text: mess.content,
-                                            poster: {
-                                                id: mess.uid,
-                                                name: mess.name,
-                                                pinyin: mess.pinyin,
-                                                avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
-                                                company: mess.company,
-                                                companyAdress: mess.companyAdress,
-                                                position: mess.position,
-                                                phoneNum: mess.phoneNum,
-                                                email: mess.email,
-                                                adress: mess.adress,
-                                                isNewUser: mess.isNewUser,
-                                                isLoginUser: login_user == mess.uid,
-        //                                            isLeader: leader,
-                                                QRCode: mess.QRCode
-                                            },
-                                            attachment: {
-                                                id: mess.id,
-                                                type: mess.type,
-                                                src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-//                                                src: mess.server_path,
-                                                from: "project"
-                                            },
-                                            praise: [],
-                                            time: new Date(websql_date_to_number(mess.time)).getTime(),
-                                            type: mess.type
-                                        });
-                                        if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
-                                            mess_result[mess_result.length-1].praise.push({
-                                                id: mess.cl_uid,
-                                                name: mess.cl_name,
-                                                pinyin: mess.cl_pinyin,
-//                                                avatar: mess.cl_avatar,
-                                                avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                                company: mess.cl_company,
-                                                companyAdress: mess.cl_companyAdress,
-                                                position: mess.cl_position,
-                                                phoneNum: mess.cl_phoneNum,
-                                                email: mess.cl_email,
-                                                adress: mess.cl_adress,
-                                                isNewUser: mess.cl_isNewUser,
-                                                isLoginUser: login_user == mess.cl_uid,
-                                                QRCode: mess.cl_QRCode
-                                            });
-                                    }else{
-                                        mess_result[mess_result.length-1].praise.push({
-                                            id: mess.cl_uid,
-                                            name: mess.cl_name,
-                                            pinyin: mess.cl_pinyin,
-//                                            avatar: mess.cl_avatar,
-                                            avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                            company: mess.cl_company,
-                                            companyAdress: mess.cl_companyAdress,
-                                            position: mess.cl_position,
-                                            phoneNum: mess.cl_phoneNum,
-                                            email: mess.cl_email,
-                                            adress: mess.cl_adress,
-                                            isNewUser: mess.cl_isNewUser,
-                                            isLoginUser: login_user == mess.cl_uid,
-                                            QRCode: mess.cl_QRCode
-                                        });
-                                    }
-                                });
-                                callback(mess_result);
+								DB.select("sm.code, sm.image");
+								DB.from("xiao_smileys AS sm");
+								DB.where("sm.deleted = 0");
+								DB.query(function(smileys) {
+									var mess_result = [], indexes = [];
+									messages.forEach(function(mess) {
+										if(indexes.lastIndexOf(mess.id) === -1){
+											indexes.push(mess.id);
+		//                                    var leader = mess.company_creator_id == mess.uid ? true : false,
+		//                                            new_user = mess.isNewUser == 0 ? true : false;
+		
+											var message = mess.content;
+											message = _this.convert_smileys(message, null, smileys);
+		
+											mess_result.push({
+												id: mess.id,
+												text: message,
+												poster: {
+													id: mess.uid,
+													name: mess.name,
+													pinyin: mess.pinyin,
+													avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
+													company: mess.company,
+													companyAdress: mess.companyAdress,
+													position: mess.position,
+													phoneNum: mess.phoneNum,
+													email: mess.email,
+													adress: mess.adress,
+													isNewUser: mess.isNewUser,
+													isLoginUser: login_user == mess.uid,
+			//                                            isLeader: leader,
+													QRCode: mess.QRCode
+												},
+												attachment: {
+													id: mess.id,
+													type: mess.type,
+													src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+	//                                                src: mess.server_path,
+													from: "project"
+												},
+												praise: [],
+												time: new Date(websql_date_to_number(mess.time)).getTime(),
+												type: mess.type
+											});
+											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
+												mess_result[mess_result.length-1].praise.push({
+													id: mess.cl_uid,
+													name: mess.cl_name,
+													pinyin: mess.cl_pinyin,
+	//                                                avatar: mess.cl_avatar,
+													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+													company: mess.cl_company,
+													companyAdress: mess.cl_companyAdress,
+													position: mess.cl_position,
+													phoneNum: mess.cl_phoneNum,
+													email: mess.cl_email,
+													adress: mess.cl_adress,
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.cl_uid,
+													QRCode: mess.cl_QRCode
+												});
+										}else{
+											mess_result[mess_result.length-1].praise.push({
+												id: mess.cl_uid,
+												name: mess.cl_name,
+												pinyin: mess.cl_pinyin,
+	//                                            avatar: mess.cl_avatar,
+												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+												company: mess.cl_company,
+												companyAdress: mess.cl_companyAdress,
+												position: mess.cl_position,
+												phoneNum: mess.cl_phoneNum,
+												email: mess.cl_email,
+												adress: mess.cl_adress,
+												isNewUser: mess.cl_isNewUser,
+												isLoginUser: login_user == mess.cl_uid,
+												QRCode: mess.cl_QRCode
+											});
+										}
+									});
+									callback(mess_result);
+								});
                             });
 
                         });
@@ -1404,7 +1774,6 @@ console.log(data);
             Models.Todo = {
                 create: function(todo, attachments, callback) {
 //                        var todo = {
-//                            color : 1, // number : from 0 to 5(0 : orange, 1 : tan, 2 : cyan, 3 : blue, 4 : henna, 5 : purple)
 //                            title : "sss",
 //                            descr : "aaa",
 //                            endTime : new Date().getTime(),
@@ -1564,7 +1933,7 @@ console.log(data);
 
                 },
                 done: function(id, callback) {
-
+                    API.update("xiao_todos", {finished: 1}, 'id = "'+ id +'"', callback);
                 }
 
             };
@@ -1588,85 +1957,91 @@ console.log(data);
                         var login_user = SESSION.get("user_id");
                         DB.query(function(messages) {
     //                    API.read(function(messages) {
-                            var mess_result = [], unread = 0, indexes = [];
-                            if (messages.length > 0) {
-                                messages.forEach(function(mess) {
-                                    if(indexes.lastIndexOf(mess.id) === -1){
-                                        indexes.push(mess.id);
-    //                                console.log(mess.uid)
-    //                                    var leader = mess.isLeader == "1" ? true : false,
-    //                                            new_user = mess.isNewUser == "0" ? true : false;
-                                        unread += (mess.read == 0 ? 1 : 0);
-                                        mess_result.push({
-                                            id: mess.id,
-                                            text: mess.content,
-                                            poster: {
-                                                id: mess.uid,
-                                                name: mess.name,
-                                                pinyin: mess.pinyin,
-//                                                avatar: mess.avatar,
-                                                //avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
-												avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
-                                                company: mess.company,
-                                                companyAdress: mess.companyAdress,
-                                                position: mess.position,
-                                                phoneNum: mess.phoneNum,
-                                                email: mess.email,
-                                                adress: mess.adress,
-                                                isNewUser: mess.isNewUser,
-                                                isLoginUser: login_user == mess.uid,
-        //                                            isLeader: mess.isLeader,
-                                                QRCode: mess.QRCode
-                                            },
-                                            attachment: {
-                                                id: mess.id,
-                                                type: mess.type,
-                                                src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-//                                                src: mess.server_path,
-                                                from: "todo"
-                                            },
-                                            praise: [],
-                                            time: new Date(websql_date_to_number(mess.time)).getTime(),
-                                            type: mess.type
-                                        });
-                                        if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
-                                            mess_result[mess_result.length-1].praise.push({
-                                                id: mess.cl_uid,
-                                                name: mess.cl_name,
-                                                pinyin: mess.cl_pinyin,
-//                                                avatar: mess.cl_avatar,
-                                                avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                                company: mess.cl_company,
-                                                companyAdress: mess.cl_companyAdress,
-                                                position: mess.cl_position,
-                                                phoneNum: mess.cl_phoneNum,
-                                                email: mess.cl_email,
-                                                adress: mess.cl_adress,
-                                                isNewUser: mess.cl_isNewUser,
-                                                isLoginUser: login_user == mess.cl_uid,
-                                                QRCode: mess.cl_QRCode
-                                            });
-                                    }else{
-                                        mess_result[mess_result.length-1].praise.push({
-                                            id: mess.cl_uid,
-                                            name: mess.cl_name,
-                                            pinyin: mess.cl_pinyin,
-//                                            avatar: mess.cl_avatar,
-                                            avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                            company: mess.cl_company,
-                                            companyAdress: mess.cl_companyAdress,
-                                            position: mess.cl_position,
-                                            phoneNum: mess.cl_phoneNum,
-                                            email: mess.cl_email,
-                                            adress: mess.cl_adress,
-                                            isNewUser: mess.cl_isNewUser,
-                                            isLoginUser: login_user == mess.cl_uid,
-                                            QRCode: mess.cl_QRCode
-                                        });
-                                    }
-                                });
-                            }
-                            callback(mess_result);
+							Models.Smileys.get_smileys(function(smileys){
+								var mess_result = [], unread = 0, indexes = [];
+								if (messages.length > 0) {
+									messages.forEach(function(mess) {
+										if(indexes.lastIndexOf(mess.id) === -1){
+											indexes.push(mess.id);
+		//                                console.log(mess.uid)
+		//                                    var leader = mess.isLeader == "1" ? true : false,
+		//                                            new_user = mess.isNewUser == "0" ? true : false;
+											unread += (mess.read == 0 ? 1 : 0);
+											
+											var message = mess.content;
+											message = Models.Smileys.convert_smileys(message, null, smileys);
+											
+											mess_result.push({
+												id: mess.id,
+												text: message,
+												poster: {
+													id: mess.uid,
+													name: mess.name,
+													pinyin: mess.pinyin,
+	//                                                avatar: mess.avatar,
+													//avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
+													avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
+													company: mess.company,
+													companyAdress: mess.companyAdress,
+													position: mess.position,
+													phoneNum: mess.phoneNum,
+													email: mess.email,
+													adress: mess.adress,
+													isNewUser: mess.isNewUser,
+													isLoginUser: login_user == mess.uid,
+			//                                            isLeader: mess.isLeader,
+													QRCode: mess.QRCode
+												},
+												attachment: {
+													id: mess.id,
+													type: mess.type,
+													src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+	//                                                src: mess.server_path,
+													from: "todo"
+												},
+												praise: [],
+												time: new Date(websql_date_to_number(mess.time)).getTime(),
+												type: mess.type
+											});
+											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
+												mess_result[mess_result.length-1].praise.push({
+													id: mess.cl_uid,
+													name: mess.cl_name,
+													pinyin: mess.cl_pinyin,
+	//                                                avatar: mess.cl_avatar,
+													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+													company: mess.cl_company,
+													companyAdress: mess.cl_companyAdress,
+													position: mess.cl_position,
+													phoneNum: mess.cl_phoneNum,
+													email: mess.cl_email,
+													adress: mess.cl_adress,
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.cl_uid,
+													QRCode: mess.cl_QRCode
+												});
+										}else{
+											mess_result[mess_result.length-1].praise.push({
+												id: mess.cl_uid,
+												name: mess.cl_name,
+												pinyin: mess.cl_pinyin,
+	//                                            avatar: mess.cl_avatar,
+												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+												company: mess.cl_company,
+												companyAdress: mess.cl_companyAdress,
+												position: mess.cl_position,
+												phoneNum: mess.cl_phoneNum,
+												email: mess.cl_email,
+												adress: mess.cl_adress,
+												isNewUser: mess.cl_isNewUser,
+												isLoginUser: login_user == mess.cl_uid,
+												QRCode: mess.cl_QRCode
+											});
+										}
+									});
+								}
+								callback(mess_result);
+							});
     //                            make_callback({messages: mess_result, unread: unread});
                         });
 
@@ -1792,13 +2167,26 @@ console.log(data);
             
             Models.Calendar = {
                 read: function(day, callback) {
+
+                    // we need folowwing here:
+                    //      - no need to sync todos table each time
+                    //      - so we need to sync it once when user access the calendar page
+                    //      - then we each time just use local db  
+
+
                     var logged_user = SESSION.get("user_id");
-                    DB.select();
+                    DB.select("t.title, t.descr as desc, p.color, t.id, p.level, t.user_id, t.creator_id");
                     DB.from('xiao_todos as t');
-                    DB.where('t.endTime = "' + day + '"');
-                    DB.where('(t.user_id = "' + logged_user + '" OR t.creator_id = "' + logged_user + '" )');
-//                        API.read(callback);
+                    DB.join('xiao_projects as p','p.id = t.project_id');
+                    // DB.where('t.endTime = "' + day + '"');
+                    // DB.where('(t.user_id = "' + logged_user + '" OR t.creator_id = "' + logged_user + '" )');
+                    DB.where('t.user_id = "' + logged_user + '" OR t.creator_id = "' + logged_user + '" ');
                     API.read(function(data) {
+
+                        data.forEach(function(t){
+                            t.isSendBySelf = (t.creator_id == logged_user ? true : false);
+                        });
+
                         callback({time: day, todos: data});
                     });
                 }
@@ -1978,7 +2366,7 @@ console.log(data);
                 
                 Models.Search = {
                     global: function(str, callback){
-                        var sync_tables = ['xiao_projects'], counter = sync_tables.length, result = {};
+						var sync_tables = ['xiao_projects'], counter = sync_tables.length, result = {};
                         API._sync(sync_tables, function(){
                             
                             //search projects
@@ -2033,8 +2421,8 @@ console.log(data);
                         // PRIVATE
                                 // PRIVATE
                                         function() {
-                                            var SERVER = {
-//                                            SERVER = {
+                                            // var SERVER = {
+                                           SERVER = {
                                                 SOCKET: {
                                                     socket: null,  // current socket Object is stores here after init
                                                     init: function() { // function is used to init io object (socket.io lib)
@@ -2198,6 +2586,7 @@ console.log(data);
                                                         },
                                                         _executeSQL: function(sql, callback) { // main DB method which makes query to DB
 //                                                            console.log(sql);
+															// console.log(sql);
                                                             function querySuccess(tx, results) {
                                                                 var len = results.rows.length, db_result = [];
                                                                 for (var i = 0; i < len; i++) {
@@ -2205,8 +2594,8 @@ console.log(data);
                                                                     db_result[i] = results.rows.item(i);
                                                                 }
 //                                                                console.log(db_result);
-                                                                if (db_result.length == 0 && !(sql.match(/sync/)))
-                                                                    console.log(sql);
+                                                                // if (db_result.length == 0 && !(sql.match(/sync/)))
+                                                                //     console.log(sql);
 
                                                                 return (callback ? callback(db_result) : true);
                                                             }
@@ -2214,6 +2603,7 @@ console.log(data);
                                                                 console.log("Error processing SQL code: " + err.code);
                                                                 console.log("Error processing SQL error below ");
                                                                 console.log(err);
+                                                                console.log("SQL query with error below:")
                                                                 console.log(sql);
                                                             }
                                                             db.transaction(queryDB, errorCB);
@@ -2320,6 +2710,10 @@ console.log(data);
                                                                 i = 0;
                                                                 ijk = 0;
                                                             }
+															
+															if (table == 'xiao_smileys') {
+																	//alert(sql);
+																}
                                                             return (
                                                                     callback ? this._executeSQL(sql, function() {
                                                                 callback();
@@ -2544,8 +2938,9 @@ console.log(data);
 //                                                        },
                                                         insert_batch_on_duplicate_update: function(table, data, callback) {
                                                             var _this = this, len = data.length;
-                                                            this.batch_insert_or_ignore(table, data, function() {
-                                                                data.forEach(function(row, i) {
+															
+															this.batch_insert_or_ignore(table, data, function() {
+																data.forEach(function(row, i) {
                                                                     if (i == len - 1) {
                                                                         _this.update(table, row, 'id = "' + row.id + '"', callback);
                                                                     } else {
@@ -2563,7 +2958,7 @@ console.log(data);
                                                         _init_tables: ['xiao_company_partners', 'xiao_projects', 'xiao_users', 'xiao_project_partners',
                                                             'xiao_partner_groups', 'xiao_partner_group_users', 'xiao_project_comments',
                                                             'xiao_companies', 'xiao_todos', 'xiao_todo_comments',
-                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes'],
+                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes', 'xiao_smileys'],
                                                         _init_db: function(clear) {
                                                             var _this = this;
                                                             console.log("start init");
@@ -2583,10 +2978,10 @@ console.log(data);
                                                                     id VARCHAR(255) NOT NULL, \n\
                                                                     project_id VARCHAR(255) NOT NULL,\n\
                                                                     user_id INTEGER NOT NULL,\n\
-                                                                    isLeader VARCHAR(255) NULL,\n\
+                                                                    isLeader INTEGER NULL DEFAULT 0,\n\
                                                                     update_time varchar(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         ); 
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_companies(\n\
@@ -2606,13 +3001,13 @@ console.log(data);
                                                                     title VARCHAR(255) NOT NULL,\n\
                                                                     descr TEXT NULL,\n\
                                                                     color INTEGER NULL,\n\
-                                                                    level VARCHAR(255) NULL,\n\
+                                                                    level INTEGER NULL DEFAULT 0,\n\
                                                                     archived INTEGER DEFAULT 0,\n\
                                                                     update_time varchar(255) NULL,\n\
                                                                     creationTime varchar(255) NULL,\n\
-                                                                    completeDate varchar(255) NULL,\n\
+                                                                    completeDate DATETIME NULL DEFAULT CURRENT_TIMESTAMP,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_company_partners(\n\
@@ -2620,7 +3015,7 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL,\n\
                                                                     update_time varchar(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         ); 
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_users(\n\
@@ -2628,7 +3023,7 @@ console.log(data);
                                                                     name varchar(255) NULL,\n\
                                                                     email varchar(100) NOT NULL,\n\
                                                                     server_path TEXT NULL,\n\
-                                                                    local_path varchar(255) DEFAULT "'+CONFIG.default_user_avatar+'",\n\
+                                                                    local_path varchar(255) NULL DEFAULT "'+CONFIG.default_user_avatar+'",\n\
                                                                     pinyin varchar(255) NULL,\n\
                                                                     QRCode varchar(255) NULL,\n\
                                                                     adress varchar(255) NULL,\n\
@@ -2638,8 +3033,9 @@ console.log(data);
                                                                     avatar_update INTEGER NULL DEFAULT 0,\n\
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     isNewUser INTEGER NULL,\n\
+																	poweruser INTEGER NULL DEFAULT 0,\n\
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_groups (\n\
@@ -2649,7 +3045,7 @@ console.log(data);
                                                                     creator_id VARCHAR(255) NOT NULL,\n\
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );    
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_group_users (\n\
@@ -2659,7 +3055,7 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL,\n\
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments (\n\
@@ -2675,7 +3071,7 @@ console.log(data);
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     read INTEGER DEFAULT 0,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todos (\n\
@@ -2683,15 +3079,15 @@ console.log(data);
                                                                     id VARCHAR(255) NOT NULL ,\n\
                                                                     title VARCHAR(255) NOT NULL ,\n\
                                                                     descr TEXT NULL DEFAULT NULL,\n\
-                                                                    color INTEGER NULL DEFAULT NULL,\n\
                                                                     finished INTEGER DEFAULT 0,\n\
                                                                     endTime DATETIME DEFAULT NULL,\n\
+                                                                    color INTEGER NULL DEFAULT NULL,\n\
                                                                     user_id INTEGER NOT NULL ,\n\
                                                                     creator_id INTEGER NOT NULL ,\n\
                                                                     project_id VARCHAR(255) NOT NULL ,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments (\n\
@@ -2707,7 +3103,7 @@ console.log(data);
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     read INTEGER DEFAULT 0,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
 //                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_attachments (\n\
@@ -2731,7 +3127,7 @@ console.log(data);
                                                                     todo_id VARCHAR(255) DEFAULT NULL,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );  
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments_likes (\n\
@@ -2741,7 +3137,7 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL ,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments_likes (\n\
@@ -2751,9 +3147,20 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL ,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
-                                                                        );
+																);
+																tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_smileys (\n\
+																	id VARCHAR(255) NULL,\n\
+                                                                    code VARCHAR(20) NOT NULL,\n\
+                                                                    image VARCHAR(20) NOT NULL,\n\
+																	sort INTEGER NOT NULL,\n\
+																	update_time TIMESTAMP NULL DEFAULT NULL,\n\
+                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+                                                                    company_id INTEGER NOT NULL DEFAULT 0,\n\
+																	deleted INTEGER DEFAULT 0,\n\
+																	UNIQUE(id))'
+																);
                                                                             
                                                                 //  very important to add each new table to this._init_tables array
                                                                 //  very important to add each new table to this._init_tables array
@@ -3016,6 +3423,7 @@ console.log(data);
 //                                                                console.log("_______sync_data")
 //                                                                console.log(sync_data)
                                                                 if (table_num == (tables.length - 1)) {
+                                                                    console.log("last");
                                                                     callback ? _this._make_socket_request(sync_data, callback) : _this._make_socket_request(sync_data);
                                                                 }
                                                             });
@@ -3071,7 +3479,7 @@ console.log(data);
                                                                         if (ij.updated.length > 0) {
                                                                             if(ij.table === "xiao_project_comments" || ij.table === "xiao_todo_comments" ||
                                                                                 ij.table === "xiao_project_attachments" || ij.table === "xiao_todo_attachments" ||
-                                                                                ij.table === "xiao_users"
+                                                                                ij.table === "xiao_users" || ij.table === "xiao_smileys"
                                                                             ){
                                                                                 SERVER.DB.insert_batch_on_duplicate_update(ij.table, ij.updated, function() {
                                                                                     make_callback();
@@ -3080,7 +3488,7 @@ console.log(data);
                                                                                     SERVER.DB._executeSQL('UPDATE xiao_users SET avatar_update = "0"');
                                                                                 }
                                                                             } else {
-                                                                                SERVER.DB.batch_replace(ij.table, ij.updated, function() {
+																				SERVER.DB.batch_replace(ij.table, ij.updated, function() {
                                                                                     make_callback();
                                                                                 });
                                                                             }
@@ -3093,7 +3501,8 @@ console.log(data);
                                                                         _this._sync_clear(ij.table, server.info.time);
                                                                         if (num == (changes.length - 1)) {
                                                                             _this._sync_delete_clear();
-                                                                            return (callback ? callback() : true);
+                                                                            // return (callback ? callback() : true);
+                                                                            if(callback)callback();
                                                                         }
                                                                     }
                                                                 });
@@ -3329,22 +3738,25 @@ console.log(data);
                                                         };
                                                         
                                                         this.base64image_to_file = function(base64_str, fake_path, callback){
-                                                            console.log("base64image_to_file");
+                                                            // console.log("base64image_to_file");
+															// console.log(base64_str);
 //                                                            var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/)[1];
                                                             var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/),
                                                                 _this = this;
-                                                            if(image_format === null){
+                                                            if(image_format === null) {
                                                                 image_format = fake_path.match(/\.([a-zA-Z0-9]*)$/);
 //                                                                image_format = image_format[0];
                                                             }
-                                                            console.log(image_format);
+                                                            // console.log(image_format);
                                                             image_format = image_format[1];
                                                             
 //                                                                alert(image_format);
 //                                                             image_format = image_format[1];
 //                                                                var image_data = Base64.decode( replace("/data:[a-z]*\/[a-z]*;base64,/", "", base64_str) ),
 //                                                                var image_data = Base64.decode( base64_str.replace(/data:[a-z]*\/[a-z]*;base64,/, "") ),
-                                                            var image_data = Base64.decode(base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, "")); 
+                                                            var image_data = base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, ""); 
+															
+															// console.log(image_data);
 															
 															// Converting from Base64-encoded binary data to byte array
 															var bytes_array = base64DecToArr(image_data);
@@ -3766,14 +4178,15 @@ console.log(data);
                                                 SOCKET: SERVER.SOCKET.init(),
                                                 API: SERVER.API,
                                                 SESSION: SERVER.SESSION,
-                                                //DB: SERVER.DB,
-//                                                DB: SERVER.DB._init_db(),
+                                                DB: SERVER.DB,
+                                                // SESSION: SERVER.SESSION._init_storage(1),
+                                                // DB: SERVER.DB._init_db(1),
                                                 // if it is needed to RECREATE DB AND STORAGE 
                                                 // uncomment lines below
                                                 // than comment again after refresh
 
                                                 //SESSION: SERVER.SESSION._init_storage(1),
-												DB: SERVER.DB,
+												// DB: SERVER.DB,
                                                 PHONE: SERVER.PHONE
 
                                             };

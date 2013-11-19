@@ -293,7 +293,7 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 ));
 
 this.UserSelectionList = (function(UserIndexList, CallServer, Global, selectUsersHtml, clickButtonEvent){
-	function UserSelectionList(text){
+	function UserSelectionList(text, _paramsOfGetPartners){
 		///	<summary>
 		///	用户选择列表。
 		///	</summary>
@@ -351,7 +351,7 @@ this.UserSelectionList = (function(UserIndexList, CallServer, Global, selectUser
 			}
 		});
 
-		CallServer.open("getPartners", { groupId : -1 }, function(data){
+		CallServer.open("getPartners", _paramsOfGetPartners || { groupId : -1 }, function(data){
 			userIndexList.refresh(data, "normal");
 			// 填充遮罩内容
 			mask.fillBody(userSelectionList[0]);
@@ -469,7 +469,7 @@ this.UserManagementList = (function(UserList, UserSelectionList, Alert, Overflow
 				// 如果点击的是添加按钮
 				if(targetEl.between('dt > button:first-child', this).length > 0){
 					// 初始化用户选择列表
-					var userSelectionList = new UserSelectionList(text);
+					var userSelectionList = new UserSelectionList(text, userManagementList.paramsOfGetPartners);
 
 					userList.getAllUsers().forEach(function(userId){
 						userSelectionList.toggleUser(userId);
@@ -518,7 +518,15 @@ this.UserManagementList = (function(UserList, UserSelectionList, Alert, Overflow
 		getAllUsers : function(){
 			return this.userList.getAllUsers();
 		},
+		paramsOfGetPartners : undefined,
 		maxLength : Infinity,
+		resetParamsOfGetPartners : function(paramsOfGetPartners){
+			this.paramsOfGetPartners = paramsOfGetPartners;
+		},
+		restore : function(){
+			this.userList.clearUsers();
+			this.classList.remove("readyToDel");
+		},
 		setMaxLength : function(length){
 			this.maxLength = length;
 		},

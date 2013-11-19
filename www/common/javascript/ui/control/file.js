@@ -127,6 +127,7 @@ this.VoiceRecorder = (function(voiceHtml, Global, Voice, stopRecordEvent){
 				return;
 
 			this.isRecording = true;
+			this.classList.add("recording");
 			Global.mask.fillBody("", true);
 			Global.mask.show("voiceRecording");
 			Voice.recordStart();
@@ -136,6 +137,7 @@ this.VoiceRecorder = (function(voiceHtml, Global, Voice, stopRecordEvent){
 				return;
 
 			this.isRecording = false;
+			this.classList.remove("recording");
 			Global.mask.hide();
 
 			stopRecordEvent.setEventAttrs({

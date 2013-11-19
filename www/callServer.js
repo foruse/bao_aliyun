@@ -30,13 +30,18 @@
             },
             getPartners: function(params, complete) {
                 console.log(params)
-                if(params.groupId == "-1"){
-                    Mdls.Partner.read(complete);    
-                }else{
-                    Mdls.Partner_Groups.get_group_users(params.groupId, complete);    
+                if("groupId" in params){
+
+                    if(params.groupId == "-1"){
+                        Mdls.Partner.read(complete);    
+                    }else{
+                        Mdls.Partner_Groups.get_group_users(params.groupId, complete);    
+                    }
+
+                }else if("projectId" in params){
+                    Mdls.Partner.get_project_partners(params.projectId, complete);    
                 }
             },
-            // getSchedules : function(){ },
             getSingleProject: function(params, complete) {
 //                Mdls.Project.read(params, complete);
                 console.log("_______________________getSingleProject");
@@ -207,6 +212,8 @@
                 Mdls.Partner_Groups.create(params, complete);
             },
             praise : function(params, complete){
+                console.log("___callserver.js likes params___");
+                console.log(params);
                 switch(params.type){
                     case "project":
                         Mdls.ProjectChat.like(params.messageId,complete);
@@ -222,7 +229,9 @@
                 Mdls.User.create(params, complete);
             },
 			registerUserInfo: function(params, complete) {
-				delete params['avatar'];
+                console.log("registerUserInfo params");
+                console.log(params);
+				// delete params['avatar'];
 				delete params['id'];
 				Mdls.User.update(params, complete);
 			},
@@ -261,6 +270,11 @@
             },
             getSchedules: function(params, complete) {
                 console.log(params);
+                // Mdls.Calendar.read(params.time, complete);
+                Mdls.Calendar.read(params.time, function(data){
+                    console.log(data);
+                    complete(data);
+                });
 //                 Mdls.Todo.read({project_id: params.id}, complete);
 //                Mdls.Todo.read({project_id: params.id}, function(data) {
 //                    console.log(data);
@@ -289,6 +303,10 @@
                     complete
                 );
             },
+            todoCompleted: function(params, complete){
+                console.log(params)
+                Mdls.Todo.done(params.id, complete);
+            },
             getAllArchives: function(params, complete){
                 //console.log(params);
                 Mdls.Archive.read(params, complete);
@@ -315,12 +333,23 @@
                 for(var el in params){
                     if(params[el] !== null)_params[el] = params[el];
                 }
-                console.log(_params)
-                Mdls.User.update(_params, complete);
-//                Mdls.User.update(_params, function(data){
-//                    console.log(data)
-//                    complete(data)
-//                });
+    //             if (_params.avatar.indexOf('data:image') != -1) {
+				// 	console.log('Saving base64 to file');
+				// 	Mdls.User.saveBlobAvatar(_params.avatar, function(local_path) {
+				// 		console.log('Saved from base64 image');
+				// 		console.log(local_path);
+				// 		_params.avatar = local_path;
+				// 		Mdls.User.update(_params, complete);
+				// 	});
+				// } else {
+				// 	console.log('Normal saving');
+				// 	Mdls.User.update(_params, complete);
+				// }
+				// return;
+               Mdls.User.update(_params, function(data){
+                   console.log(data)
+                   complete(data)
+               });
             }
             
         });
@@ -334,7 +363,7 @@
         CallServer.properties({
             open: function(name, params, _complete, _isUpload) {
                 var LoadingBar = Wait.LoadingBar;
-
+                console.log(name)
 //                LoadingBar.show(_isUpload ? "正在上传数据.." : null);
                 Models[name](params, function(data) {
                     if (name in allHandlers) {
@@ -415,7 +444,7 @@
                             return data;
                         },
                         getSchedules: function(data) {
-                            data.forEach(function(d) {
+                            data.todos.forEach(function(d) {
                                 var localDate = new Date(d.time);
 
                                 jQun.set(d, {
@@ -423,13 +452,13 @@
                                     date: localDate.getDate()
                                 });
 
-                                d.projects.forEach(function(pro) {
-                                    pro.key = pro.id;
-                                });
+                                // d.projects.forEach(function(pro) {
+                                //     pro.key = pro.id;
+                                // });
                             });
 
                             return {
-                                schedules: data
+                                schedules: data.todos
                             };
                         }
 //                        getMessages: function(data) {

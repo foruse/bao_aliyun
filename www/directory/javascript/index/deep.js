@@ -1,4 +1,4 @@
-﻿(function(Deep, NonstaticClass, StaticClass, PagePanel, OverflowPanel, CallServer){
+﻿(function(Deep, NonstaticClass, StaticClass, PagePanel, OverflowPanel, TitleBarColor, CallServer){
 this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forEach, config){
 	function GlobalSearch(selector, groupHtml){
 		///	<summary>
@@ -468,7 +468,8 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 	Todo = new NonstaticClass(Todo, "Bao.Page.Index", PagePanel.prototype);
 
 	Todo.override({
-		title : "To Do"
+		title : "To Do",
+		titleBarColor : TitleBarColor.Project
 	});
 
 	Todo.properties({
@@ -637,6 +638,7 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 			this.attachmentArea.clear();
 		},
 		title : "发送 To Do",
+		titleBarColor : TitleBarColor.Project,
 		tools : [
 			{ urlname : "javascript:void(0);", action : "sendTodoCompleted" }
 		]
@@ -651,6 +653,7 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 		remind : false,
 		resetProjectId : function(id){
 			this.projectId = id;
+			this.userManagementList.resetParamsOfGetPartners({projectId : id});
 		},
 		selectUser : function(userData){
 			var sendTodo = this;
@@ -786,7 +789,8 @@ this.ArchivedProjectView = (function(AnchorList, Panel){
 	ArchivedProjectView = new NonstaticClass(ArchivedProjectView, "Bao.Page.Deep.ArchivedProjectView", PagePanel.prototype);
 
 	ArchivedProjectView.override({
-		title : "查看归档"
+		title : "查看归档",
+		titleBarColor : TitleBarColor.Project
 	});
 
 	ArchivedProjectView.properties({
@@ -927,6 +931,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 
 	ProjectManagement.override({
 		title : "项目管理",
+		titleBarColor : TitleBarColor.Project,
 		tools : [{ urlname : "javascript:void(0);", action : "projectManagement_done" }]
 	});
 
@@ -935,7 +940,10 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 			var projectManagement = this;
 
 			CallServer.open("getSingleProject", { id : id }, function(data){
-				projectManagement.userManagementList.userList.addUsers(data.users);
+				var userManagementList = projectManagement.userManagementList;
+				
+				userManagementList.restore();
+				userManagementList.userList.addUsers(data.users);
 
 				Global.titleBar.resetTitle("项目管理：" + data.title);
 				projectManagement.id = id;
@@ -967,5 +975,6 @@ Deep.members(this);
 	jQun.StaticClass,
 	Bao.API.DOM.PagePanel,
 	Bao.API.DOM.OverflowPanel,
+	Bao.API.DOM.TitleBarColor,
 	Bao.CallServer
 ));

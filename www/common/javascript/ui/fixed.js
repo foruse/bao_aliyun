@@ -116,14 +116,17 @@ this.TitleBar = (function(){
 					return;
 				}
 
-				titleBar.show();
-
-				backButtonEl[panel.hideBackButton ? "hide" : "show"]();
-
 				if(panel.title){
 					titleBar.resetTitle(panel.title);
 				}
 
+				if(panel.titleBarColor != null){
+					titleBar.resetColor(panel.titleBarColor);
+				}
+
+				titleBar.show();
+
+				backButtonEl[panel.hideBackButton ? "hide" : "show"]();
 				titleBar.resetTools(panel.tools || []);
 			}
 		}, true);
@@ -131,6 +134,14 @@ this.TitleBar = (function(){
 	TitleBar = new NonstaticClass(TitleBar, "Bao.UI.Fixed.TitleBar", Panel.prototype);
 
 	TitleBar.properties({
+		color : 0,
+		resetColor : function(color){
+			if(color === this.color)
+				return;
+
+			this.color = color;
+			this.setAttribute("color", color);
+		},
 		resetTitle : function(title){
 			///	<summary>
 			///	重新标题。
