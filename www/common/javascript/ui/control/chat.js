@@ -1,4 +1,28 @@
 ﻿(function(Chat, NonstaticClass, StaticClass, Panel, HTML, Event, Enum, Global, Voice, set){
+this.SmileNames = (function(){
+	return new Enum({
+		YiWen : "疑问"
+	});
+}());
+
+this.MessageMode = (function(){
+	return new Enum(
+		["Voice", "Text"]
+	);
+}());
+
+this.SmiliesStatus = (function(){
+	return new Enum(
+		["Hide", "Show"]
+	);
+}());
+
+this.SmileButtonActions = (function(){
+	return new Enum(
+		["Delete", "Enter", "BaoPiQiSmilies"]
+	);
+}());
+
 this.Attachment = (function(){
 	function Attachment(type, from, id, _src, _base64){
 		///	<summary>
@@ -34,7 +58,9 @@ this.Attachment = (function(){
 	});
 
 	return Attachment.constructor;
-}());
+}(
+	this.AttachmentTypes
+));
 
 this.ImageBox = (function(imageBoxHtml){
 	function ImageBox(src){
@@ -160,12 +186,6 @@ this.ActiveVoice = (function(Attachment, round, lastActiveVoice){
 	undefined
 ));
 
-this.SmileNames = (function(){
-	return new Enum({
-		YiWen : "疑问"
-	});
-}());
-
 this.EscapeSmilies = (function(SmileNames, NAMES_REGX, imgHtml){
 	function EscapeSmilies(){};
 	EscapeSmilies = new StaticClass(EscapeSmilies, "Bao.UI.Control.Chat.EscapeSmilies");
@@ -211,18 +231,17 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 		/// <param name="msg" type="object">信息数据</param>
 		var message = this,
 		
-			text = msg.text, praise = msg.praise, attachment = msg.attachment;
+			type = msg.type, praise = msg.praise, attachment = msg.attachment;
 
 		this.assign({
-			attachment : attachment ? new Attachment(msg.type, attachment.from, attachment.id, attachment.src, attachment.base64) : undefined,
+			attachment : attachment ? new Attachment(type, attachment.from, attachment.id, attachment.src, attachment.base64) : undefined,
 			color : msg.color,
-			escapeText : EscapeSmilies.escapeText(text),
 			id : msg.id,
 			isSending : msg.isSending,
 			poster : msg.poster,
-			text : text,
+			text : type === "smile" ? EscapeSmilies.escapeText(msg.text) : msg.text,
 			time : msg.time,
-			type : msg.type
+			type : type
 		});
 
 		this.combine(messageHtml.create(this));
@@ -313,8 +332,6 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 		attachment : new Attachment(),
 		// 颜色
 		color : 0,
-		// 转义之后的文本
-		escapedText : "",
 		// id
 		id : -1,
 		// 是否发自自己
@@ -386,7 +403,7 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 			'</aside>',
 			'<figure>',
 				'<figcaption>',
-					'<span>{escapeText}</span>',
+					'<span>{text}</span>',
 					'<a>',
 						'<button></button>',
 					'</a>',
@@ -597,18 +614,6 @@ this.ChatListContent = (function(MessageGroup){
 	this.MessageGroup
 ));
 
-this.SmiliesStatus = (function(){
-	return new Enum(
-		["Hide", "Show"]
-	);
-}());
-
-this.SmileButtonActions = (function(){
-	return new Enum(
-		["Delete", "Enter", "BaoPiQiSmilies"]
-	);
-}());
-
 this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEvent, clickToolsButtonEvent, clickSmileEvent, smiliesHtml){
 	function Smilies(selector){
 		var smilies = this, navigator = new Drag.Navigator();
@@ -624,6 +629,7 @@ this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEv
 					});
 
 					clickSmileEvent.trigger(targetEl[0]);
+					smilies.hide();
 					return;
 				}
 
@@ -684,12 +690,6 @@ this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEv
 		'</ol>'
 	].join(""))
 ));
-
-this.MessageMode = (function(){
-	return new Enum(
-		["Voice", "Text"]
-	);
-}());
 
 this.ChatInput = (function(MessageMode, SelectImage, Global, VoiceRecorder, messageCompletedEvent, wantsToShowSmiliesEvent){
 	function ChatInput(selector){
@@ -838,7 +838,7 @@ this.ChatFooter = (function(Smilies, ChatInput, SmileButtonActions){
 				smilies.show();
 			},
 			clicksmile : function(e){
-				chatInput.insertText("[" + e.text + "]");
+				chatInput.messageCompleted("smile", "[" + e.text + "]");
 			},
 			clicktoolsbutton : function(e){
 				var action = e.action;

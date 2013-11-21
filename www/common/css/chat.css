@@ -33,6 +33,16 @@
 	text-align : left;
 	margin-top : 10px;
 }
+.chatList_message[action="smile"] > figure {
+	min-width : 60px;
+}
+.chatList_message[action="smile"] > figure > figcaption {
+	padding : 0;
+}
+.chatList_message[action="smile"] > figure > nav,
+.chatList_message[action="smile"] > figure > p {
+	display : none;
+}
 .chatList_message figure {
 	padding-left : 15px;
 	position : relative;
@@ -83,7 +93,6 @@
 	background-position : 0 -950px;
 	-webkit-animation : voiceDownloading steps(14) 1s infinite;
 }
-
 @-webkit-keyframes voiceDownloading {
 	from {
 		-webkit-transform : rotate(0deg);
@@ -92,11 +101,13 @@
 		-webkit-transform : rotate(360deg);
 	}
 }
-
 .chatList_message:not([action="text"]) figcaption > span,
 .chatList_message:not([action="voice"]) figcaption > a,
 .chatList_message:not([action="image"]) figcaption > img {
 	display : none;
+}
+.chatList_message[action="smile"] figcaption > span {
+	display : block;
 }
 .chatList_message .message_bg {
 	position : absolute;

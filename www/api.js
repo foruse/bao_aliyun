@@ -117,9 +117,9 @@ function onDeviceReady() {
             file_upload_url: "upload",
             sockets: ""
         },
-//      server_url: "http://115.28.131.52:3000",
+      server_url: "http://115.28.131.52:3000",
 //      server_url: "http://212.8.40.254:5959",
-		server_url: "http://gbksoft.com:5959",
+//		server_url: "http://gbksoft.com:5959",
 //		server_url: "http://192.168.0.103:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
@@ -872,7 +872,6 @@ function onDeviceReady() {
 						DB.from("xiao_companies AS c")
 						DB.order_by("c.id DESC");
 						API.row(function(row) {
-							alert('Last company' + JSON.stringify(row));
 							company_id = parseInt(row.id) + 1;
 
 							var company_data = {
