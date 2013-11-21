@@ -49,6 +49,12 @@
 }
 .chatList_message figcaption > span {
 	word-break : break-word;
+	vertical-align : bottom;
+	display : block;
+}
+.chatList_message span > img {
+	display : inline-block;
+	margin : 0 5px;
 }
 .chatList_message figcaption > a {
 	height : 22px;
@@ -197,75 +203,137 @@
 .chatList_praise > p > a {
 	margin : 3px;
 }
-.chatList_footer {
+.chatList > footer {
 	position : fixed;
 	left : 0;
 	bottom : 0;
 	width : 100%;
-	height : 42px;
-	padding : 5px 8px 7px 8px;
 	background-color : #564d48;
 }
-.chatList_footer * {
+.chatList > footer > * {
+	padding : 5px;
+}
+.chatList_input {
+	height : 40px;
+}
+.chatList_input * {
 	height : 100%;
+}
+.chatList_input * {
 	border : 0 none;
 }
-.chatList_footer button {
+.chatList_input button {
 	width : 30px;
 	background : transparent url(../image/width24.png) no-repeat content-box content-box;
 }
-.chatList_footer > button {
+.chatList_input > button {
 	padding : 4px 8px;
 	background-position : 0 -675px;
 }
-.chatList_footer.voice > button {
+.chatList_input.voice > button {
 	padding : 7px 5px;
 	background-position : 0 -600px;
 }
-.chatList_footer > p {
+.chatList_input > p {
 	height : 30px;
 	position : absolute;
 	left : 48px;
 	right : 75px;
 }
-.chatList_footer > p > * {
+.chatList_input > p > * {
 	width : 100%;
 }
-.chatList_footer > p > button {
+.chatList_input > p > button {
 	background-image : none;
 	background-color : #fff;
 }
-.chatList_footer > p > button.recording {
+.chatList_input > p > button.recording {
 	background-color : #e33;
 	color : #fff;
 }
-.chatList_footer:not(.voice) > p > button {
+.chatList_input:not(.voice) > p > button {
 	display : none;
 }
-.chatList_footer > p > input {
+.chatList_input > p > input {
 	padding : 5px;
 }
-.chatList_footer.voice > p > input {
+.chatList_input.voice > p > input {
 	display : none;
 }
-.chatList_footer > aside {
+.chatList_input > aside {
 	float : right;
 }
-.chatList_footer > aside > button {
+.chatList_input > aside > button {
 	padding : 5px;
 }
-.chatList_footer > aside > button:first-child {
+.chatList_input > aside > button:first-child {
 	background-position : 0 -625px;
 }
-.chatList_footer > aside > button:last-child {
+.chatList_input > aside > button:last-child {
 	background-position : 0 -650px;
 	overflow : hidden;
 }
-.chatList_footer > aside input {
+.chatList_input > aside input {
 	width : 30px;
 	height : 30px;
 	margin : -5px;
 	opacity : 0;
+}
+.chatList_smilies {
+	display : none;
+}
+.chatList_smilies .navigator {
+	height : 146px;
+	margin : 10px 0;
+	background-color : transparent;
+}
+.chatList_smilies .navigator > nav {
+	height : 120px;
+}
+.chatList_smilies .navigator > aside {
+	height : 26px;
+}
+.chatList_smilies .navigator button {
+	border : 0 none;
+	background-color : transparent;
+}
+.chatList_smilies .navigator button[idx] {
+	background-color : #fff;
+}
+.chatList_smilies li[action="BaoPiQiSmilies"] {
+	width : 200%;
+}
+.chatList_smilies li[action="BaoPiQiSmilies"] > button {
+	width : 10%;
+	min-width : 60px;
+}
+.chatList_smilies li[action="BaoPiQiSmilies"] img {
+	margin : 0 auto;
+	background-color : rgba(150, 150, 150, 0.8);
+	width : 50px;
+	height : 60px;
+}
+.chatList_smilies figcaption {
+	text-align : right;
+}
+.chatList_smilies figcaption > button {
+	width : 30px;
+	height : 30px;
+	float : left;
+	border : 3px solid #362a24;
+	margin-right : 5px;
+	background : #362a24 url(../../common/image/width24.png) 2px -1173px no-repeat content-box content-box;
+}
+.chatList_smilies figcaption > button[action="0"],
+.chatList_smilies figcaption > button[action="1"] {
+	float : none;
+	margin : 0 0 0 5px;
+}
+.chatList_smilies figcaption > button[action="0"] {
+	background-position : 1px -1193px;
+}
+.chatList_smilies figcaption > button[action="1"] {
+	background-position : 2px -1218px;
 }
 
 #mask[action="imageBox"] > article {

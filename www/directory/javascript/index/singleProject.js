@@ -91,7 +91,7 @@ this.Header = (function(focusTabEvent){
 	new Event("focustab")
 ));
 
-this.Discussion = (function(ProjectPanel, ChatList){
+this.Discussion = (function(ProjectPanel, ChatList, SmiliesStatus){
 	function Discussion(selector, infoHtml){
 		///	<summary>
 		///	单个项目。
@@ -166,12 +166,16 @@ this.Discussion = (function(ProjectPanel, ChatList){
 				// 项目信息
 				overflowPanel.find(">header>dl").innerHTML = infoHtml.render(project);
 
-				CallServer.open("getMessages", { id : projecetId, type : "project" }, function(messages){
+				CallServer.open("messagesListener", { id : projecetId, type : "project" }, function(messages){
 					// 添加聊天信息
 					messages.forEach(function(msg){
 						chatListContent.appendMessageToGroup(msg);
 					});
 				});
+			},
+			smiliesstatuschanged : function(e){
+				discussion.classList[e.smiliesStatus === SmiliesStatus.Hide ? "remove" : "add"]("showSmilies");
+				overflowPanel.bottom();
 			}
 		});
 	};
@@ -184,7 +188,8 @@ this.Discussion = (function(ProjectPanel, ChatList){
 	return Discussion.constructor;
 }(
 	this.ProjectPanel,
-	Bao.UI.Control.Chat.ChatList
+	Bao.UI.Control.Chat.ChatList,
+	Bao.UI.Control.Chat.SmiliesStatus
 ));
 
 this.TodoList = (function(ProjectPanel, AnchorList, formatKey){

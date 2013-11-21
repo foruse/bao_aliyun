@@ -89,7 +89,11 @@ this.Bao = (function(Bao){
 					ImageBox : null,
 					Message : null,
 					MessageGroup : null,
-					MessageList : null
+					MessageList : null,
+					MessageMode : null,
+					Smilies : null,
+					SmiliesButtonAction : null,
+					SmiliesStatus : null
 				}),
 				Drag : new Namespace().members({ // ui/control/drag.js
 					Navigator : null,

@@ -1,4 +1,4 @@
-﻿(function(Chat, NonstaticClass, Panel, HTML, Event, Global, Voice, set){
+﻿(function(Chat, NonstaticClass, StaticClass, Panel, HTML, Event, Enum, Global, Voice, set){
 this.Attachment = (function(){
 	function Attachment(type, from, id, _src, _base64){
 		///	<summary>
@@ -160,22 +160,67 @@ this.ActiveVoice = (function(Attachment, round, lastActiveVoice){
 	undefined
 ));
 
+this.SmileNames = (function(){
+	return new Enum({
+		YiWen : "疑问"
+	});
+}());
 
-this.Message = (function(Attachment, ImageBox, ActiveVoice, clickDoEvent, clickPraiseEvent, forEach, messageHtml, praiseHtml){
+this.EscapeSmilies = (function(SmileNames, NAMES_REGX, imgHtml){
+	function EscapeSmilies(){};
+	EscapeSmilies = new StaticClass(EscapeSmilies, "Bao.UI.Control.Chat.EscapeSmilies");
+
+	EscapeSmilies.properties({
+		escapeText : function(text){
+			var EscapeSmilies = this;
+
+			return text.replace(NAMES_REGX, function(str, name){
+				return EscapeSmilies.getImageStringByName(name) || str;
+			});
+		},
+		getImageStringByName : function(name){
+			var src = "";
+
+			SmileNames.every(function(smileName, pinyin){
+				if(smileName === name){
+					src = imgHtml.render({ pinyin : pinyin });
+					return false;
+				}
+				
+				return true;
+			});
+
+			return src;
+		}
+	});
+
+	return EscapeSmilies;
+}(
+	this.SmileNames,
+	// NAMES_REGX
+	/\[([\s\S]+?)\]/g,
+	// imgHtml
+	new HTML('<img src="../../common/image/smilies/{pinyin}.png" />')
+));
+
+this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, clickDoEvent, clickPraiseEvent, messageHtml, praiseHtml){
 	function Message(msg){
 		///	<summary>
 		///	单个信息。
 		///	</summary>
 		/// <param name="msg" type="object">信息数据</param>
-		var message = this, attachment = msg.attachment;
+		var message = this,
+		
+			text = msg.text, praise = msg.praise, attachment = msg.attachment;
 
 		this.assign({
 			attachment : attachment ? new Attachment(msg.type, attachment.from, attachment.id, attachment.src, attachment.base64) : undefined,
 			color : msg.color,
+			escapeText : EscapeSmilies.escapeText(text),
 			id : msg.id,
 			isSending : msg.isSending,
 			poster : msg.poster,
-			text : msg.text,
+			text : text,
 			time : msg.time,
 			type : msg.type
 		});
@@ -183,9 +228,11 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, clickDoEvent, clickP
 		this.combine(messageHtml.create(this));
 		
 		// 添加赞
-		forEach(msg.praise, function(userData){
-			this.addPraise(userData);
-		}, this);
+		if(praise){
+			praise.forEach(function(userData){
+				this.addPraise(userData);
+			}, this);
+		}
 
 		// 点击信息内容区域
 		this.find(">figure>figcaption").attach({
@@ -266,6 +313,8 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, clickDoEvent, clickP
 		attachment : new Attachment(),
 		// 颜色
 		color : 0,
+		// 转义之后的文本
+		escapedText : "",
 		// id
 		id : -1,
 		// 是否发自自己
@@ -322,11 +371,11 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, clickDoEvent, clickP
 	this.Attachment,
 	this.ImageBox,
 	this.ActiveVoice,
+	this.EscapeSmilies,
 	// clickDoEvent
 	new Event("clickdo"),
 	// clickPraiseEvent
 	new Event("clickpraise"),
-	jQun.forEach,
 	// messageHtml
 	new HTML([
 		'<li class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}">',
@@ -337,7 +386,7 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, clickDoEvent, clickP
 			'</aside>',
 			'<figure>',
 				'<figcaption>',
-					'<span>{text}</span>',
+					'<span>{escapeText}</span>',
 					'<a>',
 						'<button></button>',
 					'</a>',
@@ -463,7 +512,7 @@ this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumR
 	this.MessageList,
 	Date,
 	// messageAppendedEvent
-	new jQun.Event("messageappended"),
+	new Event("messageappended"),
 	// singleNumRegx
 	/^(\d)$/,
 	// messageGroupHtml
@@ -483,6 +532,7 @@ this.ChatListContent = (function(MessageGroup){
 		///	聊天列表内容区域。
 		///	</summary>
 		/// <param name="selector" type="string, element">对应元素选择器</param>
+		
 	};
 	ChatListContent = new NonstaticClass(ChatListContent, "Bao.UI.Control.Chat.ChatListContent", Panel.prototype);
 
@@ -547,13 +597,107 @@ this.ChatListContent = (function(MessageGroup){
 	this.MessageGroup
 ));
 
-this.ChatInput = (function(SelectImage, Global, VoiceRecorder, messageCompletedEvent, reader){
+this.SmiliesStatus = (function(){
+	return new Enum(
+		["Hide", "Show"]
+	);
+}());
+
+this.SmileButtonActions = (function(){
+	return new Enum(
+		["Delete", "Enter", "BaoPiQiSmilies"]
+	);
+}());
+
+this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEvent, clickToolsButtonEvent, clickSmileEvent, smiliesHtml){
+	function Smilies(selector){
+		var smilies = this, navigator = new Drag.Navigator();
+
+		navigator.content(smiliesHtml.render({ SmileNames : SmileNames }));
+		navigator.appendTo(this.find(">nav")[0]);
+
+		this.attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between(".navigator img", navigator[0]).length > 0){
+					clickSmileEvent.setEventAttrs({
+						text : targetEl.getAttribute("smilename")
+					});
+
+					clickSmileEvent.trigger(targetEl[0]);
+					return;
+				}
+
+				if(targetEl.between("figcaption>button", this).length > 0){
+					clickToolsButtonEvent.setEventAttrs({ action : targetEl.getAttribute("action") - 0 });
+					clickToolsButtonEvent.trigger(targetEl[0]);
+					return;
+				}
+			}
+		});
+
+		jQun(window).attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between(smilies[0], this).length === 0){
+					smilies.hide();
+				}
+			}
+		}, true);
+	};
+	Smilies = new NonstaticClass(Smilies, "Bao.UI.Control.Chat.Smilies", Panel.prototype);
+
+	Smilies.override({
+		hide : function(){
+			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : SmiliesStatus.Hide });
+			smiliesStatusChangedEvent.trigger(this[0]);
+
+			Panel.prototype.hide.apply(this, arguments);
+		},
+		show : function(){
+			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : SmiliesStatus.Show });
+			smiliesStatusChangedEvent.trigger(this[0]);
+
+			Panel.prototype.show.apply(this, arguments);
+		}
+	});
+
+	return Smilies.constructor;
+}(
+	Bao.UI.Control.Drag,
+	this.SmiliesStatus,
+	this.SmileNames,
+	// smiliesStatusChangedEvent
+	new Event("smiliesstatuschanged"),
+	// clickToolsButtonEvent
+	new Event("clicktoolsbutton"),
+	// clickSmileEvent
+	new Event("clicksmile"),
+	// smiliesHtml
+	new HTML([
+		'<ol>',
+			'<li action="BaoPiQiSmilies">',
+				'@for(SmileNames ->> name, pinyin){',
+					'<button>',
+						'<img class="smallRadius" smilename="{name}" src="../../common/image/smilies/{pinyin}.png" />',
+					'</button>',
+				'}',
+			'</li>',
+		'</ol>'
+	].join(""))
+));
+
+this.MessageMode = (function(){
+	return new Enum(
+		["Voice", "Text"]
+	);
+}());
+
+this.ChatInput = (function(MessageMode, SelectImage, Global, VoiceRecorder, messageCompletedEvent, wantsToShowSmiliesEvent){
 	function ChatInput(selector){
 		///	<summary>
 		///	聊天输入。
 		///	</summary>
 		/// <param name="selector" type="string">对应元素选择器</param>
-		var chatInput = this, inputClassList = chatInput.classList, selectImage = new SelectImage();
+		var chatInput = this, selectImage = new SelectImage();
 		
 		new VoiceRecorder(this.find(">p>button:first-child")[0]);
 
@@ -562,12 +706,20 @@ this.ChatInput = (function(SelectImage, Global, VoiceRecorder, messageCompletedE
 			userclick : function(e, targetEl){
 				if(targetEl.between(">button", this).length > 0){
 					// 移除或添加voice
-					inputClassList.toggle("voice");
+					var voiceMode = MessageMode.Voice;
+
+					chatInput.changeMode(chatInput.mode === voiceMode ? MessageMode.Text : voiceMode);
 					return;
 				}
 
 				if(targetEl.between(">p>input", this).length > 0){
 					targetEl.focus();
+					return;
+				}
+
+				if(targetEl.between(">aside>button:first-child", this).length > 0){
+					chatInput.changeMode(MessageMode.Text);
+					wantsToShowSmiliesEvent.trigger(chatInput[0]);
 					return;
 				}
 
@@ -582,15 +734,10 @@ this.ChatInput = (function(SelectImage, Global, VoiceRecorder, messageCompletedE
 		});
 
 		// 文本框事件
-		this.find(">p>input").attach({
+		this.getTextEl().attach({
 			keyup : function(e){
 				if(e.keyCode === 13){
-					if(this.value === "")
-						return;
-
-					chatInput.messageCompleted("text", this.value);
-					
-					this.value = "";
+					chatInput.enter();
 					return;
 				}
 			}
@@ -612,6 +759,41 @@ this.ChatInput = (function(SelectImage, Global, VoiceRecorder, messageCompletedE
 	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
 
 	ChatInput.properties({
+		changeMode : function(messageMode){
+			if(messageMode === this.mode)
+				return;
+
+			this.classList[messageMode === MessageMode.Text ? "remove" : "add"]("voice");
+			this.mode = messageMode;
+		},
+		deleteTextByLength : function(_len){
+			var textEl = this.getTextEl(), value = textEl.value;
+
+			textEl.value = _len ? value.substring(0, value.length - _len) : "";
+		},
+		enter : function(){
+			var textEl = this.getTextEl(), value = textEl.value;
+
+			if(value === "")
+				return;
+
+			this.messageCompleted("text", value);
+			textEl.value = "";
+		},
+		getTextEl : function(){
+			return this.find(">p>input");
+		},
+		insertText : function(text){
+			var input = this.find(">p>input")[0],
+			
+				value = input.value,
+
+				selectionStart = input.selectionStart;
+
+			//input.setRangeText(text);
+			input.value = value.substring(0, selectionStart) + text + value.substring(selectionStart);
+			input.selectionEnd = input.selectionStart = selectionStart + text.length;
+		},
 		messageCompleted : function(type, _text, _attachment){
 			// 当用户输入完成，提交的时候触发
 			messageCompletedEvent.setEventAttrs({
@@ -623,37 +805,82 @@ this.ChatInput = (function(SelectImage, Global, VoiceRecorder, messageCompletedE
 				}
 			});
 			messageCompletedEvent.trigger(this[0]);
-		}
+		},
+		mode : MessageMode.Text
 	});
 
 	return ChatInput.constructor;
 }(
+	this.MessageMode,
 	Bao.UI.Control.File.SelectImage,
 	Bao.Global,
 	Bao.UI.Control.File.VoiceRecorder,
 	// messageCompletedEvent
-	new jQun.Event("messagecompleted"),
-	// reader
-	new FileReader()
+	new Event("messagecompleted"),
+	// wantsToShowSmiliesEvent
+	new Event("wantstoshowsmilies")
 ));
 
-this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
+this.ChatFooter = (function(Smilies, ChatInput, SmileButtonActions){
+	function ChatFooter(selector){
+		var	smilies = new Smilies(this.find("figure")),
+
+			chatInput = new ChatInput(this.find(">nav"));
+			
+		this.attach({
+			continuousgesture : function(e){
+				e.stopPropagation();
+			},
+			fastgesture : function(e){
+				e.stopPropagation();
+			},
+			wantstoshowsmilies : function(){
+				smilies.show();
+			},
+			clicksmile : function(e){
+				chatInput.insertText("[" + e.text + "]");
+			},
+			clicktoolsbutton : function(e){
+				var action = e.action;
+
+				if(action === SmileButtonActions.Enter){
+					chatInput.enter();
+					return;
+				}
+
+				if(action === SmileButtonActions.Delete){
+					chatInput.deleteTextByLength(1);
+					return;
+				}
+			}
+		});
+	};
+	ChatFooter = new NonstaticClass(ChatFooter, "Bao.UI.Control.Chat.ChatFooter", Panel.prototype);
+
+	return ChatFooter.constructor;
+}(
+	this.Smilies,
+	this.ChatInput,
+	this.SmileButtonActions
+));
+
+this.ChatList = (function(ChatListContent, ChatFooter, listPanelHtml){
 	function ChatList(){
 		///	<summary>
 		///	聊天列表。
 		///	</summary>
-		var chatInput, chatListContent, chatList = this;
+		var chatFooter, chatListContent, chatList = this;
 		
 		this.combine(listPanelHtml.create({ isLeader : Global.loginUser.isLeader }));
 
-		chatListContent = new ChatListContent(this.find(">article")[0]);
-		chatInput = new ChatInput(this.find(">footer")[0]);
+		chatListContent = new ChatListContent(this.article[0]);
+		chatFooter = new ChatFooter(this.footer[0]);
 		
 		this.assign({
 			chatListContent : chatListContent
 		});
 		
-		chatInput.attach({
+		chatFooter.attach({
 			messagecompleted : function(e){
 				var message = set({}, e.message), poster = set({}, Global.loginUser);
 
@@ -677,22 +904,32 @@ this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
 
 	return ChatList.constructor;
 }(
-	this.ChatInput,
 	this.ChatListContent,
+	this.ChatFooter,
 	// listPanelHtml
 	new HTML([
 		'<div class="chatList">',
 			'<article class="chatList_content" isleader="{isLeader}"></article>',
-			'<footer class="chatList_footer inlineBlock">',
-				'<button></button>',
-				'<p>',
-					'<button class="smallRadius">按住说话</button>',
-					'<input class="smallRadius" type="text" placeholder="输入文字.." stayput="" />',
-				'</p>',
-				'<aside>',
+			'<footer class="chatList_footer">',
+				'<nav class="chatList_input inlineBlock">',
 					'<button></button>',
-					'<button></button>',
-				'</aside>',
+					'<p>',
+						'<button class="smallRadius">按住说话</button>',
+						'<input class="smallRadius" type="text" placeholder="输入文字.." stayput="" />',
+					'</p>',
+					'<aside>',
+						'<button></button>',
+						'<button></button>',
+					'</aside>',
+				'</nav>',
+				'<figure class="chatList_smilies">',
+					'<nav></nav>',
+					'<figcaption>',
+						'@for(3 ->> i){',
+							'<button class="smallRadius" action="{i}"></button>',
+						'}',
+					'</figcaption>',
+				'</figure>',
 			'</footer>',
 		'</div>'
 	].join(""))
@@ -703,9 +940,11 @@ Chat.members(this);
 	{},
 	Bao.UI.Control.Chat,
 	jQun.NonstaticClass,
+	jQun.StaticClass,
 	Bao.API.DOM.Panel,
 	jQun.HTML,
 	jQun.Event,
+	jQun.Enum,
 	Bao.Global,
 	Bao.API.Media.Voice,
 	jQun.set

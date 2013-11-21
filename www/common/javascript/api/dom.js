@@ -205,7 +205,7 @@ this.Panel = (function(HTMLElementList){
 
 this.TitleBarColor = (function(Enum){
 	return new Enum(
-		{ None : 0, Schedule : 1, Project : 2, Partner : 3 }
+		["None", "Schedule", "Project", "Partner"]
 	);
 }(
 	jQun.Enum

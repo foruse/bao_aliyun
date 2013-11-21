@@ -151,37 +151,6 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 				// 如果是起手势，即(touchend)
 				if(e.isLastOfGestureType && Math.abs(x) > 10){
 					navigator["focus" + (x > 0 ? "Prev" : "Next") + "Tab"]();
-
-
-					/* 以下是根据滑动幅度来调整focustab
-					
-					var width = navigator.width();
-
-					left = Math.round(left / width);
-
-					// left小于0，则说明还可以继续滑动
-					if(left < 0){
-						// 内容宽度除以容器宽度，得到最大值
-						var max = Math.ceil(contentEl.width() / width);
-
-						left = left * -1;
-
-						// 超过最大值
-						if(left >= max){
-							// 内容本身要占1个长度单位，所以最大值要减去这个1
-							left = max - 1;
-						}
-					}
-					// left>=0，则说明，已经到了起始点
-					else {
-						left = 0;
-					}
-
-					//contentEl.setCSSPropertyValue("left", (left * -100) + "%");
-					navigator.focusTab(left);
-					
-					*/
-
 					return;
 				}
 
@@ -226,6 +195,9 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 
 				idx = this.currentTabIndex;
 				focusEl = tabEl.find('button[idx="' + idx + '"]');
+
+				if(focusEl.length === 0)
+					return;
 			}
 
 			var classList = focusEl.classList;
@@ -248,7 +220,7 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 			///	</summary>
 			var tabEl = this.tabEl;
 			
-			tabEl.innerHTML = tabItemsHtml.render({ length : Math.ceil(this.contentEl.width() / this.width()) || 0 });
+			tabEl.innerHTML = tabItemsHtml.render({ length : Math.ceil(this.contentEl.width() / this.width()) || 1 });
 			this.buttonEls = tabEl.find("button");
 			this.focusTab(0);
 		},

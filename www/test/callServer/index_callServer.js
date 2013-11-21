@@ -38,7 +38,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	CallServer.save([
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
 		["getLoginInfo",		"url",										""],
-		["getMessages",			new Text("url?id={id}&type={type}"),		"", true],
+		["messagesListener",	new Text("url?id={id}&type={type}"),		"", true],
 		["getPartnerGroups",	"url",										"", true],
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
 		["getProjects",			"url",										"", true],
@@ -226,16 +226,26 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			return data;
 		},
-		getMessages : function(data){
+		messagesListener : function(data, params){
 			var id = Bao.Global.loginUser.id;
 
-			data = Index.SingleProject.getMessages();
+			if(params.id !== Infinity){
+				data = Index.SingleProject.getMessages();
 
-			data.forEach(function(dt){
-				var poster = dt.poster;
+				data.forEach(function(dt){
+					var poster = dt.poster;
 
-				poster.isLoginUser = poster.id === id;
-			});
+					poster.isLoginUser = poster.id === id;
+				});
+			}
+			else {
+				var random = Bao.Test.DummyData.Generate.Number.random;
+
+				data = {
+					id : random(555),
+					messagesCount  : random(10)
+				};
+			}
 
 			return data;
 		},

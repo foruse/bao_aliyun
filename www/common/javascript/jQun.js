@@ -492,18 +492,37 @@ this.Namespace = (function(){
 	return Namespace.constructor;
 }());
 
-this.Enum = (function(freeze){
+this.Enum = (function(set, every, freeze){
 	function Enum(data){
 		///	<summary>
 		///	枚举。
 		///	</summary>
-		this.assign(data);
+		if(data instanceof Array){
+			forEach(data, function(val, i){
+				this[val] = i;
+			}, this);
+		}
+		else {
+			set(this, data);
+		}
+
 		freeze(this);
 	};
-	Enum = new NonstaticClass(Enum, "Enum");
+	Enum = new jQun(Enum);
+
+	Enum.properties({
+		every : function(handler, _this){
+			return every(this, handler, _this);
+		},
+		forEach : function(handler, _this){
+			return forEach(this, handler, _this);
+		}
+	});
 
 	return Enum.constructor;
 }(
+	jQun.set,
+	jQun.every,
 	Object.freeze
 ));
 
