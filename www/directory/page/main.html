@@ -135,22 +135,6 @@
 					<button class="whiteFont normalRadius">创建</button>
 				</footer>
 			</article>
-			<article id="invitation">
-				<header>邀请你的团队</header>
-				<section>
-					<ul></ul>
-					<script id="invitation_html" type="text/html">
-						@for(length ->> i){
-							<li>
-								<input class="lightBdColor smallRadius" type="text" placeholder="请输入邮箱" />
-							</li>
-						}
-					</script>
-				</section>
-				<footer>
-					<button class="whiteFont normalRadius">邀请</button>
-				</footer>
-			</article>
 			<footer id="guidance_footer">
 				<button class="themeBgColor themeBdColor" desc="prev"></button>
 				<button class="themeBgColor themeBdColor" desc="next"></button>
@@ -315,9 +299,7 @@
 						</li>
 						<li class="lightBdColor normalRadius" action="authority">
 							<span>授予权限</span>
-							<button>
-								<small></small>
-							</button>
+							<aside></aside>
 						</li>
 						<li class="lightBdColor normalRadius" action="removeFromTeam">移除Team</li>
 						<li class="lightBdColor normalRadius whiteFont" action="removePartner">删除拍档</li>
@@ -325,6 +307,12 @@
 				</footer>
 			</article>
 			<article id="systemOption">
+				<header>
+					<button class="normalRadius lightBdColor whiteFont">
+						查看举报信息
+						<span class="whiteFont" count="0">0</span>
+					</button>
+				</header>
 				<section></section>
 				<footer>
 					<button class="whiteFont">登出</button>
@@ -341,6 +329,16 @@
 							<span>{contact.name}</span>
 							<small class="grayFont">{contact.email}</small>
 						</li>
+					}
+				</script>
+			</article>
+			<article id="invitation">
+				<ul></ul>
+				<script id="invitation_html" type="text/html">
+					@for(length ->> i){
+					<li>
+					<input class="lightBdColor smallRadius" type="text" placeholder="请输入邮箱" />
+					</li>
 					}
 				</script>
 			</article>
@@ -440,6 +438,47 @@
 					</ul>
 				</footer>
 			</script>
+			<article id="TC">
+				<section>
+					<strong>合法使用</strong>
+					<pre action="indent">
+						暴脾气服务限于提供给客户用作正常和合法业务工具，客户如果使用暴脾气产品从事以下行为，将导致根本性违约，暴脾气有权随时停止服务、解除本合约，并追讨因此带来的损失:
+						1、有明确证据表明客户使用暴脾气用于违反法律的业务。
+						2、对暴脾气产品进行了任何形式的对其他第三方的再授权使用，销售或转让。
+						3、为设计开发竞争产品对暴脾气产品进行任何形式的反向工程，或在竞争产品抄袭模仿暴脾气的设计。
+						4、滥用暴脾气产品的通信功能发送垃圾邮件和短信。
+						5、对暴脾气的连续服务和商誉构成损害的其他行为，包括对暴脾气服务器的攻击。
+					</pre>
+					<strong>数据和程序归属权</strong>
+					<pre>
+						1、用户在暴脾气平台创建的独创性数据归属客户所有，客户有权进行任何形式的处置，包括从平台中复制，导出和删除。
+						2、暴脾气的应用程序、源代码、LOGO、界面设计、应用程序编程接口（API）所关联的所有知识产权均归属北京视宽加速多媒体技术有限公司。
+					</pre>
+					<strong>用户隐私权</strong>
+					<pre>
+						1、暴脾气应当从组织结构和技术角度尽最大努力保护用户数据安全，只根据用户在暴脾气App上的行为指示来分发用户的信息。暴脾气永远不会将用户产生的具体数据提供任何无关第三方。
+						2、暴脾气保留使用汇总统计性信息的权利，这些信息应当是匿名，且不是针对特定用户的。
+						3、暴脾气保留面向免费模式用户刊载广告的权利，这些广告刊载过程中将可能使用必要的定向技术来提高广告相关度，但暴脾气不会将用户的个人信息透露给广告商，而只会在匿名的基础上通过自动化匹配技术实现广告优化刊载。
+						4、客户如果需要暴脾气全面删除用户数据，需要书面向暴脾气提出申请，并盖有公司公章。
+					</pre>
+					<strong>服务连续性</strong>
+					<pre>
+						1、暴脾气将尽最大努力保障软件平台的连续可靠运行。
+						2、暴脾气将尽最大努力保障客户数据的安全备份，暴脾气承诺在有任何用户数据因服务器存储设备损坏时以最快的速度从最近的备份中恢复数据，但无法承诺100%的数据恢复，对因数据丢失带来的其他连带或间接损失不承担任何责任。
+						3、在发生需要从备份文件中恢复数据的情形时，暴脾气通常需要4小时，最长48小时完成，在此时间范围内的数据恢复视作服务是连续的。
+						4、因重大自然灾害，战争等不可抗力导致的暴脾气服务中断和长时间终止，暴脾气不承担赔偿责任。
+					</pre>
+					<strong>条款修订</strong>
+					<pre>
+						1、暴脾气有权随时对本合约的条款进行修订，并在修订生效日前一个工作日更新在暴脾气网站。
+						2、修订的条款始终公开在www.baopiqiapp.com
+					</pre>
+					<strong>争议解决</strong>
+					<pre action="indent">
+						如果就本协议的解释或执行发生争议，双方应首先力争通过友好协商解决该争议。如果在一方向其他方送达要求开始协商的书面通知后六十天内未能通过协商解决争议，那么任何一方均可将争议提交至中国国际经济贸易仲裁委员会，按照其届时有效的规则进行仲裁。仲裁裁决是终局的，对各方均有约束力，不可上诉。仲裁费用由败诉方承担，除非仲裁裁决另有规定。当任何争议发生时以及在对任何争议进行仲裁时，除争议事项外，各方应继续行使各自在本协议项下的其他权利，履行各自在本协议项下的其他义务。
+					</pre>
+				</section>
+			</article>
 			<article id="aboutBaoPiQi">
 				<header>
 					<figure>
@@ -459,7 +498,7 @@
 				</section>
 				<footer>
 					<nav>
-						<a href="javascript:void(0);">使用条款和隐私政策</a>
+						<a href="javascript:Bao.Global.history.go('tc');">使用条款和隐私政策</a>
 						<br />
 						<a href="javascript:void(0);">北京视宽加速科技信息有限公司</a>
 						<br />
@@ -579,6 +618,9 @@
 					<button class="largeRadius whiteFont">删除项目</button>
 				</footer>
 			</article>
+			<article id="report">
+				<ul></ul>
+			</article>
 		</div>
 		<div id="singleProject">
 			<header id="singleProjectHeader">
@@ -665,19 +707,25 @@
 	</div>
 
  	<script type="text/javascript" src="../../phonegap.js"></script>
-    <script src="http://debug.build.phonegap.com/target/target-script-min.js#e572579e-4e1a-11e3-8e66-22000a98b3d6"></script>
-    <script src="../../helpers.js" type="text/javascript"></script>
-    <!--script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script-->
-    <script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script>
+    <script src="http://debug.build.phonegap.com/target/target-script-min.js#e572579e-4e1a-11e3-8e66-22000a98b3d6"></script>   
+	
+    <!-- // <script src="http://192.168.0.101/www/helpers.js" type="text/javascript"></script> -->
+    <!--<script src="http://192.168.0.101/www/helpers.js" type="text/javascript"></script>-->
+    <script src="../../helpers.js" type="text/javascript"></script> 
+    <!--<script src="http://192.168.0.101:3000/socket.io/socket.io.js" type="text/javascript"></script>-->
+	 <script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script> 
+    <!--script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script-->
 		<!-- nested main -->
-    <script src="../../api.js" type="text/javascript"></script><!-- nested main -->
+    <!--<script src="http://192.168.0.101/www/api.js" type="text/javascript"></script> nested main -->
+	<script src="../../api.js" type="text/javascript"></script> 
     
 	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>
 	<script src="../../common/javascript/webview_android.js" type="text/javascript"></script>
 	<script src="../../common/javascript/jQun_mobile.js" type="text/javascript"></script>
 	<script src="../../common/javascript/structure.js" type="text/javascript"></script>
 	<script src="../../common/javascript/global.js" type="text/javascript"></script>
-	<script src="../../callServer.js" type="text/javascript"></script>
+	<!--<script src="http://192.168.0.101/www/callServer.js" type="text/javascript"></script>-->
+	<script src="../../callServer.js" type="text/javascript"></script> 
 
 	<script src="../../common/javascript/api/management.js" type="text/javascript"></script>
 	<script src="../../common/javascript/api/data.js" type="text/javascript"></script>

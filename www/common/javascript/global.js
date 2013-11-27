@@ -1,36 +1,18 @@
-﻿(function(Bao, StaticClass){
-this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
+﻿(function(Bao, StaticClass, Enum){
+this.Permission = (function(){
+	return new Enum(
+		["None", "Leader"]
+	);
+}());
+
+this.Global = (function(Fixed, Management, HTML, Permission, windowEl){
 	function Global(){
 		///	<summary>
 		///	全局类，用于存储页面中的一些全局属性。
 		///	</summary>
 		var Global = this;
 
-		jQun(window).attach({
-			touchstart : function(e, targetEl){
-				if(targetEl.between('input[type="text"], input[type="password"], textarea').length > 0){
-					/*
-					if(targetEl.getAttribute("stayput") != null)
-						return;
-
-					var input = targetEl[0];
-
-					if(inputs.indexOf(input) === -1){
-						targetEl.blur();
-						targetEl.attach(inputEvents);
-						inputs.push(input);
-					}
-					*/
-					return;
-				}
-
-				var el = jQun(document.activeElement);
-
-				if(el.between('input[type="text"], input[type="password"], textarea').length > 0){
-					el.blur();
-					return;
-				}
-			},
+		windowEl.attach({
 			appload : function(){
 				// 初始化历史记录
 				var history = new Management.History();
@@ -59,8 +41,12 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 				history.go("login").tryLogin();
 			},
 			login : function(e){
-				Global.loginUser = e.loginUser;
-				//Global.history.go("discussion").fill(1);
+				var loginUser = e.loginUser, isLeader = loginUser.isLeader;
+
+				Global.loginUser = loginUser;
+				jQun(".main").setAttribute("ls", Permission[isLeader ? "Leader" : "None"]);
+
+				// Global.history.go("report");
 			}
 		});
 	};
@@ -76,27 +62,14 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 	Bao.UI.Fixed,
 	Bao.API.Management,
 	jQun.HTML,
-	jQun.Browser,
-	[],
-	// inputEvents
-	{
-		focus : function(){
-			jQun(this).classList.add("inputing");
-		},
-		blur : function(){
-			jQun(this).classList.remove("inputing");
-		},
-		keyup : function(e){
-			if(e.keyCode === 13){
-				jQun(this).classList.remove("inputing");
-			}
-		}
-	}
+	this.Permission,
+	jQun(window)
 ));
 
 Bao.members(this);
 }.call(
 	{},
 	Bao,
-	jQun.StaticClass
+	jQun.StaticClass,
+	jQun.Enum
 ));

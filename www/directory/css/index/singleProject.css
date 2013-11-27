@@ -57,9 +57,6 @@
 	bottom : 52px;
 	overflow : visible;
 }
-#discussion.showSmilies {
-	bottom : 248px;
-}
 #discussion > section {
 	min-height : 100%;
 }

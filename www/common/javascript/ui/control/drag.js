@@ -1,4 +1,4 @@
-﻿(function(Drag, NonstaticClass, StaticClass, Panel, HTML, Event, IntervalTimer){
+﻿(function(Drag, NonstaticClass, StaticClass, Enum, Panel, HTML, Event, IntervalTimer){
 this.Scroll = (function(scrollPanel, body){
 	function Scroll(){
 		///	<summary>
@@ -149,7 +149,7 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 				x += gestureOffsetX;
 
 				// 如果是起手势，即(touchend)
-				if(e.isLastOfGestureType && Math.abs(x) > 10){
+				if(e.isLastOfGestureType && Math.abs(x) > 0){
 					navigator["focus" + (x > 0 ? "Prev" : "Next") + "Tab"]();
 					return;
 				}
@@ -162,7 +162,7 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 
 	Navigator.properties({
 		buttonEls : undefined,
-		content : function(htmlStr){
+		content : function(htmlStr, _len){
 			///	<summary>
 			///	设置导航的主体内容。
 			///	</summary>
@@ -172,7 +172,7 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 			contentEl.innerHTML = htmlStr;
 			contentEl.setCSSPropertyValue("left", 0);
 
-			this.resetTab();
+			this.resetTab(_len);
 		},
 		contentEl : undefined,
 		currentTabIndex : 0,
@@ -214,13 +214,17 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 			focusTabEvent.setEventAttrs({ tabIndex : idx });
 			focusTabEvent.trigger(focusEl[0]);
 		},
-		resetTab : function(){
+		resetTab : function(_len){
 			///	<summary>
 			///	设置选项卡。
 			///	</summary>
 			var tabEl = this.tabEl;
+
+			if(_len === undefined){
+				_len = Math.ceil(this.contentEl.width() / this.width()) || 1;
+			}
 			
-			tabEl.innerHTML = tabItemsHtml.render({ length : Math.ceil(this.contentEl.width() / this.width()) || 1 });
+			tabEl.innerHTML = tabItemsHtml.render({ length : _len });
 			this.buttonEls = tabEl.find("button");
 			this.focusTab(0);
 		},
@@ -255,12 +259,56 @@ this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelH
 	].join(""))
 ));
 
+this.SwitchStatus = (function(){
+	return new Enum(
+		["Off", "On"]
+	);
+}());
+
+this.Switch = (function(Navigator, SwitchStatus, statusChangedEvent, switchHtml){
+	function Switch(){
+		var swt = this;
+
+		this.classList.add("switch");
+		this.content(switchHtml.render(), 2);
+
+		this.attach({
+			continuousgesture : function(e){
+				// 这里应该增加允许滑动的最大、最小值	
+			},
+			focustab : function(e){
+				var status = e.tabIndex;
+
+				swt.status = status;
+
+				statusChangedEvent.setEventAttrs({ status : status });
+				statusChangedEvent.trigger(e.target);
+			}
+		}, true);
+	};
+	Switch = new NonstaticClass(Switch, "Bao.UI.Control.Drag.Switch", Navigator.prototype);
+
+	Switch.properties({
+		status : SwitchStatus.Off
+	});
+
+	return Switch.constructor;
+}(
+	this.Navigator,
+	this.SwitchStatus,
+	// statusChangedEvent
+	new Event("statuschanged"),
+	// switchHtml
+	new HTML('<button></button>')
+));
+
 Drag.members(this);
 }.call(
 	{},
 	Bao.UI.Control.Drag,
 	jQun.NonstaticClass,
 	jQun.StaticClass,
+	jQun.Enum,
 	Bao.API.DOM.Panel,
 	jQun.HTML,
 	jQun.Event,

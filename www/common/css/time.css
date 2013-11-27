@@ -8,7 +8,7 @@
 	/* 手机性能问题
 	-webkit-animation : stretchCalendar 500ms steps(14) 1;
 	*/
-	height : 285px;
+	height : 290px;
 }
 @-webkit-keyframes stretchCalendar {
 	from {
@@ -74,8 +74,8 @@
 	text-align : center;
 }
 .calendar_month > p {
-	height : 40px;
-	line-height : 40px;
+	height : 45px;
+	line-height : 45px;
 	font-size : 26px;
 	background-color : #ddd;
 }

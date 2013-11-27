@@ -45,8 +45,7 @@ this.Loader = (function(Storage, Index, HTML){
 			return new Index.Guidance.Self("#guidance");
 		},
 		invitation : function(){
-			this.load("guidance");
-			return new Index.Guidance.Invitation("#invitation", new HTML(jQun("#invitation_html")));
+			return new Index.Secondary.Invitation("#invitation", new HTML(jQun("#invitation_html")));
 		},
 		load : function(name){
 			var pagePanel = this.pageStorage.get(name);
@@ -76,6 +75,9 @@ this.Loader = (function(Storage, Index, HTML){
 		qrCode : function(){
 			return new Index.Deep.QRCode("#QRCode", new HTML(jQun("#QRCode_html")));
 		},
+		report : function(){
+			return new Index.Deep.Report("#report");
+		},
 		schedule : function(){
 			this.load("spp");
 			return new Index.SPP.Schedule("#schedule", new HTML(jQun("#spp_scheduleSign_html")));
@@ -95,6 +97,9 @@ this.Loader = (function(Storage, Index, HTML){
 		systemOption : function(){
 			return new Index.Secondary.SystemOption("#systemOption");
 		},
+		tc : function(){
+			return new Index.Deep.TC("#TC");
+		}, 
 		todo : function(){
 			return new Index.Deep.Todo("#todo", new HTML(jQun("#todo_info_html")));
 		},

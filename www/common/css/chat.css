@@ -1,21 +1,21 @@
 ﻿.chatList_content li {
 	margin-top : 10px;
 }
-.chatList_content li[ispostbyself="true"] {
+.chatList_content div[ispostbyself="true"] {
 	text-align : right;
 }
-.chatList_content li[ispostbyself="true"] > aside {
+.chatList_content div[ispostbyself="true"] > aside {
 	float : right;
 }
-.chatList_content li[ispostbyself="true"] figure {
+.chatList_content div[ispostbyself="true"] figure {
 	padding : 0 15px 0 0;
 }
-.chatList_content li[ispostbyself="true"] .message_bg {
+.chatList_content div[ispostbyself="true"] .message_bg {
 	right : 15px;
 	left : 0;
 	opacity : 0.5;
 }
-.chatList_content li[ispostbyself="true"] .message_bg > span {
+.chatList_content div[ispostbyself="true"] .message_bg > span {
 	border-left : 12px solid transparent;
 	border-right : 0 none;
 	left : auto;
@@ -46,6 +46,7 @@
 .chatList_message figure {
 	padding-left : 15px;
 	position : relative;
+	z-index : 1;
 	min-width : 125px;
 	max-width : 80%;
 	text-align : left;
@@ -216,6 +217,7 @@
 }
 .chatList > footer {
 	position : fixed;
+	z-index : 2;
 	left : 0;
 	bottom : 0;
 	width : 100%;
@@ -370,4 +372,8 @@
 	padding : 0;
 	position : static;
 	display : block !important;
+}
+
+.showSmilies {
+	bottom : 248px !important;
 }

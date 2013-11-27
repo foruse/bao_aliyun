@@ -5,7 +5,8 @@
         Models = new StaticClass(Models);
         Models.properties({
             addProject: function(params, complete) {
-                params = jQun.set({descr: params.desc}, params);
+				// alert(jQun)
+				params = jQun.set({descr: params.desc}, params);
                 delete params.desc;
                 Mdls.Project.create({
                     project: jQun.except(params, ["users"]),
@@ -61,14 +62,18 @@
             //  copy of messagesListener
 
             getMessages: function(params, complete) {
-
+				
                 console.log("_______________________getMessages");
+				console.log(params);
+				console.log('params');
                 // if(params.projectId === -1){
                 if(params.projectId === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
+					alert('zxc1');
 
                 }else{
+					console.log('inichat');
                     switch (params.type) {
                         case "project":
     //                        Mdls.ProjectChat.chat_init(params.id, complete);
@@ -98,12 +103,14 @@
             //  copy of messagesListener
 
             messagesListener: function(params, complete) {
-                console.log("_______________________getMessages");
+				console.log("_______________________messagesListener");
+				// console.log(params);
+				// console.log('params');
                 // if(params.projectId === -1){
-                if(params.projectId === window.Infinity){
+                if(params.id === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
-
+					console.log("init_notif")
                 }else{
                     switch (params.type) {
                         case "project":
@@ -404,8 +411,26 @@
                    console.log(data)
                    complete(data)
                });
-            }
-            
+            },
+			invitation : function(params, complete){
+				Mdls.Invites.send_invite(params.emails.split(','), complete);
+			},
+			assignPermissions : function(params, complete) {
+				var id = params.id;
+				Mdls.User.set_permission(id, 1, complete);
+			},
+			removePermissions : function(params, complete) {
+				var id = params.id;
+				Mdls.User.set_permission(id, 0, complete);
+			},
+			getCountOfReports: function(params, complete) {
+				Mdls.AbusedMessages.get_abused_messages_count(function(count) {
+					complete({count: count});
+				});
+			},
+			reportMessage: function(params, complete) {
+				Mdls.AbusedMessages.report_abuse(null, params.messageId, complete);
+			}
         });
 
 

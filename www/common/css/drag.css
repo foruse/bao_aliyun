@@ -62,3 +62,33 @@
 .navigator > aside button.focused {
 	background-color : #000;
 }
+
+.switch {
+	height : 100%;
+	padding : 1px 0 1px 1px;
+	background-color : #fff;
+	padding : 3px 1px;
+	border : 0 none;
+}
+.switch > nav {
+	width : 200%;
+	height : 100%;
+	border : 1px solid #fff;
+	outline : 1px solid #8e8e8e;
+	background : -webkit-linear-gradient(left, #fff 50%, #d52c33 50%) content-box content-box;
+}
+.switch > nav > button {
+	position : relative;
+	z-index : 2;
+	display : block;
+	padding : 3px 0;
+	width : 20px;
+	height : 100%;
+	box-sizing : content-box;
+	border : 1px solid #fff;
+	margin : -4px auto;
+	background-color : #6c6c6c;
+}
+.switch > aside {
+	display : none;
+}

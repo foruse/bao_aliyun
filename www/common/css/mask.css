@@ -26,8 +26,8 @@
 	height : 50px;
 	line-height : 50px;
 	font-size : 15px;
-	white-space : normal;
 	overflow : hidden;
+	text-overflow : ellipsis;
 }
 .confirm > footer {
 	margin-top : 15px;
@@ -53,4 +53,8 @@
 	left : 50%;
 	right : auto;
 	bottom : auto;
+}
+
+.alert > footer > button[action="cancle"] {
+	display : none;
 }

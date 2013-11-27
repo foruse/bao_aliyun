@@ -1,4 +1,4 @@
-﻿(function(Chat, NonstaticClass, StaticClass, Panel, HTML, Event, Enum, Global, Voice, set){
+﻿(function(Chat, NonstaticClass, StaticClass, Panel, CallServer, HTML, Event, Enum, Global, Voice, set){
 this.SmileNames = (function(){
 	return new Enum({
 		YiWen : "疑问"
@@ -223,7 +223,74 @@ this.EscapeSmilies = (function(SmileNames, NAMES_REGX, imgHtml){
 	new HTML('<img src="../../common/image/smilies/{pinyin}.png" />')
 ));
 
-this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, clickDoEvent, clickPraiseEvent, messageHtml, praiseHtml){
+this.ReportConfirm = (function(Confirm, Alert){
+	function ReportConfirm(messageId){
+		var reportConfirm = this;
+
+		this.attach({
+			clickbutton : function(e){
+				if(e.maskButton.action !== "ok")
+					return;
+
+				CallServer.open("reportMessage", { messageId : messageId }, function(){
+					new Alert("已成功举报！").show();
+				});
+			}
+		});
+
+		this.show();
+	};
+	ReportConfirm = new NonstaticClass(ReportConfirm, "Bao.UI.Control.Chat.ReportConfirm", Confirm.prototype);
+
+	ReportConfirm.override({
+		text : "确定要举报此条消息吗？"
+	});
+
+	return ReportConfirm.constructor;
+}(
+	Bao.UI.Control.Mask.Confirm,
+	Bao.UI.Control.Mask.Alert
+));
+
+this.MessageContentArea = (function(ActiveVoice){
+	function MessageContentArea(selector, attachment){
+		this.attach({
+			userclick : function(e, targetEl){
+				// 查看图片
+				if(targetEl.between(">img", this).length > 0){
+					// new ImageBox(targetEl.src);
+					return;
+				}
+
+				var voicePanel = targetEl.between(">a", this);
+
+				// 播放语音，同一个按钮只会进入这里一次，因为之后会被ActiveVoice类给截断冒泡
+				if(voicePanel.length > 0){
+					new ActiveVoice(voicePanel[0], attachment);
+					return;
+				}
+			}
+		});
+	};
+	MessageContentArea = new NonstaticClass(MessageContentArea, "Bao.UI.Control.Chat.MessageContentArea", Panel.prototype);
+
+	return MessageContentArea.constructor;
+}(
+	this.ActiveVoice
+));
+
+/*
+this.MessageAffiliateArea = (function(){
+	function MessageAffiliateArea(selector){
+	
+	};
+	MessageAffiliateArea = new NonstaticClass(MessageAffiliateArea, "Bao.UI.Control.Chat.MessageAffiliateArea", Panel.prototype);
+
+	return MessageAffiliateArea.constructor;
+}());
+*/
+
+this.Message = (function(Attachment, ImageBox, MessageContentArea, EscapeSmilies, ReportConfirm, clickDoEvent, clickPraiseEvent, messageHtml, praiseHtml){
 	function Message(msg){
 		///	<summary>
 		///	单个信息。
@@ -246,6 +313,8 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 
 		this.combine(messageHtml.create(this));
 		
+		new MessageContentArea(this.find(">figure>figcaption")[0], this.attachment);
+
 		// 添加赞
 		if(praise){
 			praise.forEach(function(userData){
@@ -253,22 +322,9 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 			}, this);
 		}
 
-		// 点击信息内容区域
-		this.find(">figure>figcaption").attach({
-			userclick : function(e, targetEl){
-				// 查看图片
-				if(targetEl.between(">img", this).length > 0){
-					// new ImageBox(targetEl.src);
-					return;
-				}
-
-				var voicePanel = targetEl.between(">a", this);
-
-				// 播放语音，同一个按钮只会进入这里一次，因为之后会被ActiveVoice类给截断冒泡
-				if(voicePanel.length > 0){
-					new ActiveVoice(voicePanel[0], message.attachment);
-					return;
-				}
+		this.attach({
+			longpress : function(){
+				new ReportConfirm(message.id);
 			}
 		});
 
@@ -365,6 +421,9 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 			
 			this.removeAttribute("praisedbyself");
 		},
+		resetId : function(id){
+			this.id = id;
+		},
 		sendCompleted : function(messageId, _attachmentId){
 			this.isSending = false;
 
@@ -387,15 +446,16 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 }(
 	this.Attachment,
 	this.ImageBox,
-	this.ActiveVoice,
+	this.MessageContentArea,
 	this.EscapeSmilies,
+	this.ReportConfirm,
 	// clickDoEvent
 	new Event("clickdo"),
 	// clickPraiseEvent
 	new Event("clickpraise"),
 	// messageHtml
 	new HTML([
-		'<li class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}">',
+		'<div class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}">',
 			'<aside>',
 				'<p class="normalAvatarPanel" userid="{poster.id}">',
 					'<img src="{poster.avatar}" />',
@@ -423,7 +483,7 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 					'<span></span>',
 				'</p>',
 			'</figure>',
-		'</li>'
+		'</div>'
 	].join("")),
 	// praiseHtml
 	new HTML([
@@ -433,13 +493,16 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 	].join(""))
 ));
 
-this.MessageList = (function(List, Message){
-	function MessageList(){
+this.MessageList = (function(List, Message, itemHtml){
+	function MessageList(listContainerOl){
 		///	<summary>
 		///	信息列表。
 		///	</summary>
+		this.assign({
+			listContainerOl : listContainerOl
+		});
 	};
-	MessageList = new NonstaticClass(MessageList, "Bao.UI.Control.Chat.MessageList", List.prototype);
+	MessageList = new NonstaticClass(MessageList, "Bao.UI.Control.Chat.MessageList", Panel.prototype);
 
 	MessageList.override({
 		push : function(msg){
@@ -447,17 +510,26 @@ this.MessageList = (function(List, Message){
 			///	添加信息。
 			///	</summary>
 			/// <param name="msg" type="object">信息数据</param>
-			var message = new Message(msg);
+			var item = itemHtml.create(), message = new Message(msg);
+
+			message.appendTo(item[0]);
+			item.appendTo(this.listContainerOl);
 
 			List.prototype.push.call(this, message);
 			return message;
 		}
 	});
 
+	MessageList.properties({
+		listContainerOl : undefined
+	});
+
 	return MessageList.constructor;
 }(
 	jQun.List,
-	this.Message
+	this.Message,
+	// itemHtml
+	new HTML('<li></li>')
 ));
 
 this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumRegx, messageGroupHtml){
@@ -502,7 +574,7 @@ this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumR
 		);
 
 		this.assign({
-			messageList : new MessageList()
+			messageList : new MessageList(this.find(">dd>ol")[0])
 		});
 	};
 	MessageGroup = new NonstaticClass(MessageGroup, "Bao.UI.Control.Chat.MessageGroup", Panel.prototype);
@@ -514,8 +586,6 @@ this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumR
 			///	</summary>
 			/// <param name="message" type="object">信息数据</param>
 			var msg = this.messageList.push(message);
-
-			msg.appendTo(this.find(">dd>ol")[0]);
 
 			messageAppendedEvent.setEventAttrs({ message : msg });
 			messageAppendedEvent.trigger(this[0]);
@@ -549,7 +619,6 @@ this.ChatListContent = (function(MessageGroup){
 		///	聊天列表内容区域。
 		///	</summary>
 		/// <param name="selector" type="string, element">对应元素选择器</param>
-		
 	};
 	ChatListContent = new NonstaticClass(ChatListContent, "Bao.UI.Control.Chat.ChatListContent", Panel.prototype);
 
@@ -653,17 +722,35 @@ this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEv
 
 	Smilies.override({
 		hide : function(){
-			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : SmiliesStatus.Hide });
+			var hideStatus = SmiliesStatus.Hide;
+
+			if(this.status === hideStatus)
+				return;
+
+			this.status = hideStatus;
+
+			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : hideStatus });
 			smiliesStatusChangedEvent.trigger(this[0]);
 
 			Panel.prototype.hide.apply(this, arguments);
 		},
 		show : function(){
-			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : SmiliesStatus.Show });
+			var showStatus = SmiliesStatus.Show;
+
+			if(this.status === showStatus)
+				return;
+
+			this.status = showStatus;
+
+			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : showStatus });
 			smiliesStatusChangedEvent.trigger(this[0]);
 
 			Panel.prototype.show.apply(this, arguments);
 		}
+	});
+
+	Smilies.properties({
+		status : SmiliesStatus.Hide
 	});
 
 	return Smilies.constructor;
@@ -935,6 +1022,106 @@ this.ChatList = (function(ChatListContent, ChatFooter, listPanelHtml){
 	].join(""))
 ));
 
+this.ChatListPanel = (function(ChatList, Global, Confirm, SmiliesStatus){
+	function ChatListPanel(from, messageAppendedMethodName, overflowPanel){
+		var chatListPanel = this;
+
+		this.assign({
+			from : from,
+			overflowPanel : overflowPanel
+		});
+
+		this.attach({
+			messageappended : function(e){
+				var message = e.message;
+
+				overflowPanel.bottom();
+
+				if(!message.isSending)
+					return;
+
+				var type = message.type, attachment = message.attachment,
+
+					params = {
+						attachment : attachment,
+						text : message.text,
+						type : type
+					};
+
+				attachment.resetFrom(from);
+
+				params[from + "Id"] = chatListPanel.fromId;
+
+				CallServer.open(messageAppendedMethodName, params, function(data){
+					if(type === "voice"){
+						attachment.resetFrom(from);
+						attachment.resetId(data.id);
+					}
+
+					message.resetId(data.id);
+				});
+			},
+			clickpraise : function(e){
+				var message = e.message, loginUser = Global.loginUser;
+
+				CallServer.open("praise", {
+					messageId : message.id,
+					userId : loginUser.id,
+					type : from
+				}, function(){
+					message.addPraise(loginUser);
+				})
+			},
+			clickdo : function(e){
+				var sendTodo = Global.history.go("sendTodo");
+
+				sendTodo.selectUser(e.message.poster);
+				sendTodo.resetProjectId(chatListPanel.fromId);
+			},
+			smiliesstatuschanged : function(e){
+				overflowPanel.parent().classList[e.smiliesStatus === SmiliesStatus.Hide ? "remove" : "add"]("showSmilies");
+				overflowPanel.bottom();
+			}
+		});
+	};
+	ChatListPanel = new NonstaticClass(ChatListPanel, "Bao.UI.Control.Chat.ChatListPanel", ChatList.prototype);
+
+	ChatListPanel.properties({
+		from : "",
+		fromId : -1,
+		overflowPanel : undefined,
+		reset : function(fromId, color){
+			var oldFromId = this.fromId, from = this.from,
+			
+				chatListContent = this.chatListContent;
+
+			if(oldFromId !== -1){
+				CallServer.open("stopMessagesListener", { id : oldFromId, type : from });
+				return;
+			}
+
+			this.fromId = fromId;
+
+			this.overflowPanel.setTop(0);
+			chatListContent.clearAllMessages();
+			chatListContent.resetColor(color);
+
+			CallServer.open("messagesListener", { id : fromId, type : from }, function(messages){
+				// 添加聊天信息
+				messages.forEach(function(msg){
+					chatListContent.appendMessageToGroup(msg);
+				});
+			});
+		}
+	});
+
+	return ChatListPanel.constructor;
+}(
+	this.ChatList,
+	Bao.Global,
+	this.SmiliesStatus
+));
+
 Chat.members(this);
 }.call(
 	{},
@@ -942,6 +1129,7 @@ Chat.members(this);
 	jQun.NonstaticClass,
 	jQun.StaticClass,
 	Bao.API.DOM.Panel,
+	Bao.CallServer,
 	jQun.HTML,
 	jQun.Event,
 	jQun.Enum,

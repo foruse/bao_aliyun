@@ -67,7 +67,15 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["removeProject",		new Text("url?projectId={projectId}"),		""],
 		["editAccount",			new Text("url?positon={positon}&avatar={avatar}&phoneNum={phoneNum}&email={email}&password={password}"), ""],
 		["archiveProject",		new Text("url?porjectId={projectId}"),		""],
-		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""]
+		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""],
+		["assignPermissions",	new Text("url?id={id}"),					""],
+		["removePermissions",	new Text("url?id={id}"),					""],
+		["getReportedInfo",		"",											""],
+		["deleteReport",		new Text("url?id={id}"),											""],
+		["ignoreReport",		new Text("url?id={id}"),											""],
+		["getCountOfReports",	"",											""],
+		["stopMessagesListener",new Text("url?id={id}&from={from}"),		""],
+		["reportMessage",		new Text("url?messageId={messageId}"),		""]
 	], allHandlers);
 
 	return CallServer;
@@ -252,8 +260,6 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		login : function(data){
 			var user = Index.Common.getUser();
 
-			user.isLeader = true;
-
 			data = {
 				user : user,
 				status : 0
@@ -344,6 +350,37 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		},
 		registerUserInfo : function(data){
 			data = Index.Common.getUser();
+
+			return data;
+		},
+		invitation : function(data, params){
+			data = {
+				status : -1,
+				error : params.emails.split(",")[0] + "已存在"
+			};
+
+			return data;
+		},
+		getReportedInfo : function(data){
+			var info = [];
+
+			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(5), function(){
+				info.push({
+					reporter : Index.Common.getUser(),
+					source : Bao.Test.DummyData.Generate.String.random(),
+					time : Bao.Test.DummyData.Generate.Number.random(99999),
+					message : Index.SingleProject.getMessage()
+				});
+			}, this);
+
+			data = info;
+
+			return data;
+		},
+		getCountOfReports : function(data){
+			data = {
+				count : Bao.Test.DummyData.Generate.Number.random(99)
+			};
 
 			return data;
 		}

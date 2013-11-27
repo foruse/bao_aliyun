@@ -78,31 +78,31 @@ this.SingleProject = (function(){
 	SingleProject = new StaticClass(null, "Bao.Test.DummyData.SingleProject");
 
 	SingleProject.properties({
+		getMessage : function(_date){
+			return {
+				id : Number.id(),
+				text : String.random(),
+				poster : Number.random(20) > 10 ? Common.getUser() : Bao.Global.loginUser,
+				attachment : Common.getAttachment(),
+				praise : Common.getUsers(Number.random(20)),
+				time : _date ? _date.getTime() : new Date() - 0,
+				type : ["text", "voice", "image"][Number.random(2)]
+			};
+		},
 		getMessages : function(){
 			var msgs = [], date = new Date(), maxDate = new Date() - 5000;
 
 			date.setDate(date.getDate() - 2);
 
 			jQun.forEach(Number.random(15), function(){
-				var loginUser = Bao.Global.loginUser, poster = Number.random(20) > 10 ? Common.getUser() : loginUser;
-
 				date = new Date(date.getTime() + Number.random(86400000 / 5));
 
 				if(date > maxDate){
 					date = maxDate;
 				}
 
-				msgs.push({
-					id : Number.id(),
-					text : String.random(),
-					poster : poster,
-					attachment : Common.getAttachment(),
-					praise : Common.getUsers(Number.random(20)),
-					time : date.getTime(),
-					type : this[Number.random(2)]
-				});
-
-			}, ["text", "voice", "image"]);
+				msgs.push(SingleProject.getMessage(date));
+			});
 
 			return msgs;
 		},

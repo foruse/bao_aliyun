@@ -102,7 +102,7 @@
 #businessCard dl[desc="userinfo"] li[info="phoneNum"] {
 	background-position : 5px -132px;
 }
-#businessCard aside {
+#businessCard section aside {
 	width : 90px;
 	height : 90px;
 	margin-left : 20px;
@@ -138,6 +138,8 @@
 	margin-bottom : 5px;
 	background-color : #fff;
 	padding : 10px 15px;
+}
+#businessCard > footer li:not([action="authority"]), .main[ls="0"] #businessCard > footer li[action="authority"] {
 	display : none;
 }
 #businessCard li[action="removePartner"] {
@@ -147,7 +149,7 @@
 #businessCard > footer span {
 	display : inline-block;
 }
-#businessCard > footer button {
+#businessCard > footer aside, #businessCard > footer button {
 	float : right;
 }
 #businessCard li[action="sendTodo"] > button {
@@ -158,9 +160,38 @@
 	border : 0 none;
 	background-color : #ce312d;
 }
+#businessCard > footer aside {
+	width : 46px;
+	height : 24px;
+}
+#businessCard .navigator button {
+	float : none;
+}
 
 #systemOption {
 	padding : 10px 15px;
+}
+#systemOption > header {
+	margin-bottom : 16px;
+}
+#systemOption > header > button {
+	height : 40px;
+	background-color : #00b0d7;
+	width : 100%;
+	font-size : 15px;
+}
+#systemOption > header span {
+	display : inline-block;
+	width : 20px;
+	height : 20px;
+	border-radius : 20px;
+	line-height : 20px;
+	background-color : #cd312d;
+	vertical-align : baseline;
+	margin-left : 5px;
+}
+#systemOption > header span[count="0"] {
+	display : none;
 }
 #systemOption > footer {
 	text-align : center;
@@ -180,7 +211,9 @@
 #systemOption li[key="qrCode"]{
 	display : none;
 }
-
+.main[ls="0"] #systemOption > header {
+	display : none;
+}
 
 #systemContacts {
 	padding : 10px 0;
@@ -213,4 +246,26 @@
 }
 #titleBar button[action="systemContacts_done"] {
 	background : #cc2c27 url(../../../common/image/width24.png) no-repeat 7px -118px;
+}
+
+#invitation > ul {
+	padding : 10px 15px;
+	min-height : 100%;
+}
+#invitation > ul > li {
+	height : 35px;
+	margin-bottom : 10px;
+	padding : 0 20px 0 40px;
+	background : url(../../../common/image/width24.png) 10px -496px no-repeat;
+}
+#invitation > ul > li:last-child {
+	margin-bottom : 0;
+}
+#invitation > ul input {
+	height : 100%;
+	width : 100%;
+	padding : 10px;
+}
+#invitation > ul > input:focus {
+	border : 1px solid #6f6966;
 }

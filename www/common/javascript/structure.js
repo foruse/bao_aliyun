@@ -34,16 +34,21 @@ this.Bao = (function(Bao){
 					Account : null,
 					Archive : null,
 					ArchivedProjectView : null,
+					GlobalSearch : null,
 					ProjectManagement : null,
 					QRCode : null,
+					SendTodo : null,
+					Report : null,
+					TC : null,
 					Todo : null
 				}),
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
 					CreateFirstProject : null,
+					Demo : null,
 					Footer : null,
-					Invitation : null,
 					Login : null,
 					LoginInfoManagement : null,
+					Self : null,
 					UploadAvatar : null
 				}),
 				SPP : new Namespace({ // ../../directoy/javascript/index/home.js
@@ -56,18 +61,20 @@ this.Bao = (function(Bao){
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,
 					BusinessCard : null,
-					SingleProject : null,
+					Invitation : null,
 					SystemContacts : null,
 					SystemOption : null
 				}),
 				SingleProject : new Namespace({ // ../../directoy/javascript/index/singleProject.js
 					Discussion : null,
 					Header : null,
+					ProjectPanel : null,
 					Self : null,
 					TodoList : null
 				})
 			})
 		}),
+		Permission : null,
 		Test : new Namespace().members({ 
 			DummyData : new Namespace().members({ // ../../test/dummyData
 				Generate : new Namespace().members({
@@ -85,9 +92,12 @@ this.Bao = (function(Bao){
 				Chat : new Namespace().members({ // ui/control/chat.js
 					Attachment : null,
 					ChatInput : null,
+					ChatList : null,
+					ChatListPanel : null,
 					ChatListContent : null,
 					ImageBox : null,
 					Message : null,
+					MessageContentArea : null,
 					MessageGroup : null,
 					MessageList : null,
 					MessageMode : null,
@@ -97,7 +107,9 @@ this.Bao = (function(Bao){
 				}),
 				Drag : new Namespace().members({ // ui/control/drag.js
 					Navigator : null,
-					Scroll : null
+					Scroll : null,
+					Switch : null,
+					SwitchStatus : null
 				}),
 				File : new Namespace().members({ // ui/control/file.js
 					Attachment : null,

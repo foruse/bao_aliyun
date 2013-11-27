@@ -91,91 +91,28 @@ this.Header = (function(focusTabEvent){
 	new Event("focustab")
 ));
 
-this.Discussion = (function(ProjectPanel, ChatList, SmiliesStatus){
+this.Discussion = (function(ProjectPanel, ChatListPanel, SmiliesStatus){
 	function Discussion(selector, infoHtml){
 		///	<summary>
 		///	单个项目。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="infoHtml" type="jQun.HTML">信息模板</param>
-		var projecetId, discussion = this,
+		var chatListPanel, discussion = this,
 			
-			chatList = new ChatList(), overflowPanel = new OverflowPanel(this.find(">section")[0]);
+			overflowPanel = new OverflowPanel(this.find(">section")[0]);
 
-		chatList.appendTo(overflowPanel.find(">figure")[0]);
+		chatListPanel = new ChatListPanel("project", "addComment", overflowPanel);
 
-		chatList.attach({
-			messageappended : function(e){
-				var message = e.message;
-
-				overflowPanel.bottom();
-
-				if(!message.isSending)
-					return;
-
-				var type = message.type, attachment = message.attachment;
-
-				attachment.resetFrom("project");
-
-				CallServer.open(
-					"addComment",
-					{
-						projectId : projecetId,
-						attachment : attachment,
-						text : message.text,
-						type : type
-					},
-					function(data){
-						if(type !== "voice")
-							return;
-
-						attachment.resetFrom("project");
-						attachment.resetId(data.id);
-					}
-				);
-			},
-			clickpraise : function(e){
-				var message = e.message, loginUser = Global.loginUser;
-
-				CallServer.open("praise", {
-					messageId : message.id,
-					userId : loginUser.id,
-					type : "project"
-				}, function(){
-					message.addPraise(loginUser);
-				})
-			},
-			clickdo : function(e){
-				var sendTodo = Global.history.go("sendTodo");
-
-				sendTodo.selectUser(e.message.poster);
-				sendTodo.resetProjectId(projecetId);
-			}
-		});
+		chatListPanel.appendTo(overflowPanel.find(">figure")[0]);
 
 		this.attach({
 			loadproject : function(e){
-				var project = e.project, chatListContent = chatList.chatListContent;
+				var project = e.project;
 
-				projecetId = project.id;
-				overflowPanel.setTop(0);
-
-				chatListContent.clearAllMessages();
-				// 重置颜色
-				chatListContent.resetColor(project.color);
-				// 项目信息
 				overflowPanel.find(">header>dl").innerHTML = infoHtml.render(project);
 
-				CallServer.open("messagesListener", { id : projecetId, type : "project" }, function(messages){
-					// 添加聊天信息
-					messages.forEach(function(msg){
-						chatListContent.appendMessageToGroup(msg);
-					});
-				});
-			},
-			smiliesstatuschanged : function(e){
-				discussion.classList[e.smiliesStatus === SmiliesStatus.Hide ? "remove" : "add"]("showSmilies");
-				overflowPanel.bottom();
+				chatListPanel.reset(project.id, project.color);
 			}
 		});
 	};
@@ -188,7 +125,7 @@ this.Discussion = (function(ProjectPanel, ChatList, SmiliesStatus){
 	return Discussion.constructor;
 }(
 	this.ProjectPanel,
-	Bao.UI.Control.Chat.ChatList,
+	Bao.UI.Control.Chat.ChatListPanel,
 	Bao.UI.Control.Chat.SmiliesStatus
 ));
 

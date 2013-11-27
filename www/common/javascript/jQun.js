@@ -1,375 +1,55 @@
-/*
- *  类库名称：jQun
- *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.6.6
- *  本次修改：增加枚举类。
- *  开发浏览器信息：firefox 20.0+ 、 chrome 26.0+、基于webkit的手机浏览器
+﻿/*
+ *  类库名称 ：jQun
+ *  中文释义 ：骥群(聚集在一起的千里马)
+ *  文档状态 ：1.0.7.0
+ *  本次修改 ：本类库结构大改及优化。
+ *  开发浏览器信息 ：firefox 20.0+ 、 chrome 26.0+、基于webkit的手机浏览器
  */
 
-(function(Object, Array, Function){
-var jQun,
+// jQun的定义
+(function(){
 
-	NonstaticClass, StaticClass,
-
-	List, ElementPropertyCollection,
-
-	HTMLElementList,
-
-	emptyAttrCollection,
-
-	undefined,
-
-	forEach;
-
-
-jQun = (function(create, defineProperty, argRegx, argListRegx, every, toNative){
-	function jQun(_selector){
+this.jQun = (function(create){
+	function jQun(cstctor, _ParentClass){
 		///	<summary>
-		///	返回一个通过指定选择器筛选出来的元素集合。
+		///	生成一个继承指定父类的新生类。
 		///	</summary>
-		///	<param name="_selector" type="String, HTMLElement, Array">选择器、html、dom元素或dom元素数组。</param>
+		///	<param name="cstctor" type="Function">新生类的构造函数。</param>
+		///	<param name="_ParentClass" type="jQun">需要继承的父类。</param>
 		var callee = arguments.callee;
 
-		if(callee.isInstanceOf(this, callee)){
-			return this.creator.apply(this, arguments);
-		}
-
-		return new HTMLElementList(_selector);
-	};
-	jQun.prototype = create(null, { constructor : { value : jQun, writable : true } });
-
-	with(jQun){
-		// 为jQun添加常用方法
-		every({
-			define : function(obj, name, value, _descriptor){
-				///	<summary>
-				///	将属性添加到对象或修改现有属性的特性。
-				///	</summary>
-				///	<param name="obj" type="Object">对其添加或修改属性的对象。</param>
-				///	<param name="name" type="String">需要添加或修改的属性名。</param>
-				///	<param name="value" type="*">需要添加或修改的属性值。</param>
-				///	<param name="_descriptor" type="Object">需要添加或修改的属性描述符。</param>
-				var isAccessor, desc = { configurable : true, writable : true };
-
-				if(!_descriptor){
-					_descriptor = {};
-				}
-
-				isAccessor = !!(_descriptor.gettable || _descriptor.settable);
-
-				for(var d in _descriptor){
-					desc[d] = _descriptor[d];
-				}
-
-				if(isAccessor){
-					desc.get = value.get;
-					desc.set = value.set;
-
-					delete desc["writable"];
-				}
-				else{
-					desc.value = value;
-				}
-
-				defineProperty(obj, name, desc);
-				return obj;
-			},
-			defineProperties : function(obj, properties, _descriptor){
-				///	<summary>
-				///	将一个或多个属性添加到对象，并/或修改现有属性的特性。
-				///	</summary>
-				///	<param name="obj" type="Object">对其添加或修改属性的对象。</param>
-				///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
-				///	<param name="_descriptor" type="Object">需要添加或修改的属性描述符。</param>
-				forEach(properties, function(value, name){
-					define(obj, name, value, _descriptor);
-				});
-
-				return obj;
-			},
-			every : every,
-			except : function(obj, properties){
-				///	<summary>
-				///	返回一个不包含所有指定属性名称的对象。
-				///	</summary>
-				///	<param name="obj" type="Object">需要排除属性的对象。</param>
-				///	<param name="properties" type="Array">需要排除的属性名称数组。</param>
-				var result = set({}, obj);
-
-				forEach(properties, function(name){
-					delete result[name];
-				});
-				return result;
-			},
-			forEach : function(obj, fn, _this){
-				///	<summary>
-				///	遍历对象的所有枚举成员并对其执行指定操作函数。
-				///	</summary>
-				///	<param name="obj" type="Object">需要遍历的对象。</param>
-				///	<param name="fn" type="Function">指定操作的函数。</param>
-				///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
-				every(obj, function(){
-					fn.apply(this, arguments);
-					return true;
-				}, _this);
-			},
-			isInstanceOf : function(obj, constructor){
-				///	<summary>
-				///	判断对象是否为指定类构造函数的一级实例（即直接由该类实例化）。
-				///	</summary>
-				///	<param name="obj" type="Object">用于判断的实例对象。</param>
-				///	<param name="constructor" type="Function">指定的类。</param>
-				return Object.getPrototypeOf(obj) === constructor.prototype;
-			},
-			isPropertyOf : function(obj, property){
-				///	<summary>
-				///	检测对象自己是否具有指定属性或访问器。
-				///	</summary>
-				///	<param name="obj" type="Object">一个可能具有指定属性或访问器的对象。</param>
-				///	<param name="property" type="*">用于检测的属性或访问器。</param>
-				var names = ["value", "get", "set"];
-
-				return !Object.getOwnPropertyNames(obj).every(function(name){
-					return every(3, function(i){
-						return this[names[i]] !== property;
-					}, this(obj, name));
-				}, Object.getOwnPropertyDescriptor);
-			},
-			merge : function(obj, args){
-				///	<summary>
-				///	深度合并对象中所有项，返回一个新的对象。
-				///	</summary>
-				///	<param name="obj" type="Object, Array">需要合并的项。</param>
-				///	<param name="args" type="Object, Array">其他需要合并的项列表。</param>
-				if(obj instanceof Array)
-					return obj.concat.apply(obj, toArray(arguments, 1));
-
-				var result = {}, another = arguments[1];
-
-				nesting(arguments, function(value, name){
-					result[name] = typeof value === "object" ? merge(value) : value;
-				});
-				return result;
-			},
-			nesting : function(obj, fn, _this){
-				///	<summary>
-				///	将对象中的每个枚举元素进行再枚举并执行指定操作（双重嵌套的forEach）。
-				///	</summary>
-				///	<param name="obj" type="Object">需要嵌套枚举并执行指定操作的对象（一般为json）。</param>
-				///	<param name="fn" type="Function">指定的操作函数。</param>
-				///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
-				if(fn === undefined){
-					fn = fn.bind(_this);
-				}
-
-				forEach(obj, function(o){
-					forEach(o, fn);
-				});
-			},
-			set : function(obj, properties){
-				///	<summary>
-				///	添加或修改指定对象的属性。
-				///	</summary>
-				///	<param name="obj" type="Object">需要添加或修改属性的对象。</param>
-				///	<param name="properties" type="Object">需要添加或修改的属性集合。</param>
-				forEach(properties, function(val, name){
-					obj[name] = val;
-				});
-
-				return obj;
-			},
-			toArray : function(obj, _start, _end){
-				///	<summary>
-				///	将类似数组的对象转化为数组。
-				///	</summary>
-				///	<param name="obj" type="Object">需要转化为数组的对象。</param>
-				///	<param name="_start" type="Number">进行截取，截取的起始索引。</param>
-				///	<param name="_start" type="Number">需要截取的末尾索引。</param>
-				return [].slice.call(obj, _start || 0, _end);
-			},
-			toString : toNative
-		}, function(value, name, methods){
-			var define = methods.define;
-
-			define(value, "toString", toNative);
-			define(jQun, name, value);
-
-			return true;
-		});
-
-		// 定义类的基础方法
-		defineProperties(prototype, {
-			assign : function(properties){
-				///	<summary>
-				///	给该类的属性赋值。
-				///	</summary>
-				///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
-				forEach(properties, function(val, name){
-					if(val === undefined)
-						return;
-
-					this[name] = val;
-				}, this);
-
-				return this;
-			},
-			base : function(args){
-				///	<summary>
-				///	子类访问父类。
-				///	</summary>
-				///	<param name="args" type="*">子类的参数列表。</param>
-				var ParentClass = this.parentClass();
-
-				if(ParentClass.constructor === jQun)
-					return;
-
-				var arg = {}, parentList = [], localeArg = arguments;
-
-				forEach(arguments.callee.caller.argumentList, function(name, i, argumentList){
-					arg["_" + name] = arg[name] = localeArg[i];
-				});
-				
-				while(ParentClass){
-					if(ParentClass === NonstaticClass.prototype)
-						break;
-
-					parentList.unshift(ParentClass);
-					ParentClass = ParentClass.parentClass();
-				}
-
-				forEach(parentList, function(parent){
-					var transferArgList = [], constructor = parent.constructor;
-
-					forEach(constructor.argumentList, function(name){
-						transferArgList.push(arg[name]);
-					});
-
-					constructor.source.apply(this, transferArgList);
-				}, this);
-			},
-			creator : function(_constructor, _name, _ParentClass){
-				///	<summary>
-				///	派生出一个类。
-				///	</summary>
-				///	<param name="_constructor" type="Function">源构造函数。</param>
-				///	<param name="_name" type="String">构造函数的名称。</param>
-				///	<param name="_ParentClass" type="jQun">需要继承的父类</param>
-				var Pseudo, argumentList = [];
-
-				if(!_constructor){
-					_constructor = this.empty;
-				}
-
-				if(!_name){
-					_name = _constructor.name || "AnonymousClass";
-				}
-
-				argumentList.push.apply(
-					argumentList,
-					_constructor.toString().match(argListRegx)[1].match(argRegx)
-				);
-
-				Pseudo = Object.getOwnPropertyDescriptor(
-					new Function([
-						"return {",
-							"get '" + _name + "' (){\r",
-								"if(typeof this.base === 'function'){\r",
-									"this.base.apply(this, arguments);\r",
-								"}\r",
-								"return arguments.callee.source.apply(this, arguments);\r",
-							"}",
-						" };"
-					].join(""))(),
-					_name
-				).get;
-
-				this.properties.call(Pseudo, {
-					argumentList : argumentList,
-					source : _constructor,
-					toString : toNative
-				});
-
-				Pseudo.prototype = create(
-					_ParentClass || this.ownClass(),
-					{
-						constructor : {
-							value : Pseudo,
-							writable : true,
-							configurable : true
-						}
-					}
-				);
-				return Pseudo.prototype;
-			},
-			empty : function(){ },
-			isChildOf : function(AncestorClass){
-				///	<summary>
-				///	判断该类是否是指定类的子孙类。
-				///	</summary>
-				///	<param name="AncestorClass" type="jQun, Function">指定的类，或指定类的构造函数。</param>
-				return this instanceof AncestorClass.constructor;
-			},
-			override : function(properties, _descriptor){
-				///	<summary>
-				///	重写一个或多个属性的值。
-				///	</summary>
-				///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
-				///	<param name="_descriptor" type="Object">被添加或修改属性的描述符。</param>
-				return this.properties(properties, _descriptor);
-			},
-			ownClass : function(){
-				///	<summary>
-				///	获取自身类。
-				///	</summary>
-				return this.constructor.prototype;
-			},
-			parentClass : function(){
-				///	<summary>
-				///	获取父类。
-				///	</summary>
-				return Object.getPrototypeOf(this.ownClass());
-			},
-			properties : function(properties, _descriptor){
-				///	<summary>
-				///	将一个或多个属性添加到该类，并/或修改现有属性的特性。
-				///	</summary>
-				///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
-				///	<param name="_descriptor" type="Object">被添加或修改属性的描述符。</param>
-				return defineProperties(this, properties, _descriptor);
-			},
-			toString : function(){
-				///	<summary>
-				///	对象字符串。
-				///	</summary>
-				return "[object jQun]";
+		with(callee){
+			if(!isInstanceOf(this, callee)){
+				return new HTMLElementList(arguments[0]);
 			}
-		});
 
-		
-		// (2013.08.20)目前有些浏览器不支持，如：手机QQ浏览器，手机百度浏览器
-		try {
-			define(
-				prototype,
-				"__proto__",
-				Object.getOwnPropertyDescriptor(Object.prototype, "__proto__"),
-				{ settable : true, gettable : true }
-			);
+			cstctor.toString = toString;
 		}
-		catch(e){}
+		
+		return cstctor.prototype = create(
+			_ParentClass || this.getOwnClass(),
+			{
+				constructor : { value : cstctor, writable : true, configurable : true }
+			}
+		);
 	}
 
 	return jQun;
 }(
-	Object.create,
-	Object.defineProperty,
-	// argRegx
-	/([^\s\,]+)/g,
-	// argListRegx
-	/function[^\(]*\(([^\))]*)/,
-	// every
-	function(obj, fn, _this){
+	Object.create
+));
+
+}.call(
+	window
+));
+
+// 基本方法和属性的定义
+(function(jQun, Object, Array, undefined){
+
+this.every = (function(){
+	return function(obj, fn, _this){
 		///	<summary>
-		///	确定对象的所有枚举成员是否满足指定的测试。
+		///	确定对象的所有成员是否满足指定的测试。
 		///	</summary>
 		///	<param name="obj" type="Object">需要测试成员的对象。</param>
 		///	<param name="fn" type="Function">用于测试对象成员的测试函数。</param>
@@ -395,104 +75,325 @@ jQun = (function(create, defineProperty, argRegx, argListRegx, every, toNative){
 			return false;
 		}
 		return true;
-	},
-	// toNative
-	function(){
+	};
+}());
+
+this.forEach = (function(every){
+	return function(obj, fn, _this){
 		///	<summary>
-		///	使函数方法在控制台里看起来像本地代码。
+		///	遍历对象的所有成员并对其执行指定操作函数。
+		///	</summary>
+		///	<param name="obj" type="Object">需要遍历的对象。</param>
+		///	<param name="fn" type="Function">指定操作的函数。</param>
+		///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
+		every(obj, function(){
+			fn.apply(this, arguments);
+			return true;
+		}, _this);
+
+		return obj;
+	};
+}(
+	this.every
+));
+
+this.define = (function(forEach, defineProperty){
+	return function(obj, name, value, _descriptor){
+		///	<summary>
+		///	将属性添加到对象或修改现有属性的特性。
+		///	</summary>
+		///	<param name="obj" type="Object">对其添加或修改属性的对象。</param>
+		///	<param name="name" type="String">需要添加或修改的属性名。</param>
+		///	<param name="value" type="*">需要添加或修改的属性值。</param>
+		///	<param name="_descriptor" type="Object">需要添加或修改的属性描述符。</param>
+		var desc = { configurable : true, writable : true };
+
+		forEach(_descriptor, function(d){
+			desc[d] = _descriptor[d];
+		});
+
+		if(_descriptor && !!(_descriptor.gettable || _descriptor.settable)){
+			desc.get = value.get;
+			desc.set = value.set;
+
+			delete desc["writable"];
+		}
+		else{
+			desc.value = value;
+		}
+
+		defineProperty(obj, name, desc);
+		return obj;
+	};
+}(
+	this.forEach,
+	Object.defineProperty
+));
+
+this.defineProperties = (function(forEach, define){
+	return function(obj, properties, _descriptor){
+		///	<summary>
+		///	将一个或多个属性添加到对象，并/或修改现有属性的特性。
+		///	</summary>
+		///	<param name="obj" type="Object">对其添加或修改属性的对象。</param>
+		///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
+		///	<param name="_descriptor" type="Object">需要添加或修改的属性描述符。</param>
+		forEach(properties, function(value, name){
+			define(obj, name, value, _descriptor);
+		});
+
+		return obj;
+	};
+}(
+	this.forEach,
+	this.define
+));
+
+this.set = (function(forEach){
+	return function(obj, properties){
+		///	<summary>
+		///	添加或修改指定对象的属性。
+		///	</summary>
+		///	<param name="obj" type="Object">需要添加或修改属性的对象。</param>
+		///	<param name="properties" type="Object">需要添加或修改的属性集合。</param>
+		forEach(properties, function(val, name){
+			obj[name] = val;
+		});
+
+		return obj;
+	};
+}(
+	this.forEach
+));
+
+this.except = (function(set, forEach){
+	return function(obj, properties){
+		///	<summary>
+		///	返回一个不包含所有指定属性名称的对象。
+		///	</summary>
+		///	<param name="obj" type="Object">需要排除属性的对象。</param>
+		///	<param name="properties" type="Array">需要排除的属性名称数组。</param>
+		var result = set({}, obj);
+
+		forEach(properties, function(name){
+			delete result[name];
+		});
+		return result;
+	}
+}(
+	this.set,
+	this.forEach
+));
+
+this.isInstanceOf = (function(getPrototypeOf){
+	return function(obj, constructor){
+		///	<summary>
+		///	判断对象是否为指定类构造函数的一级实例（即直接由该类实例化）。
+		///	</summary>
+		///	<param name="obj" type="Object">用于判断的实例对象。</param>
+		///	<param name="constructor" type="Function">指定的类。</param>
+		return getPrototypeOf(obj) === constructor.prototype;
+	};
+}(
+	Object.getPrototypeOf
+));
+
+this.isPropertyOf = (function(every, getOwnPropertyDescriptor){
+	return function(obj, property){
+		///	<summary>
+		///	检测对象自己是否具有指定属性或访问器。
+		///	</summary>
+		///	<param name="obj" type="Object">一个可能具有指定属性或访问器的对象。</param>
+		///	<param name="property" type="*">用于检测的属性或访问器。</param>
+		return !every(getOwnPropertyNames(obj), function(name){
+			return every(this, function(n){
+				return this[n] !== property;
+			}, getOwnPropertyDescriptor(obj, name));
+		}, ["value", "get", "set"]);
+	};
+}(
+	this.every,
+	Object.getOwnPropertyDescriptor
+));
+
+this.nesting = (function(forEach){
+	return function(obj, fn, _this){
+		///	<summary>
+		///	将对象中的每个枚举元素进行再枚举并执行指定操作（双重嵌套的forEach）。
+		///	</summary>
+		///	<param name="obj" type="Object">需要嵌套枚举并执行指定操作的对象（一般为json）。</param>
+		///	<param name="fn" type="Function">指定的操作函数。</param>
+		///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
+		if(fn === undefined){
+			fn = fn.bind(_this);
+		}
+
+		forEach(obj, function(o){
+			forEach(o, fn);
+		});
+
+		return obj;
+	};
+}(
+	this.forEach
+));
+
+this.toArray = (function(slice){
+	return function(obj, _start, _end){
+		///	<summary>
+		///	将类似数组的对象转化为数组。
+		///	</summary>
+		///	<param name="obj" type="Object">需要转化为数组的对象。</param>
+		///	<param name="_start" type="Number">进行截取，截取的起始索引。</param>
+		///	<param name="_start" type="Number">需要截取的末尾索引。</param>
+		return slice.call(obj, _start || 0, _end);
+	};
+}(
+	Array.prototype.slice
+));
+
+this.merge = (function(nesting, toArray){
+	return function(obj, args){
+		///	<summary>
+		///	深度合并对象中所有项。
+		///	</summary>
+		///	<param name="obj" type="Object, Array">需要合并的项。</param>
+		///	<param name="args" type="Object, Array">其他需要合并的项列表。</param>
+		if(obj instanceof Array)
+			return obj.concat.apply(obj, toArray(arguments, 1));
+
+		var result = {}, another = arguments[1];
+
+		nesting(arguments, function(value, name){
+			result[name] = typeof value === "object" ? this(value) : value;
+		}, arguments.callee);
+		return result;
+	};
+}(
+	this.nesting,
+	this.toArray
+));
+
+this.toString = (function(){
+	return function(){
+		///	<summary>
+		///	使函数在控制台里看起来像本地代码。
 		///	</summary>
 		var name = this.name;
 
-		return "function" + (name ? " " + name : "") + "() { [native code] }";
+		if(name){
+			return "function " + name + "() { [native code] }";
+		}
+
+		return "function (){ [native code] }";
+	};
+}());
+
+this.prototype = (function(prototype, forEach, define, defineProperties, getPrototypeOf){
+	defineProperties(prototype, {
+		assign : function(properties){
+			///	<summary>
+			///	给该类的属性赋值。
+			///	</summary>
+			///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
+			/// <returns>this</returns>
+			forEach(properties, function(val, name){
+				if(val === undefined)
+					return;
+
+				this[name] = val;
+			}, this);
+
+			return this;
+		},
+		getOwnClass : function(){
+			///	<summary>
+			///	获取自身类。
+			///	</summary>
+			return this.constructor.prototype;
+		},
+		getParentClass : function(){
+			///	<summary>
+			///	获取父类。
+			///	</summary>
+			return getPrototypeOf(this.getOwnClass());
+		},
+		isChildOf : function(AncestorClass){
+			///	<summary>
+			///	判断该类是否是指定类的子孙类。
+			///	</summary>
+			///	<param name="AncestorClass" type="jQun, Function">指定的类，或指定类的构造函数。</param>
+			return this instanceof AncestorClass.constructor;
+		},
+		override : function(properties, _descriptor){
+			///	<summary>
+			///	重写一个或多个属性的值。
+			///	</summary>
+			///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
+			///	<param name="_descriptor" type="Object">被添加或修改属性的描述符。</param>
+			this.properties(properties, _descriptor);
+
+			return this;
+		},
+		properties : function(properties, _descriptor){
+			///	<summary>
+			///	将一个或多个属性添加到该类，并/或修改现有属性的特性。
+			///	</summary>
+			///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
+			///	<param name="_descriptor" type="Object">被添加或修改属性的描述符。</param>
+			defineProperties(this, properties, _descriptor);
+
+			return this;
+		},
+		toString : function(){
+			///	<summary>
+			///	对象字符串。
+			///	</summary>
+			return "[class " + this.constructor.name + "]";
+		}
+	});
+
+	// (2013.08.20)目前有些浏览器不支持，如：手机QQ浏览器，手机百度浏览器
+	try {
+		define(
+			prototype,
+			"__proto__",
+			Object.getOwnPropertyDescriptor(Object.prototype, "__proto__"),
+			{ settable : true, gettable : true }
+		);
 	}
+	catch(e){}
+
+	return prototype;
+}(
+	Object.create(null, { constructor : { value : jQun, writable : true } }),
+	this.forEach,
+	this.define,
+	this.defineProperties,
+	Object.getPrototypeOf
 ));
 
-forEach = jQun.forEach;
-
-this.NonstaticClass = NonstaticClass = (function(){
-	function NonstaticClass(_constructor, _name, _ParentClass){
-		///	<summary>
-		///	派生出一个非静态类。
-		///	</summary>
-		///	<param name="_constructor" type="Function">源构造函数。</param>
-		///	<param name="_name" type="String">构造函数的名称。</param>
-		///	<param name="_ParentClass" type="Function">需要继承的父类</param>
-		return new jQun(_constructor, _name, _ParentClass || this.ownClass());
-	};
-	NonstaticClass = new jQun(NonstaticClass, "NonstaticClass");
-
-	NonstaticClass.override({
-		toString : function(){
-			///	<summary>
-			///	对象字符串。
-			///	</summary>
-			return "[NonstaticClass " + this.constructor.name + "]";
-		}
-	});
-
-	return NonstaticClass.constructor;
-}());
-
-this.StaticClass = StaticClass = (function(){
-	function StaticClass(_constructor, _name, _properties, _descriptor){
-		///	<summary>
-		///	派生出一个静态类。
-		///	</summary>
-		///	<param name="_constructor" type="Function">源构造函数。</param>
-		///	<param name="_name" type="String">构造函数的名称。</param>
-		///	<param name="_properties" type="Object">类的属性。</param>
-		///	<param name="_descriptor" type="Object, Array">被添加属性的描述符。</param>
-		var NewClass = new jQun(_constructor, _name, this.ownClass());
-
-		NewClass.properties({
-			base : undefined
-		});
-
-		if(_properties){
-			NewClass.properties(_properties, _descriptor);
+with(this){
+	forEach(this, function(property, name){
+		if(name !== "prototype"){
+			property.toString = toString;
 		}
 
-		if(_constructor)
-			_constructor.call(NewClass);
+		this[name] = property;
+	}, jQun);
+}
 
-		return NewClass;
-	};
-	StaticClass = new jQun(StaticClass, "StaticClass");
+}.call(
+	{},
+	jQun,
+	Object,
+	Array
+));
 
-	StaticClass.override({
-		toString : function(){
-			///	<summary>
-			///	对象字符串。
-			///	</summary>
-			return "[StaticClass " + this.constructor.name + "]";
-		}
-	});
+// 面向对象的基础
+(function(jQun, Function, defineProperties, forEach, set, getDescriptor){
 
-	return StaticClass.constructor;
-}());
-
-this.Namespace = (function(){
-	function Namespace(){
-		///	<summary>
-		///	开辟一个命名空间。
-		///	</summary>
-	};
-	Namespace = new NonstaticClass(Namespace, "Namespace");
-
-	Namespace.properties({
-		members : function(members){
-			///	<summary>
-			///	给该命名空间赋予成员。
-			///	</summary>
-			this.assign(members);
-			return this;
-		}
-	});
-
-	return Namespace.constructor;
-}());
-
-this.Enum = (function(set, every, freeze){
+this.Enum = (function(every, freeze){
 	function Enum(data){
 		///	<summary>
 		///	枚举。
@@ -511,37 +412,230 @@ this.Enum = (function(set, every, freeze){
 	Enum = new jQun(Enum);
 
 	Enum.properties({
-		every : function(handler, _this){
-			return every(this, handler, _this);
+		every : function(fn, _this){
+			///	<summary>
+			///	确定枚举的所有成员是否满足指定的测试。
+			///	</summary>
+			///	<param name="fn" type="Function">用于测试对象成员的测试函数。</param>
+			///	<param name="_this" type="*">指定测试函数的 this 对象。</param>
+			return every(this, fn, _this);
 		},
-		forEach : function(handler, _this){
-			return forEach(this, handler, _this);
+		forEach : function(fn, _this){
+			///	<summary>
+			///	遍历枚举的所有成员并对其执行指定操作函数。
+			///	</summary>
+			///	<param name="fn" type="Function">指定操作的函数。</param>
+			///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
+			return forEach(this, fn, _this);
 		}
 	});
 
 	return Enum.constructor;
 }(
-	jQun.set,
 	jQun.every,
 	Object.freeze
 ));
 
-this.Browser = (function(){
+this.Namespace = (function(){
+	function Namespace(){
+		///	<summary>
+		///	开辟一个命名空间。
+		///	</summary>
+	};
+	Namespace = new jQun(Namespace);
+
+	Namespace.properties({
+		members : function(members){
+			///	<summary>
+			///	给该命名空间赋予成员。
+			///	</summary>
+			return set(this, members);
+		}
+	});
+
+	return Namespace.constructor;
+}());
+
+this.NonstaticClass = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructor){
+	function AnonymousNonstaticClass(){ };
+
+	function NonstaticClass(_constructor, _name, _ParentClass){
+		///	<summary>
+		///	派生出一个非静态类。
+		///	</summary>
+		///	<param name="_constructor" type="Function">源构造函数。</param>
+		///	<param name="_name" type="String">构造函数的名称。</param>
+		///	<param name="_ParentClass" type="jQun.NonstaticClass">需要继承的父类</param>
+		var constructor = _constructor ? _constructor : AnonymousNonstaticClass;
+
+		return new jQun(
+			getConstructor(
+				constructor,
+				_name ? _name : (constructor.name || AnonymousNonstaticClass.name),
+				toString.call(constructor).match(ARG_LIST_REGX)[1].match(ARG_REGX)
+			),
+			_ParentClass || this.getOwnClass()
+		);
+	};
+	NonstaticClass = new jQun(NonstaticClass);
+
+	NonstaticClass.override({
+		toString : function(){
+			///	<summary>
+			///	对象字符串。
+			///	</summary>
+			return "[NonstaticClass " + this.constructor.name + "]";
+		}
+	});
+
+	NonstaticClass.properties({
+		base : function(args){
+			///	<summary>
+			///	子类访问父类。
+			///	</summary>
+			///	<param name="args" type="*">子类的参数列表。</param>
+			var parentList = [],
+			
+				ParentClass = this.getParentClass();
+
+			while(ParentClass){
+				if(ParentClass === NonstaticClass)
+					break;
+
+				parentList.unshift(ParentClass);
+				ParentClass = ParentClass.getParentClass();
+			}
+
+			if(parentList.length === 0)
+				return;
+
+			var arg = {};
+
+			forEach(arguments.callee.caller.argumentNames, function(name, i){
+				arg["_" + name] = arg[name] = this[i];
+			}, arguments);
+
+			forEach(parentList, function(Parent){
+				var transferArgs = [], constructor = Parent.constructor;
+
+				forEach(constructor.argumentNames, function(name){
+					transferArgs.push(arg[name]);
+				});
+
+				constructor.source.apply(this, transferArgs);
+			}, this);
+		}
+	});
+
+	return NonstaticClass.constructor;
+}(
+	// ARG_LIST_REGX
+	/function[^\(]*\(([^\)]*)/,
+	// ARG_REGX
+	/([^\s\,]+)/g,
+	Function.prototype.toString,
+	// getConstructor
+	function(source, name, argumentNames){
+		var constructor = getDescriptor(
+			new Function([
+				"return {",
+					"get '" + name + "' (){\r",
+						"this.base.apply(this, arguments);\r",
+						"return arguments.callee.source.apply(this, arguments);\r",
+					"}",
+				" };"
+			].join(""))(),
+			name
+		).get;
+
+		defineProperties(constructor, {
+			argumentNames : argumentNames,
+			source : source
+		});
+
+		return constructor;
+	}
+));
+
+this.StaticClass = (function(getConstructor){
+	function AnonymousStaticClass(){ };
+
+	function StaticClass(_constructor, _name, _properties, _descriptor){
+		///	<summary>
+		///	派生出一个静态类。
+		///	</summary>
+		///	<param name="_constructor" type="Function">源构造函数。</param>
+		///	<param name="_name" type="String">构造函数的名称。</param>
+		///	<param name="_properties" type="Object">类的属性。</param>
+		///	<param name="_descriptor" type="Object, Array">被添加属性的描述符。</param>
+		var SClass,	constructor = _constructor ? _constructor : AnonymousStaticClass;
+
+		SClass = new jQun(
+			getConstructor(_name ? _name : (constructor.name || AnonymousStaticClass.name)),
+			this.getOwnClass()
+		);
+
+		if(_properties){
+			SClass.properties(_properties, _descriptor);
+		}
+
+		constructor.call(SClass);
+		return SClass;
+	};
+	StaticClass = new jQun(StaticClass);
+
+	StaticClass.override({
+		toString : function(){
+			///	<summary>
+			///	对象字符串。
+			///	</summary>
+			return "[StaticClass " + this.constructor.name + "]";
+		}
+	});
+
+	return StaticClass.constructor;
+}(
+	// getConstructor
+	function(name){
+		return getDescriptor(
+			new Function("return { get '" + name + "' (){} };")(),
+			name
+		).get;
+	}
+));
+
+defineProperties(jQun, this);
+}.call(
+	{},
+	jQun,
+	Function,
+	jQun.defineProperties,
+	jQun.forEach,
+	jQun.set,
+	Object.getOwnPropertyDescriptor
+));
+
+/*
+	这里比以往多了一层闭包，
+	为了用户执行效率，必须让该层闭包函数被系统回收，
+	所有参数所用之处必须只能一次性使用(如需闭包使用需再次引用)，
+	确保本闭包资源在使用后能合理释放掉
+*/
+(function(jQun, NonstaticClass, StaticClass, Enum, defineProperties, forEach){
+
+// 一些独立的基础类
+(function(forEach){
+
+this.Browser = (function(RegExp, MOBILE_VERSION_STRING, userAgent){
 	function Browser(){
 		///	<summary>
 		///	浏览器基本信息类。
 		///	</summary>
-		var RegExp = window.RegExp,
-		
-			userAgent = navigator.userAgent,
-
-			mobileVersionString = ".*\\s(?:\\S)+\\/([\\d\\.]+)\\s(Mobile)";
-
 		[
-			new RegExp("(Android)" + mobileVersionString),
-			new RegExp("(Windows Phone)" + mobileVersionString),
-			new RegExp("(iPad)" + mobileVersionString),
-			new RegExp("(iPod)" + mobileVersionString),
+			new RegExp("(Android)" + MOBILE_VERSION_STRING),
+			new RegExp("(Windows Phone)" + MOBILE_VERSION_STRING),
+			new RegExp("(iPad)" + MOBILE_VERSION_STRING),
+			new RegExp("(iPod)" + MOBILE_VERSION_STRING),
 			/(iPhone)\sOS\s([\d_]+).*\s(Mobile)/,
 			/(MSIE) ([\d\.]+)/,
 			/(Firefox)\/([\d\.]+)/,
@@ -574,35 +668,14 @@ this.Browser = (function(){
 	});
 
 	return Browser;
-}());
+}(
+	RegExp,
+	// MOBILE_VERSION_STRING
+	".*\\s(?:\\S)+\\/([\\d\\.]+)\\s(Mobile)",
+	navigator.userAgent
+));
 
-this.JSON = (function(){
-	function JSON(){
-		///	<summary>
-		///	JSON功能类。
-		///	</summary>
-	};
-	JSON = new StaticClass(null, "jQun.JSON");
-
-	JSON.properties({
-		parse : function(jsonStr){
-			///	<summary>
-			///	将字符串转化为json。
-			///	</summary>
-			///	<param name="jsonStr" type="String">需要转化为json的字符串。</param>
-			try {
-				return window.JSON.parse(jsonStr);
-			} catch(e){
-				return (new Function("return " + jsonStr + ";"))();
-			}
-		},
-		stringify : window.JSON.stringify
-	});
-
-	return JSON;
-}());
-
-this.List = List = (function(addArrayMethods){
+this.List = (function(ArrayClass, define, hasOwnProperty){
 	function List(){
 		///	<summary>
 		///	对列表进行管理、操作的类。
@@ -687,32 +760,78 @@ this.List = List = (function(addArrayMethods){
 			return this.alternate(2, 1);
 		}
 	});
-	addArrayMethods(List);
+	
+	
+	Object.getOwnPropertyNames(
+		ArrayClass
+	).forEach(function(name){
+		if(hasOwnProperty.call(List, name))
+			return;
+
+		define(List, name, ArrayClass[name]);
+	});
 
 	return List.constructor;
 }(
-	// addArrayMethods
-	function(List){
-		var define = jQun.define, hasOwnProperty = {}.hasOwnProperty;
-
-		forEach(
-			Object.getOwnPropertyNames(Array.prototype),
-			function(name){
-				if(hasOwnProperty.call(List, name))
-					return;
-
-				define(List, name, [][name]);
-			}
-		);
-	}
+	Array.prototype,
+	jQun.define,
+	Object.prototype.hasOwnProperty
 ));
 
-this.Text = (function(tRegx){
+}.call(
+	this
+));
+
+
+// 与字符串处理有关的类
+(function(){
+
+this.ValidationRegExpString = (function(){
+	return new Enum({
+		Chinese : "[\\u4e00-\\u9fa5]",
+		Email : "(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*)\\.(\\w+(?:[-.]\\w+)*)",
+		Empty : "^$",
+		NotEmpty : "[\\s\\S]",
+		UserInfo : "^\\w{6,16}$",
+		Telephone : "^(\\d{3}|\\d{4})?-(\\d{7,8}|\\d{11})$",
+		WebURL : "http:\\/\\/([\\w-]+)\\.+([\\w-]+)(?:\\/([\\w- .\\/?%&=]*))?"
+	});
+}());
+
+this.JSON = (function(JSONBase){
+	function JSON(){
+		///	<summary>
+		///	JSON功能类。
+		///	</summary>
+	};
+	JSON = new StaticClass(JSON, "jQun.JSON");
+
+	JSON.properties({
+		parse : function(jsonStr){
+			///	<summary>
+			///	将字符串转化为json。
+			///	</summary>
+			///	<param name="jsonStr" type="String">需要转化为json的字符串。</param>
+			try {
+				return JSONBase.parse(jsonStr);
+			} catch(e){
+				return (new Function("return " + jsonStr + ";"))();
+			}
+		},
+		stringify : JSONBase.stringify
+	});
+
+	return JSON;
+}(
+	JSON
+));
+
+this.Text = (function(Array, T_REGX, encodeURIComponent){
 	function Text(text){
 		///	<summary>
 		///	用于操作字符串文本的类。
 		///	</summary>
-		///	<param name="text" type="String">字符串文本。</param>
+		///	<param name="text" type="String, Array">字符串文本。</param>
 		this.assign({
 			text : text instanceof Array ? text.join("") : text
 		});
@@ -732,7 +851,7 @@ this.Text = (function(tRegx){
 			///	</summary>
 			///	<param name="replacement" type="Object, Function">需要替换的数据或者自行替换的处理函数。</param>
 			return this.text.replace(
-				tRegx,
+				T_REGX,
 				typeof replacement === "function" ? replacement : function(str, modifier, word){
 					if(modifier === ":"){
 						return "{" + word + "}";
@@ -751,10 +870,8 @@ this.Text = (function(tRegx){
 			///	 返回一个替换数据后的连接字符串。
 			///	</summary>
 			///	<param name="params" type="Object, Function">需要替换的数据或者自行替换的处理函数。</param>
-			var encode = encodeURIComponent;
-
 			return this.replace(function(str, modifier, word){
-				return encode(params[word]);
+				return encodeURIComponent(params[word]);
 			});
 		},
 		text : ""
@@ -762,424 +879,67 @@ this.Text = (function(tRegx){
 
 	return Text.constructor;
 }(
-	// tRegx => 查找参数
-	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
+	Array,
+	// T_REGX
+	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g,
+	encodeURIComponent
 ));
 
-this.Validation = (function(RegExp, RegExpEnum){
+this.Validation = (function(ValidationRegExpString, RegExp){
 	function Validation(){
 		///	<summary>
 		///	验证。
 		///	</summary>
-		var nameList = this.nameList;
-
-		forEach(RegExpEnum, function(str, name){
-			nameList.push(name);
-		});
 	};
-	Validation = new StaticClass(Validation, "jQun.Validation", { nameList : [] });
+	Validation = new StaticClass(Validation, "jQun.Validation");
 
 	Validation.properties({
-		match : function(str, type, _regxAttrs){
-			return str.match(new RegExp(RegExpEnum[type], _regxAttrs));
+		match : function(str, regExpString, _regxAttrs){
+			///	<summary>
+			///	验证匹配。
+			///	</summary>
+			///	<param name="str" type="String">需要验证的字符串。</param>
+			///	<param name="regExpString" type="String">用于匹配的正则字符串。</param>
+			///	<param name="_regxAttrs" type="String">正则属性。</param>
+			return str.match(new RegExp(regExpString, _regxAttrs));
 		},
-		result : function(str, type){
-			return !!this.match.apply(this, arguments);
+		result : function(str, regExpString){
+			///	<summary>
+			///	验证结果。
+			///	</summary>
+			///	<param name="str" type="String">需要验证的字符串。</param>
+			///	<param name="regExpString" type="String">用于匹配的正则字符串。</param>
+			return !!this.match(str, regExpString);
 		}
 	});
 
 	return Validation;
 }(
-	RegExp,
-	// RegExpEnum
-	new this.Enum({
-		chinese : "[\\u4e00-\\u9fa5]",
-		email : "(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*)\\.(\\w+(?:[-.]\\w+)*)",
-		empty : "^$",
-		notEmpty : "[\\s\\S]",
-		userInfo : "^\\w{6,16}$",
-		telephone : "^(\\d{3}|\\d{4})?-(\\d{7,8}|\\d{11})$",
-		webUrl : "http:\\/\\/([\\w-]+)\\.+([\\w-]+)(?:\\/([\\w- .\\/?%&=]*))?"
-	})
+	this.ValidationRegExpString,
+	RegExp
 ));
 
-this.Cache = (function(JSON, sessionStorage){
-	function Cache(name){
-		///	<summary>
-		///	缓存数据。
-		///	</summary>
-		/// <param name="name" type="String">缓存数据的标识名称</param>
-		this.assign({
-			name : name
-		});
-	};
-	Cache = new NonstaticClass(Cache, "jQun.Cache");
-
-	Cache.properties({
-		del : function(key){
-			///	<summary>
-			///	删除某一条缓存数据。
-			///	</summary>
-			/// <param name="key" type="String">缓存数据的主键</param>
-			var storage = this.get();
-
-			delete storage[key];
-			sessionStorage.setItem(this.name, JSON.stringify(storage));
-		},
-		get : function(_key){
-			///	<summary>
-			///	获取某一条缓存数据。
-			///	</summary>
-			/// <param name="_key" type="String">缓存数据的主键</param>
-			var storage = JSON.parse(sessionStorage.getItem(this.name));
-
-			if(!storage){
-				storage = {};
-			}
-
-			if(_key === undefined){
-				return storage;
-			}
-
-			return storage[_key];
-		},
-		name : "",
-		set : function(key, value){
-			///	<summary>
-			///	设置某一条缓存数据。
-			///	</summary>
-			/// <param name="key" type="String">缓存数据的主键</param>
-			/// <param name="value" type="Object, String, Number, Boolean">缓存数据的值</param>
-			var storage = this.get();
-
-			storage[key] = value;
-			sessionStorage.setItem(this.name, JSON.stringify(storage));
-		}
-	});
-
-	return Cache.constructor;
-}(
-	this.JSON,
-	// sessionStorage
-	sessionStorage
+}.call(
+	this
 ));
 
-this.RequestConnection = (function(Text, Cache, JSON, toUpperCase, getEncodedParams){
-	function RequestConnection(name, url, type, _handler, _cacheable){
-		///	<summary>
-		///	ajax请求连接。
-		///	</summary>
-		///	<param name="name" type="String">连接名称。</param>
-		///	<param name="url" type="String">连接url。</param>
-		///	<param name="type" type="String">发送数据的方式("POST"、"GET")。</param>
-		///	<param name="_handler" type="Function">接收数据后的处理函数。</param>
-		///	<param name="_cacheable" type="Boolean">是否缓存数据。</param>
-		var cache;
+// List的直接子类
+(function(List){
 
-		_cacheable = _cacheable === true;
-
-		if(_cacheable){
-			cache = new Cache("jQun.Cache_" + name);
-		}
-
-		this.assign({
-			cache : cache,
-			name : name,
-			url : url,
-			isPost : toUpperCase.call(type) === "POST",
-			handler : _handler
-		});
-	};
-	RequestConnection = new NonstaticClass(RequestConnection, "jQun.RequestConnection");
-
-	RequestConnection.properties({
-		cache : undefined,
-		handler : undefined,
-		isPost : false,
-		name : "",
-		url : ""
-	});
-
-	RequestConnection.properties({
-		open : function(name, params, complete, responseType, isTesting){
-			///	<summary>
-			///	开打一个ajax连接。
-			///	</summary>
-			///	<param name="name" type="String">连接名称。</param>
-			///	<param name="params" type="Object">url的替换参数及post方法的传递参数。</param>
-			///	<param name="complete" type="Function">异步完成后所执行的回调函数。</param>
-			///	<param name="responseType" type="String">返回的数据格式。</param>
-			///	<param name="isTesting" type="Boolean">是否在测试环境中。</param>
-			var url = this.url, cache = this.cache,
-
-				isJSON = responseType === "JSON",
-
-				request = new XMLHttpRequest();
-
-			if(url instanceof Text){
-				url = url.toUrlParams(params);
-			}
-
-			if(typeof complete === "function"){
-				if(cache){
-					var data = cache.get(url);
-
-					if(data){
-						complete(data, true, 200);
-						return;
-					}
-				}
-
-				var handler = this.handler;
-
-				request.onreadystatechange =  function(){
-					if(this.readyState < 4)
-						return;
-
-					var isSuccess = this.status === 200, responseData = isSuccess ? this.responseText : "";
-
-					if(isSuccess){
-						if(isJSON){
-							responseData = JSON.parse(responseData);
-						}
-
-						if(typeof handler === "function"){
-							responseData = handler(responseData, params);
-						}
-
-						if(cache){
-							cache.set(url, responseData);
-						}
-					}
-
-					complete(responseData, false, isSuccess);
-				};
-			}
-
-			if(isTesting){
-				request.onreadystatechange.call({
-					readyState : 4,
-					status : 200,
-					responseText : ""
-				});
-
-				return;
-			}
-
-			var isPost = this.isPost, type = isPost ? "POST" : "GET";
-
-			request.open(type, url, true);
-			request.responseType = isJSON ? "text" : responseType;
-			
-			if(isPost){
-				this.RequestHeader.addTo(request);
-			}
-
-			request.send(isPost ? getEncodedParams(params) : null);
-			return request;
-		}
-	});
-
-	return RequestConnection.constructor;
-}(
-	this.Text,
-	this.Cache,
-	this.JSON,
-	String.prototype.toUpperCase,
-	// getEncodedParams
-	function(params){
-		///	<summary>
-		///	获取post方法的参数字符串。
-		///	</summary>
-		///	<param name="params" type="Object">参数。</param>
-		var arr = [];
-
-		forEach(params, function(value, name){
-			arr.push(this(name) + "=" + this(value));
-			arr.push("&");
-		}, encodeURIComponent);
-		arr.splice(-1);
-
-		return arr.join("");
-	}
-));
-
-this.RequestHeader = (function(){
-	function RequestHeader(){
-		///	<summary>
-		///	请求头部信息。
-		///	</summary>
-	};
-	RequestHeader = new StaticClass(null, "jQun.RequestHeader");
-
-	RequestHeader.properties({
-		name : "Content-type",
-		value : "application/x-www-form-urlencoded"
-	});
-
-	RequestHeader.properties({
-		addTo : function(request){
-			///	<summary>
-			///	向指定的ajax请求添加头部信息。
-			///	</summary>
-			///	<param name="name" type="Object">ajax请求。</param>
-			request.setRequestHeader(this.name, this.value);
-			return this;
-		},
-		reset : function(name, value){
-			///	<summary>
-			///	重新设置请求头部信息。
-			///	</summary>
-			///	<param name="name" type="String">名称。</param>
-			///	<param name="value" type="String">值。</param>
-			this.name = name;
-			this.value = value;
-			return this;
-		}
-	});
-
-	return RequestHeader;
-}());
-
-this.Storage = (function(){
-	function Storage(){ };
-	Storage = new NonstaticClass(Storage, "jQun.Storage");
-
-	Storage.properties({
-		clear : function(){
-			///	<summary>
-			///	清空所有储存数据。
-			///	</summary>
-			forEach(this, function(value, key){
-				this.del(key);
-			}, this);
-			return this;
-		},
-		del : function(key){
-			///	<summary>
-			///	删除一项储存数据。
-			///	</summary>
-			///	<param name="key" type="String">数据主键。</param>
-			return delete this[key];
-		},
-		get : function(key){
-			///	<summary>
-			///	获取数据。
-			///	</summary>
-			///	<param name="key" type="String">数据主键。</param>
-			return this[key];
-		},
-		set : function(key, value){
-			///	<summary>
-			///	设置数据。
-			///	</summary>
-			///	<param name="key" type="String">数据主键。</param>
-			///	<param name="value" type="*">数据值。</param>
-			this[key] = value;
-			return this;
-		}
-	});
-
-	return Storage.constructor;
-}());
-
-this.Ajax = (function(Storage, RequestHeader, RequestConnection){
-	function Ajax(){
-		///	<summary>
-		///	ajax异步类。
-		///	</summary>
-		if(!!(new XMLHttpRequest())){
-			this.enabled = true;
-			return;
-		}
-
-		console.warn("当前浏览器不支持XMLHttpRequest。");
-	};
-	Ajax = new StaticClass(Ajax, "jQun.Ajax", {
-		enabled : false
-	});
-
-	Ajax.properties({
-		RequestHeader : RequestHeader,
-		beginTesting : function(){
-			this.isTesting = true;
-		},
-		isTesting : false,
-		open : function(name, params, _complete){
-			///	<summary>
-			///	开打一个ajax连接。
-			///	</summary>
-			///	<param name="name" type="String">连接名称。</param>
-			///	<param name="params" type="Object">url的替换参数及post方法的传递参数。</param>
-			///	<param name="_complete" type="Function">异步完成后所执行的回调函数。</param>
-			var requstConnection = this.requestStorage.get(name);
-
-			if(!requstConnection){
-				console.error("ajax请求信息错误：请检查连接名称是否正确。", arguments);
-				return;
-			}
-
-			var args = jQun.toArray(arguments);
-
-			args.push(this.responseType, this.isTesting);
-			requstConnection.open.apply(requstConnection, args);
-		},
-		requestStorage : new Storage(),
-		responseType : "text",
-		save : function(allSettings, _handlers){
-			///	<summary>
-			///	存储ajax连接信息。
-			///	</summary>
-			///	<param name="allSettings" type="Array">ajax连接信息。</param>
-			///	<param name="_handlers" type="Function">所有的数据格式转换函数。</param>
-			var requestStorage = this.requestStorage
-
-			if(!_handlers){
-				_handlers = {};
-			}
-
-			forEach(allSettings, function(settings){
-				var name = settings[0];
-
-				requestStorage.set(
-					name,
-					new RequestConnection(settings[0], settings[1], settings[2], _handlers[name], settings[3])
-				);
-			});
-			return requestStorage;
-		},
-		setResponseType : function(type){
-			///	<summary>
-			///	设置返回数据的格式。
-			///	</summary>
-			///	<param name="type" type="String">数据的格式("text"、"json"、"arraybuffer"、"blob"或"document")。</param>
-			this.responseType = type.toLowerCase();
-		}
-	});
-
-	return Ajax;
-}(
-	this.Storage,
-	this.RequestHeader,
-	this.RequestConnection
-));
-
-this.ElementPropertyCollection = ElementPropertyCollection = (function(){
+this.ElementPropertyCollection = (function(){
 	function ElementPropertyCollection(elementList){
 		///	<summary>
 		///	所有元素属性的基类。
 		///	</summary>
-		///	<param name="elementList" type="jQun.ElementList">元素列表（由 jQun.ElementList 类或其子孙类的实例）。</param>
+		///	<param name="elementList" type="Array, List">元素列表。</param>
 		var name = this.propertyName;
 
 		this.assign({
 			sources : elementList
 		});
 
-		if(name === ""){
-			this.combine(elementList);
+		if(name === "")
 			return;
-		}
 
 		elementList.forEach(function(element){
 			this.push(element[name]);
@@ -1201,8 +961,20 @@ this.ElementPropertyCollection = ElementPropertyCollection = (function(){
 	return ElementPropertyCollection.constructor;
 }());
 
+}.call(
+	this,
+	this.List
+));
+
+// 与ElementPropertyCollection（元素属性）有关的类
+(function(ElementPropertyCollection){
+
 this.AttributeCollection = (function(){
-	function AttributeCollection(elementList){ };
+	function AttributeCollection(elementList){
+		///	<summary>
+		///	元素特性类。
+		///	</summary>
+	};
 	AttributeCollection = new NonstaticClass(AttributeCollection, "jQun.AttributeCollection", ElementPropertyCollection.prototype);
 
 	AttributeCollection.override({
@@ -1276,6 +1048,7 @@ this.AttributeCollection = (function(){
 
 				value[attr.nodeName] = attr.nodeValue;
 			}
+
 			return value;
 		}
 	});
@@ -1283,10 +1056,12 @@ this.AttributeCollection = (function(){
 	return AttributeCollection.constructor;
 }());
 
-emptyAttrCollection = new this.AttributeCollection([]);
-
-this.CSSPropertyCollection = (function(){
-	function CSSPropertyCollection(elementList){ };
+this.CSSPropertyCollection = (function(isNaN, hasOwnProperty){
+	function CSSPropertyCollection(elementList){
+		///	<summary>
+		///	元素CSS属性类。
+		///	</summary>
+	};
 	CSSPropertyCollection = new NonstaticClass(CSSPropertyCollection, "jQun.CSSPropertyCollection", ElementPropertyCollection.prototype);
 
 	CSSPropertyCollection.override({
@@ -1323,7 +1098,7 @@ this.CSSPropertyCollection = (function(){
 		// firefox、chrome 与 IE 的 CSSStyleDeclaration 结构都不一样
 		var cssName = isNaN(name - 0) ? name : value;
 
-		if(this.call(CSSPropertyCollection, cssName))
+		if(hasOwnProperty.call(CSSPropertyCollection, cssName))
 			return;
 
 		if(typeof CSSStyle[cssName] !== "string")
@@ -1341,13 +1116,20 @@ this.CSSPropertyCollection = (function(){
 		};
 
 		CSSPropertyCollection.properties(property, { gettable : true, settable : true });
-	}, Object.prototype.hasOwnProperty);
+	});
 
 	return CSSPropertyCollection.constructor;
-}());
+}(
+	isNaN,
+	Object.prototype.hasOwnProperty
+));
 
 this.ChildrenCollection = (function(){
-	function ChildrenCollection(elementList){ };
+	function ChildrenCollection(elementList){
+		///	<summary>
+		///	children类。
+		///	</summary>
+	};
 	ChildrenCollection = new NonstaticClass(ChildrenCollection, "jQun.ChildrenCollection", ElementPropertyCollection.prototype);
 
 	ChildrenCollection.override({
@@ -1399,7 +1181,11 @@ this.ChildrenCollection = (function(){
 }());
 
 this.ClassListCollection = (function(){
-	function ClassListCollection(elementList){ };
+	function ClassListCollection(elementList){
+		///	<summary>
+		///	classList类。
+		///	</summary>
+	};
 	ClassListCollection = new NonstaticClass(ClassListCollection, "jQun.ClassListCollection", ElementPropertyCollection.prototype);
 
 	ClassListCollection.override({
@@ -1469,6 +1255,14 @@ this.ClassListCollection = (function(){
 	return ClassListCollection.constructor;
 }());
 
+}.call(
+	this,
+	this.ElementPropertyCollection
+));
+
+// 与元素节点有关的类
+(function(List, Window, emptyAttrCollection, forEach, define){
+
 this.NodeList = (function(AttributeCollection, toArray){
 	function NodeList(){
 		///	<summary>
@@ -1499,12 +1293,13 @@ this.NodeList = (function(AttributeCollection, toArray){
 				///	初始化属性。
 				///	</summary>
 				///	<param name="attrs" type="Object">属性键值对。</param>
-				var pseudo = { sources : this },
-					emptyAttr = emptyAttrCollection;
-
-				for(var name in attrs){
-					emptyAttr.set.call(pseudo, name, attrs[name]);
-				}
+				forEach(
+					attrs,
+					function(value, name){
+						emptyAttrCollection.set.call(this, name, attrs[name]);
+					},
+					{ sources : this }
+				);
 			}
 		}
 	}, { gettable : true, settable : true });
@@ -1623,7 +1418,9 @@ this.NodeList = (function(AttributeCollection, toArray){
 	jQun.toArray
 ));
 
-this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, window, selectorRegx, setter){
+this.ElementList = (function(
+	NodeList, ChildrenCollection, ClassListCollection, Node, SELECTORREGX, document, getComputedStyle, setter
+){
 	function ElementList(_selector, _parent){
 		///	<summary>
 		///	通过指定选择器筛选元素。
@@ -1638,20 +1435,20 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 		});
 
 		if(typeof _selector === "string"){
-			var elements, doc = window.document;
+			var elements;
 
 			if(!_parent){
-				_parent = doc;
+				_parent = document;
 			}
 
-			_selector = _selector.replace(selectorRegx, function(str, modifier, val){
+			_selector = _selector.replace(SELECTORREGX, function(str, modifier, val){
 				return '[' + (modifier === "#" ? "id" : "class~") + '="' + val + '"]';
 			});
 			
 			try{
 				elements = _parent.querySelectorAll(_selector);
 			} catch(e){
-				if(_parent === doc){
+				if(_parent === document){
 					console.error('document 不支持选择器："' + _selector + '"');
 					return;
 				}
@@ -1665,7 +1462,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			return;
 		}
 
-		if(_selector instanceof window.Node || _selector instanceof window.constructor){
+		if(_selector instanceof Node || _selector instanceof Window){
 			this.push(_selector);
 			return;
 		}
@@ -1799,7 +1596,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			///	获取集合中第一个元素的css属性。
 			///	</summary>
 			///	<param name="name" type="String">属性名。</param>
-			return window.getComputedStyle(this[0])[name];
+			return getComputedStyle(this[0])[name];
 		},
 		parent : function(){
 			///	<summary>
@@ -1952,21 +1749,25 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 	this.NodeList,
 	this.ChildrenCollection,
 	this.ClassListCollection,
-	window,
-	// selectorRegx
+	Node,
+	// SELECTORREGX
 	/([\#\.])([^\s\:\#\.\,\+\~\[\>\(\)]+)/g,
+	document,
+	getComputedStyle,
 	// setter
 	function(element){
-		///	<summary>
-		///	设置元素的对应部分。
-		///	</summary>
-		///	<param name="element" type="Element">需要设置元素的对应部分，标签应为对应标签。</param>
 		this.createList(element).insertTo(this[0], 0);
 	}
 ));
 
 this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty){
-	function HTMLElementList(_selector, _parent){};
+	function HTMLElementList(_selector, _parent){
+		///	<summary>
+		///	通过指定选择器筛选HTML元素。
+		///	</summary>
+		///	<param name="_selector" type="String, Element">选择器或dom元素。</param>
+		///	<param name="_parent" type="Element">指定查询的父元素。</param>
+	};
 	HTMLElementList = new NonstaticClass(HTMLElementList, "jQun.HTMLElementList", ElementList.prototype);
 
 	// firefox 把id、innerHTML归为了Element的属性，但是w3c与IE9都归为了HTMLElement的属性
@@ -1982,7 +1783,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 
 	// firefox 把onmouseenter、onmouseleave、onwheel归为了Element的属性(chrome并不支持该3个事件)
 	forEach(
-		Object.getOwnPropertyNames(window.constructor.prototype),
+		Object.getOwnPropertyNames(Window.prototype),
 		function(name){
 			if(name.substring(0, 2) != "on")
 				return;
@@ -1996,8 +1797,8 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 			///	<summary>
 			///	创建个新的HTML元素集合。
 			///	</summary>
-			///	<param name="_selector" type="String, Object">选择器、html或dom元素。</param>
-			///	<param name="_parent" type="Element">指定查询的父节元素。</param>
+			///	<param name="_selector" type="String, Element">选择器或dom元素。</param>
+			///	<param name="_parent" type="Element">指定查询的父元素。</param>
 			return new HTMLElementList.constructor(_selector, _parent);
 		}
 	});
@@ -2082,7 +1883,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 	this.CSSPropertyCollection,
 	// addProperty
 	function(name){
-		jQun.define(this, name, {
+		define(this, name, {
 			get : function(){
 				return this.get(name);
 			},
@@ -2093,9 +1894,19 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 	}
 ));
 
-HTMLElementList = this.HTMLElementList;
+}.call(
+	this,
+	this.List,
+	window.Window || window.constructor,
+	new this.AttributeCollection([]),
+	forEach,
+	jQun.define
+));
 
-this.Event = (function(EventTarget, window, define, set, toArray){
+// 与HTMLElementList相关的类
+(function(HTMLElementList, forEach){
+
+this.Event = (function(Node, EventTarget, window, document, define, set, toArray){
 	function Event(name, _init, _type, _initEventArgs){
 		///	<summary>
 		///	DOM事件类。
@@ -2192,14 +2003,16 @@ this.Event = (function(EventTarget, window, define, set, toArray){
 
 	return Event.constructor;
 }(
+	Node,
 	window.EventTarget,
 	window,
+	document,
 	jQun.define,
 	jQun.set,
 	jQun.toArray
 ));
 
-this.HTML = (function(HTMLElement, sRegx, fRegx, tReplace){
+this.HTML = (function(Function, SPACEREGX, FORREGX, replaceMethod, document){
 	function HTML(template){
 		///	<summary>
 		///	html模板。
@@ -2213,16 +2026,16 @@ this.HTML = (function(HTMLElement, sRegx, fRegx, tReplace){
 
 		arr.push(
 			// 使用Text类的replace替换参数
-			tReplace.call({
+			replaceMethod.call({
 				text : (typeof template === "string" ? template : template.innerHTML)
 					// 给单引号加保护
 					.split("'").join("\\'")
 					// 替换掉特殊的空白字符
-					.replace(sRegx, "")
+					.replace(SPACEREGX, "")
 					// 替换for循环
-					.replace(fRegx, function(str, condition, i){
+					.replace(FORREGX, function(str, condition, i){
 						return [
-							"');jQun.forEach(",
+							"');forEach(",
 							condition.split("{").join("\t").split("}").join("\n"),
 							", function(" + (i || "") + ")\t this.push('"
 						].join("");
@@ -2256,7 +2069,7 @@ this.HTML = (function(HTMLElement, sRegx, fRegx, tReplace){
 		forEach(variables, function(isEmpty, word){
 			arr[0] += word + ", ";
 			arr.push(
-				tReplace.call(
+				replaceMethod.call(
 					{
 						text : ", '{word}' in this ? this['{word}'] : " + (isEmpty ? "''" : "'{word}'")
 					},
@@ -2282,8 +2095,8 @@ this.HTML = (function(HTMLElement, sRegx, fRegx, tReplace){
 			var htmlElementList = new HTMLElementList(""), parent = document.createElement("div");
 
 			parent.innerHTML = this.render(_data);
-			htmlElementList.combine(parent.childNodes);
 
+			htmlElementList.combine(parent.childNodes);
 			htmlElementList.remove();
 
 			return htmlElementList;
@@ -2293,20 +2106,21 @@ this.HTML = (function(HTMLElement, sRegx, fRegx, tReplace){
 			///	渲染模板。
 			///	</summary>
 			///	<param name="_data" type="Object, Array">需要渲染的数据。</param>
-			return new Function("jQun", this.template).call(_data || {}, jQun);
+			return new Function("forEach", this.template).call(_data || {}, forEach);
 		},
 		template : ""
 	});
 
 	return HTML.constructor;
 }(
-	HTMLElement,
-	// sRegx => space(查找特殊的空白字符)
+	Function,
+	// SPACEREGX => space(查找特殊的空白字符)
 	/[\r\t\n]/g,
-	// fRegx => for(查找for语句)
+	// FORREGX => for(查找for语句)
 	/@for\s*\(([\s\S]+?)(?:\s*->>\s*([\s\S]+?))*?\)\s*\{/g,
-	// tReplace
-	this.Text.prototype.replace
+	// replaceMethod
+	this.Text.prototype.replace,
+	document
 ));
 
 this.StaticHTML = (function(HTML){
@@ -2343,8 +2157,397 @@ this.StaticHTML = (function(HTML){
 	this.HTML
 ));
 
-with(jQun){
-	defineProperties(jQun, this);
-	define(window, "jQun", jQun);
-}
-}.call({}, Object, Array, Function));
+}.call(
+	this,
+	this.HTMLElementList,
+	forEach
+));
+
+// 与数据有关的类
+(function(JSON){
+
+this.SessionCache = (function(sessionStorage){
+	function SessionCache(name){
+		///	<summary>
+		///	缓存数据。
+		///	</summary>
+		/// <param name="name" type="String">缓存数据的标识名称</param>
+		this.assign({
+			name : name
+		});
+	};
+	SessionCache = new NonstaticClass(SessionCache, "jQun.SessionCache");
+
+	SessionCache.properties({
+		del : function(key){
+			///	<summary>
+			///	删除某一条缓存数据。
+			///	</summary>
+			/// <param name="key" type="String">缓存数据的主键</param>
+			var storage = this.get();
+
+			delete storage[key];
+			sessionStorage.setItem(this.name, JSON.stringify(storage));
+		},
+		get : function(_key){
+			///	<summary>
+			///	获取某一条缓存数据。
+			///	</summary>
+			/// <param name="_key" type="String">缓存数据的主键</param>
+			var storage = JSON.parse(sessionStorage.getItem(this.name));
+
+			if(!storage){
+				storage = {};
+			}
+
+			if(_key === undefined){
+				return storage;
+			}
+
+			return storage[_key];
+		},
+		name : "",
+		set : function(key, value){
+			///	<summary>
+			///	设置某一条缓存数据。
+			///	</summary>
+			/// <param name="key" type="String">缓存数据的主键</param>
+			/// <param name="value" type="Object, String, Number, Boolean">缓存数据的值</param>
+			var storage = this.get();
+
+			storage[key] = value;
+			sessionStorage.setItem(this.name, JSON.stringify(storage));
+		}
+	});
+
+	return SessionCache.constructor;
+}(
+	// sessionStorage
+	sessionStorage
+));
+
+this.Storage = (function(forEach){
+	function Storage(){ };
+	Storage = new NonstaticClass(Storage, "jQun.Storage");
+
+	Storage.properties({
+		clear : function(){
+			///	<summary>
+			///	清空所有储存数据。
+			///	</summary>
+			forEach(this, function(value, key){
+				this.del(key);
+			}, this);
+			return this;
+		},
+		del : function(key){
+			///	<summary>
+			///	删除一项储存数据。
+			///	</summary>
+			///	<param name="key" type="String">数据主键。</param>
+			return delete this[key];
+		},
+		get : function(key){
+			///	<summary>
+			///	获取数据。
+			///	</summary>
+			///	<param name="key" type="String">数据主键。</param>
+			return this[key];
+		},
+		set : function(key, value){
+			///	<summary>
+			///	设置数据。
+			///	</summary>
+			///	<param name="key" type="String">数据主键。</param>
+			///	<param name="value" type="*">数据值。</param>
+			this[key] = value;
+			return this;
+		}
+	});
+
+	return Storage.constructor;
+}());
+
+}.call(
+	this,
+	this.JSON,
+	forEach
+));
+
+// 与ajax相关的类
+(function(JSON, forEach, encodeURIComponent){
+
+this.RequestConnection = (function(Text, SessionCache, toUpperCase, getEncodedParams){
+	function RequestConnection(name, url, type, _handler, _cacheable){
+		///	<summary>
+		///	ajax请求连接。
+		///	</summary>
+		///	<param name="name" type="String">连接名称。</param>
+		///	<param name="url" type="String">连接url。</param>
+		///	<param name="type" type="String">发送数据的方式("POST"、"GET")。</param>
+		///	<param name="_handler" type="Function">接收数据后的处理函数。</param>
+		///	<param name="_cacheable" type="Boolean">是否缓存数据。</param>
+		var cache;
+
+		_cacheable = _cacheable === true;
+
+		if(_cacheable){
+			cache = new SessionCache("jQun.Cache_" + name);
+		}
+
+		this.assign({
+			cache : cache,
+			name : name,
+			url : url,
+			isPost : toUpperCase.call(type) === "POST",
+			handler : _handler
+		});
+	};
+	RequestConnection = new NonstaticClass(RequestConnection, "jQun.RequestConnection");
+
+	RequestConnection.properties({
+		cache : undefined,
+		handler : undefined,
+		isPost : false,
+		name : "",
+		url : ""
+	});
+
+	RequestConnection.properties({
+		open : function(name, params, complete, responseType, isTesting){
+			///	<summary>
+			///	开打一个ajax连接。
+			///	</summary>
+			///	<param name="name" type="String">连接名称。</param>
+			///	<param name="params" type="Object">url的替换参数及post方法的传递参数。</param>
+			///	<param name="complete" type="Function">异步完成后所执行的回调函数。</param>
+			///	<param name="responseType" type="String">返回的数据格式。</param>
+			///	<param name="isTesting" type="Boolean">是否在测试环境中。</param>
+			var url = this.url, cache = this.cache,
+
+				isJSON = responseType === "JSON",
+
+				request = new XMLHttpRequest();
+
+			if(url instanceof Text){
+				url = url.toUrlParams(params);
+			}
+
+			if(typeof complete === "function"){
+				if(cache){
+					var data = cache.get(url);
+
+					if(data){
+						complete(data, true, 200);
+						return;
+					}
+				}
+
+				var handler = this.handler;
+
+				request.onreadystatechange =  function(){
+					if(this.readyState < 4)
+						return;
+
+					var isSuccess = this.status === 200, responseData = isSuccess ? this.responseText : "";
+
+					if(isSuccess){
+						if(isJSON){
+							responseData = JSON.parse(responseData);
+						}
+
+						if(typeof handler === "function"){
+							responseData = handler(responseData, params);
+						}
+
+						if(cache){
+							cache.set(url, responseData);
+						}
+					}
+
+					complete(responseData, false, isSuccess);
+				};
+			}
+
+			if(isTesting){
+				request.onreadystatechange.call({
+					readyState : 4,
+					status : 200,
+					responseText : ""
+				});
+
+				return;
+			}
+
+			var isPost = this.isPost, type = isPost ? "POST" : "GET";
+
+			request.open(type, url, true);
+			request.responseType = isJSON ? "text" : responseType;
+			
+			if(isPost){
+				this.RequestHeader.addTo(request);
+			}
+
+			request.send(isPost ? getEncodedParams(params) : null);
+			return request;
+		}
+	});
+
+	return RequestConnection.constructor;
+}(
+	this.Text,
+	this.SessionCache,
+	String.prototype.toUpperCase,
+	// getEncodedParams
+	function(params){
+		///	<summary>
+		///	获取post方法的参数字符串。
+		///	</summary>
+		///	<param name="params" type="Object">参数。</param>
+		var arr = [];
+
+		forEach(params, function(value, name){
+			arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(value));
+			arr.push("&");
+		});
+
+		arr.splice(-1);
+		return arr.join("");
+	}
+));
+
+this.RequestHeader = (function(){
+	function RequestHeader(){
+		///	<summary>
+		///	请求头部信息。
+		///	</summary>
+	};
+	RequestHeader = new StaticClass(null, "jQun.RequestHeader");
+
+	RequestHeader.properties({
+		name : "Content-type",
+		value : "application/x-www-form-urlencoded"
+	});
+
+	RequestHeader.properties({
+		addTo : function(request){
+			///	<summary>
+			///	向指定的ajax请求添加头部信息。
+			///	</summary>
+			///	<param name="name" type="Object">ajax请求。</param>
+			request.setRequestHeader(this.name, this.value);
+			return this;
+		},
+		reset : function(name, value){
+			///	<summary>
+			///	重新设置请求头部信息。
+			///	</summary>
+			///	<param name="name" type="String">名称。</param>
+			///	<param name="value" type="String">值。</param>
+			this.name = name;
+			this.value = value;
+			return this;
+		}
+	});
+
+	return RequestHeader;
+}());
+
+this.Ajax = (function(Storage, RequestHeader, RequestConnection){
+	function Ajax(){
+		///	<summary>
+		///	ajax异步类。
+		///	</summary>
+		if(!!(new XMLHttpRequest())){
+			this.enabled = true;
+			return;
+		}
+
+		console.warn("当前浏览器不支持XMLHttpRequest。");
+	};
+	Ajax = new StaticClass(Ajax, "jQun.Ajax", {
+		enabled : false
+	});
+
+	Ajax.properties({
+		RequestHeader : RequestHeader,
+		beginTesting : function(){
+			this.isTesting = true;
+		},
+		isTesting : false,
+		open : function(name, params, _complete){
+			///	<summary>
+			///	开打一个ajax连接。
+			///	</summary>
+			///	<param name="name" type="String">连接名称。</param>
+			///	<param name="params" type="Object">url的替换参数及post方法的传递参数。</param>
+			///	<param name="_complete" type="Function">异步完成后所执行的回调函数。</param>
+			var requstConnection = this.requestStorage.get(name);
+
+			if(!requstConnection){
+				console.error("ajax请求信息错误：请检查连接名称是否正确。", arguments);
+				return;
+			}
+
+			var args = jQun.toArray(arguments);
+
+			args.push(this.responseType, this.isTesting);
+			requstConnection.open.apply(requstConnection, args);
+		},
+		requestStorage : new Storage(),
+		responseType : "text",
+		save : function(allSettings, _handlers){
+			///	<summary>
+			///	存储ajax连接信息。
+			///	</summary>
+			///	<param name="allSettings" type="Array">ajax连接信息。</param>
+			///	<param name="_handlers" type="Function">所有的数据格式转换函数。</param>
+			var requestStorage = this.requestStorage
+
+			if(!_handlers){
+				_handlers = {};
+			}
+
+			forEach(allSettings, function(settings){
+				var name = settings[0];
+
+				requestStorage.set(
+					name,
+					new RequestConnection(settings[0], settings[1], settings[2], _handlers[name], settings[3])
+				);
+			});
+			return requestStorage;
+		},
+		setResponseType : function(type){
+			///	<summary>
+			///	设置返回数据的格式。
+			///	</summary>
+			///	<param name="type" type="String">数据的格式("text"、"json"、"arraybuffer"、"blob"或"document")。</param>
+			this.responseType = type.toLowerCase();
+		}
+	});
+
+	return Ajax;
+}(
+	this.Storage,
+	this.RequestHeader,
+	this.RequestConnection
+));
+
+}.call(
+	this,
+	this.JSON,
+	forEach,
+	encodeURIComponent
+));
+
+defineProperties(jQun, this);
+}.call(
+	{},
+	jQun,
+	jQun.NonstaticClass,
+	jQun.StaticClass,
+	jQun.Enum,
+	jQun.defineProperties,
+	jQun.forEach
+));

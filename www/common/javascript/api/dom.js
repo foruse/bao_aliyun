@@ -434,7 +434,17 @@ this.OverflowPanel = (function(Panel, IntervalTimer, setTopEvent, leaveborder){
 	}.bind(new Event("leaveborder"))
 ));
 
-this.Validation = (function(ValidationBase, Mask){
+this.Validation = (function(ValidationBase, ValidationRegExpString, Mask, RegExp){
+	function OverrideValidationBase(){
+		// jQun.js改版至1.0.7.0后，Validation类的match方法修改了许多，为了迎合app老代码，所以要还原此方法
+		ValidationBase.override({
+			match : function(str, type, _regxAttrs){
+				return str.match(new RegExp(ValidationRegExpString[type[0].toUpperCase() + type.substring(1)], _regxAttrs));
+			}
+		});
+	};
+	OverrideValidationBase = new StaticClass(OverrideValidationBase);
+
 	function Validation(validationEl, handler, errorText){
 		///	<summary>
 		///	验证元素。
@@ -455,7 +465,13 @@ this.Validation = (function(ValidationBase, Mask){
 		errorText : "",
 		handler : undefined,
 		showError : function(){
-			new Mask.Alert(this.errorText).show();
+			var text = this.errorText;
+
+			if(typeof text === "function"){
+				text = text();
+			}
+
+			new Mask.Alert(text).show();
 		},
 		validate : function(){
 			///	<summary>
@@ -474,7 +490,9 @@ this.Validation = (function(ValidationBase, Mask){
 	return Validation.constructor;
 }(
 	jQun.Validation,
-	Bao.UI.Control.Mask
+	jQun.ValidationRegExpString,
+	Bao.UI.Control.Mask,
+	RegExp
 ));
 
 this.ValidationList = (function(List, Validation){

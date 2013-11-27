@@ -63,15 +63,16 @@
 #titleBar > ul button {
 	height : 34px;
 	width : 34px;
-	border : 5px solid transparent;
+	border : 5px solid rgba(0, 0, 0, 0.2);
 	margin-right : 3px;
-	background-color : transparent;
+	background-color : rgba(0, 0, 0, 0.2);
 	background-clip : content-box !important;
 	background-origin : content-box !important;
 }
 #titleBar button[action~="submit"] {
-	border-color : #ffc000;
-	background : #ffc000 url(../image/width24.png) no-repeat 3px -248px;
+	background-image : url(../image/width24.png);
+	background-repeat : no-repeat;
+	background-position : 3px -248px;
 }
 
 #mask {
@@ -207,6 +208,23 @@
 [attachmenttype] > img {
 	width : 100%;
 	height : 100%;
+}
+
+button[appearance="on_off"] {
+	width : 46px;
+	height : 20px;
+	border : 2px solid #737373;
+	padding : 1px;
+	background-clip : content-box;
+	background-origin : content-box;
+	background-color : #fff;
+}
+button[appearance="on_off"][status="0"] {
+	background-color : #ce302d;
+}
+button[appearance="on_off"] > small {
+	background-color : #6c6c6c;
+	height : 24px;
 }
 
 .inputing {

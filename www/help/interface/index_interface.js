@@ -167,9 +167,12 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 		/*
 			{
 				params : {
-					emails : "a@vision2.com,b@vision2.com,c@vision2.com"
+					emails : "a@bixinews.com,b@bixinews.com,c@bixinews.com"
 				},
-				return : null
+				return : {
+					status : -1, if it has some errors
+					error : "error information"
+				}
 			}
 		*/
 		["invitation",		new Text("url?emails={emails}"),				""],
@@ -254,7 +257,8 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 					attachment : DS_attachment
 				},
 				return {
-					status : 0
+					attachmentId : 1,
+					id : 2
 				}
 			}
 		*/
@@ -316,7 +320,8 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				projectId : 1
 			},
 			return {
-				id : 1 // the id of comment
+				id : 1, // the id of comment
+				attachmentId : 2
 			}
 		*/
 		["addCommentForTodo",	new Text("url?text={text}&type={type}&projectId={projectId}"),	""],
@@ -372,7 +377,72 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			},
 			return : DS_user
 		*/
-		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""]
+		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""],
+
+		/*
+			params : {
+				id : 1 // user id
+			},
+			return : null
+		*/
+		["assignPermissions",	new Text("url?id={id}"),					""],
+
+		/*
+			params : {
+				id : 1 // user id
+			},
+			return : null
+		*/
+		["removePermissions",	new Text("url?id={id}"),					""],
+
+		/*
+			params : {
+				reporter : DS_user,
+				source : "abc", // project title or todo title
+				time : 1234567, // time ticks
+				message : DS_message
+			},
+			return : null
+		*/
+		["getReportedInfo",		"",											""],
+		/*
+			params : {
+				id : 1 // report id
+			},
+			return : null
+		*/
+		["deleteReport",		new Text("url?id={id}"),											""],
+
+		/*
+			params : {
+				id : 1 // report id
+			},
+			return : null
+		*/
+		["ignoreReport",		new Text("url?id={id}"),											""],
+
+		/*
+			params : null,
+			return : null
+		*/
+		["getCountOfReports",	"",											""],
+
+		/*
+			params : {
+				id : 1, // project id or todo id
+				from : "project"  // "project" or "todo"
+			},
+			return : null
+		*/
+		["stopMessagesListener",new Text("url?id={id}&from={from}"),		""],
+
+		/*
+			params : {
+				messageId : 1 // message id
+			},
+			return : null
+		*/
+		["reportMessage",		new Text("url?messageId={messageId}"),		""]
 	]);
 }
 }(

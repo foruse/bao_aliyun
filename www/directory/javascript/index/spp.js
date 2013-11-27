@@ -124,7 +124,8 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 
 					scheduleItemEls = contentEl.find(">li");
 
-				if(scheduleItemEls.length > 0){
+				//if(scheduleItemEls.length > 0){
+				if(false){
 					var d = new Date(time - 0),
 					
 						t = d.setDate(d.getDate() + 1);
@@ -163,12 +164,12 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 				
 				contentEl.innerHTML = "";
 
-				for(var i = 0;i < 10;i++){
+				//for(var i = 0;i < 10;i++){
 					if(lastData[date.getTime()]){
 						new Grouping.constructor(lastData[date.getTime()]).appendTo(contentUl);
 					}
 					date.setDate(date.getDate() + 1);
-				}
+				//}
 
 				contentEl.setCSSPropertyValue("top", 0);
 			}
@@ -535,10 +536,6 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 			},
 			aftershow : function(){
 				partner.load();
-
-				Global.titleBar.find('button[action="addPartner"]').onuserclick = function(){
-					Global.history.go("systemContacts");
-				};
 			}
 		});
 
@@ -551,7 +548,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 		title : "MY PARTNERS 拍档管理",
 		titleBarColor : TitleBarColor.Partner,
 		tools : [
-			{ urlname : "javascript:void(0);", action : "addPartner" },
+			{ urlname : "invitation", action : "addPartner" },
 			{ urlname : "systemOption", action : "set" }
 		]
 	});

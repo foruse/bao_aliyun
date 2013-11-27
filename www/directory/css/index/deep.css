@@ -180,7 +180,9 @@
 	display : block;
 	border-top-left-radius : 0;
 	overflow : hidden;
+	/*
 	-webkit-animation : editPassword steps(14) 500ms 1;
+	*/
 }
 @-webkit-keyframes editPassword {
 	from {
@@ -349,6 +351,8 @@
 .todo_header dd p {
 	padding : 0 8px;
 	text-align : left;
+	white-space : normal;
+	word-break : break-all;
 }
 .todo_header dd aside {
 	margin-top : 20px;
@@ -577,4 +581,99 @@
 }
 #archivedProjectView > header > ul:empty, #archivedProjectView .anchorList > ul:empty {
 	display : none;
+}
+
+#TC > section {
+	padding : 10px;
+	line-height : 20px;
+}
+#TC > section > pre {
+	white-space : pre-line;
+	margin-bottom : 1em;
+}
+#TC > section > pre[action="indent"] {
+	text-indent : 2em;
+}
+#TC > section > strong {
+	display : block;
+	text-align : center;
+	font-size : 15px;
+}
+
+#report > ul {
+	padding : 10px;
+}
+#report > ul:empty {
+	display : none;
+}
+#report > ul > li {
+	margin-bottom : 15px;
+}
+#report li > dl {
+	border-width : 2px;
+	background-color : #fff;
+}
+#report dt {
+	padding : 5px 10px;
+	height : 60px;
+	line-height : 48px;
+}
+#report dt > * {
+	display : inline-block;
+	margin-left : 5px;
+}
+#report dt > strong {
+	font-size : 15px;
+}
+#report dd {
+	padding : 5px;
+}
+#report dd > figure {
+	padding : 10px;
+	text-align : center;
+}
+#report figure > div {
+	display : inline-block;
+}
+#report .chatList_message .message_bg {
+	background-color : #ddb;
+}
+#report .message_bg > span {
+	border-bottom-color : #fff;
+	border-top-color : #fff;
+}
+#report .chatList_message nav > button {
+	display : none;
+}
+#report .chatList_message .chatList_praise {
+	text-indent : 16px;
+}
+#report .chatList_praise > p {
+	text-indent : 52px;
+}
+#report p > span {
+	color : #cd322e;
+}
+#report footer {
+	text-align : center;
+	padding : 5px 0;
+}
+#report footer > button {
+	width : 90px;
+	height : 26px;
+	background-color : #00b0d7;
+	border : 0 none;
+}
+#report footer > button[action="del"] {
+	background-color : #cd322e;
+	margin-right : 46px;
+}
+#report > p {
+	display : none;
+	text-align : center;
+	margin-top : 20px;
+	font-size : 15px;
+}
+#report > ul:empty + p {
+	display : block;
 }
