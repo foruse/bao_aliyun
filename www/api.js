@@ -117,9 +117,9 @@ function onDeviceReady() {
             file_upload_url: "upload",
             sockets: ""
         },
-//      server_url: "http://115.28.131.52:3000",
+      server_url: "http://115.28.131.52:3000",
 //      server_url: "http://212.8.40.254:5959",
-		 server_url: "http://gbksoft.com:5959",
+//		 server_url: "http://gbksoft.com:5959",
 //		server_url: "http://192.168.0.101:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
