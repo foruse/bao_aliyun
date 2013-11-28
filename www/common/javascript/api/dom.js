@@ -150,7 +150,7 @@ this.EventCollection = (function(Timer, IntervalTimer, isMobile, childGestureCon
 				{
 					fastgesture : function(e){
 						// 如果任何一方向上的偏移量大于5，就不算click
-						if(abs(e.gestureOffsetY) > 5 || abs(e.gestureOffsetX > 5))
+						if(abs(e.gestureOffsetY) > 5 || abs(e.gestureOffsetX) > 5)
 							return;
 
 						userClick.trigger(e.target);

@@ -139,7 +139,9 @@
 	background-color : #fff;
 	padding : 10px 15px;
 }
-#businessCard > footer li:not([action="authority"]), .main[ls="0"] #businessCard > footer li[action="authority"] {
+#businessCard > footer li:not([action="authority"]),
+#businessCard[creator] > footer li[action="authority"],
+.main[permission="0"] #businessCard > footer li[action="authority"] {
 	display : none;
 }
 #businessCard li[action="removePartner"] {
@@ -173,6 +175,7 @@
 }
 #systemOption > header {
 	margin-bottom : 16px;
+	display : none;
 }
 #systemOption > header > button {
 	height : 40px;
@@ -211,8 +214,8 @@
 #systemOption li[key="qrCode"]{
 	display : none;
 }
-.main[ls="0"] #systemOption > header {
-	display : none;
+.main[permission="2"] #systemOption > header {
+	display : block;
 }
 
 #systemContacts {

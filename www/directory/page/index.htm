@@ -84,7 +84,7 @@
 			<article id="uploadAvatar">
 				<header>
 					<button>
-						<img src="../../../common/image/avatar_default_large.jpg" />
+						<img src="../../common/image/avatar_default_large.jpg" />
 					</button>
 					<span class="grayFont">点击上传头像</span>
 				</header>
@@ -98,11 +98,13 @@
 			<article id="demo">
 				<script type="text/html" id="demo_html">
 					@for([
-						"javascript:void(0);",
-						"javascript:void(0);",
-						"javascript:void(0);"
+						"../image/demo_1.jpg",
+						"../image/demo_2.jpg",
+						"../image/demo_3.jpg"
 					] ->> src){
-						<img src="{src}" />
+						<p>
+							<img src="{src}" />
+						</p>
 					}
 				</script>
 			</article>
@@ -265,7 +267,7 @@
 					</dl>
 				</footer>
 			</article>
-			<article id="businessCard">
+			<article id="businessCard" creator="">
 				<section class="normalRadius">
 					<dl desc="userinfo"></dl>
 					<script id="businessCard_html" type="text/html">
@@ -481,7 +483,7 @@
 				<header>
 					<figure>
 						<p class="largeRadius">
-							<img src="../../../common/image/icon.png" />
+							<img src="../../common/image/icon.png" />
 						</p>
 						<figcaption>暴脾气 1.0.1</figcaption>
 					</figure>

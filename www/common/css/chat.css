@@ -296,12 +296,12 @@
 	display : none;
 }
 .chatList_smilies .navigator {
-	height : 146px;
-	margin : 10px 0;
+	height : 166px;
+	border : 0 none;
 	background-color : transparent;
 }
 .chatList_smilies .navigator > nav {
-	height : 120px;
+	height : 140px;
 }
 .chatList_smilies .navigator > aside {
 	height : 26px;
@@ -311,19 +311,25 @@
 	background-color : transparent;
 }
 .chatList_smilies .navigator button[idx] {
-	background-color : #fff;
+	background-color : #8e8e8e;
+}
+.chatList_smilies .navigator button.focused {
+	background-color : #fff !important;
+}
+.chatList_smilies li {
+	white-space : normal;
 }
 .chatList_smilies li[action="BaoPiQiSmilies"] {
 	width : 200%;
+	line-height : 70px;
 }
 .chatList_smilies li[action="BaoPiQiSmilies"] > button {
 	width : 10%;
-	min-width : 60px;
 }
 .chatList_smilies li[action="BaoPiQiSmilies"] img {
 	margin : 0 auto;
-	background-color : rgba(150, 150, 150, 0.8);
-	width : 50px;
+	background-color : #fff;
+	width : 60px;
 	height : 60px;
 }
 .chatList_smilies figcaption {

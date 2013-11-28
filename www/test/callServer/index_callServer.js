@@ -362,13 +362,13 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			return data;
 		},
 		getReportedInfo : function(data){
-			var info = [];
+			var info = [], random = Bao.Test.DummyData.Generate.Number.random;
 
-			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(5), function(){
+			jQun.forEach(random(5), function(){
 				info.push({
 					reporter : Index.Common.getUser(),
 					source : Bao.Test.DummyData.Generate.String.random(),
-					time : Bao.Test.DummyData.Generate.Number.random(99999),
+					time : random(99999),
 					message : Index.SingleProject.getMessage()
 				});
 			}, this);

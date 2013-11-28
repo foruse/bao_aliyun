@@ -92,7 +92,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 	Bao.UI.Control.List.UserManagementList
 ));
 
-this.BusinessCard = (function(Global, Confirm, Switch, SwitchStatus, clickAvatarEvent){
+this.BusinessCard = (function(Global, Permission, Confirm, Switch, SwitchStatus, clickAvatarEvent){
 	function ClickUserAvatar(){
 		///	<summary>
 		///	点击用户头像。
@@ -157,8 +157,6 @@ this.BusinessCard = (function(Global, Confirm, Switch, SwitchStatus, clickAvatar
 
 		swt.attach({
 			statuschanged : function(e){
-				console.log(e.status === SwitchStatus.On ? "assignPermissions" : "removePermissions");
-
 				CallServer.open(
 					e.status === SwitchStatus.On ? "assignPermissions" : "removePermissions",
 					{ id : businessCard.userId },
@@ -187,6 +185,13 @@ this.BusinessCard = (function(Global, Confirm, Switch, SwitchStatus, clickAvatar
 			var businessCard = this;
 
 			CallServer.open("getUser", { id : id }, function(data){
+				if(data.permission === Permission.Creator){
+					businessCard.setAttribute("creator", "");
+				}
+				else {
+					businessCard.removeAttribute("creator");
+				}
+
 				businessCard.find(">section>dl").innerHTML = businessCard.userInfoHtml.render(data);	
 			});
 
@@ -199,6 +204,7 @@ this.BusinessCard = (function(Global, Confirm, Switch, SwitchStatus, clickAvatar
 	return BusinessCard.constructor;
 }(
 	Bao.Global,
+	Bao.Permission,
 	Bao.UI.Control.Mask.Confirm,
 	Bao.UI.Control.Drag.Switch,
 	Bao.UI.Control.Drag.SwitchStatus,
@@ -210,8 +216,6 @@ this.BusinessCard = (function(Global, Confirm, Switch, SwitchStatus, clickAvatar
 
 this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 	function Header(selector){
-		var header = this;
-
 		this.attach({
 			userclick : function(e, targetEl){
 				if(targetEl.between(">button", this).length > 0){
@@ -220,14 +224,17 @@ this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 				}
 			}
 		});
-
-		CallServer.open("getCountOfReports", null, function(data){
-			header.setCount(data.count);
-		});
 	};
 	Header = new NonstaticClass(Header, null, Panel.prototype);
 
 	Header.properties({
+		recall : function(){
+			var header = this;
+
+			CallServer.open("getCountOfReports", null, function(data){
+				header.setCount(data.count);
+			});
+		},
 		setCount : function(count){
 			var countEl = this.find(">button>span");
 
@@ -242,7 +249,8 @@ this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 		///	系统项。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
-		new Header.constructor(this.header);
+		var header = new Header.constructor(this.header);
+
 		new AnchorList(anchorData).appendTo(this.find(">section")[0]);
 
 		this.attach({
@@ -254,6 +262,9 @@ this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 					});
 					return;
 				}
+			},
+			beforeshow : function(){
+				header.recall();
 			}
 		});
 	};
@@ -436,7 +447,7 @@ this.Invitation = (function(ValidationList, OverflowPanel, Global, Mask, Validat
 	Invitation = new NonstaticClass(Invitation, "Bao.Page.Index.Secondary.Invitation", PagePanel.prototype);
 
 	Invitation.override({
-		title : "邀请团队",
+		title : "邀请拍档",
 		titleBarColor : TitleBarColor.Partner,
 		tools : [
 			{ urlname : "javascript:void(0);", action : "invite submit" }

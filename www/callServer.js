@@ -47,9 +47,9 @@
 //                Mdls.Project.read(params, complete);
                 console.log("_______________________getSingleProject");
                 Mdls.Project.read(params, function(data) {
-                    console.log("getSingleProject");
+					console.log("getSingleProject");
                     console.log(data);
-                    complete(data);
+					complete(data);
                 });
             },
 
@@ -70,7 +70,6 @@
                 if(params.projectId === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
-					alert('zxc1');
 
                 }else{
 					console.log('inichat');
@@ -131,6 +130,10 @@
                     }
                 }
             },
+					
+			stopMessagesListener: function(params, complete) {
+				// What i need to do here?
+			},
             
             addComment: function(params, complete) {
 //                alert("project")
@@ -430,6 +433,20 @@
 			},
 			reportMessage: function(params, complete) {
 				Mdls.AbusedMessages.report_abuse(null, params.messageId, complete);
+			},
+			getReportedInfo: function(params, complete) {
+				var data = [];
+				
+				Mdls.AbusedMessages.get_abused_messages(function(messages) {
+					console.log(messages);
+					complete(messages);
+				});
+			},
+			deleteReport: function(params, complete) {
+				Mdls.AbusedMessages.remove_message(null, params.messageId, complete);
+			},
+			ignoreReport: function(params, complete) {
+				Mdls.AbusedMessages.reset_abuse(null, params.messageId, complete);
 			}
         });
 

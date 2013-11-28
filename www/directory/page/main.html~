@@ -86,7 +86,7 @@
 			<article id="uploadAvatar">
 				<header>
 					<button>
-						<img src="../../../common/image/avatar_default_large.jpg" />
+						<img src="../../common/image/avatar_default_large.jpg" />
 					</button>
 					<span class="grayFont">点击上传头像</span>
 				</header>
@@ -100,11 +100,13 @@
 			<article id="demo">
 				<script type="text/html" id="demo_html">
 					@for([
-						"javascript:void(0);",
-						"javascript:void(0);",
-						"javascript:void(0);"
+						"../image/demo_1.jpg",
+						"../image/demo_2.jpg",
+						"../image/demo_3.jpg"
 					] ->> src){
-						<img src="{src}" />
+						<p>
+							<img src="{src}" />
+						</p>
 					}
 				</script>
 			</article>
@@ -267,7 +269,7 @@
 					</dl>
 				</footer>
 			</article>
-			<article id="businessCard">
+			<article id="businessCard" creator="">
 				<section class="normalRadius">
 					<dl desc="userinfo"></dl>
 					<script id="businessCard_html" type="text/html">
@@ -483,7 +485,7 @@
 				<header>
 					<figure>
 						<p class="largeRadius">
-							<img src="../../../common/image/icon.png" />
+							<img src="../../common/image/icon.png" />
 						</p>
 						<figcaption>暴脾气 1.0.1</figcaption>
 					</figure>
@@ -707,14 +709,14 @@
 	</div>
 
  	<script type="text/javascript" src="../../phonegap.js"></script>
-    <script src="http://debug.build.phonegap.com/target/target-script-min.js#e572579e-4e1a-11e3-8e66-22000a98b3d6"></script>   
+    <!--script src="http://debug.build.phonegap.com/target/target-script-min.js#e572579e-4e1a-11e3-8e66-22000a98b3d6"></script-->
 	
+    <!-- // <script src="http://192.168.0.101/www/helpers.js" type="text/javascript"></script> -->
     <!--<script src="http://192.168.0.101/www/helpers.js" type="text/javascript"></script>-->
-    <!--<script src="http://192.168.0.101/www/helpers.js" type="text/javascript"></script>-->
-    <script src="../../helpers.js" type="text/javascript"></script>
+    <script src="../../helpers.js" type="text/javascript"></script> 
     <!--<script src="http://192.168.0.101:3000/socket.io/socket.io.js" type="text/javascript"></script>-->
-	<!--script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script-->
-    <script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script>
+	 <script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script> 
+    <!--script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script-->
 		<!-- nested main -->
     <!--<script src="http://192.168.0.101/www/api.js" type="text/javascript"></script> nested main -->
 	<script src="../../api.js" type="text/javascript"></script> 

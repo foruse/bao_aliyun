@@ -12,7 +12,7 @@ with(this){
 		email : "mj@BaoPiQi.com", // string
 		adress : "beijing", // string : home adress
 		isNewUser : false, // boolean : if the user is first login, return true, else return false
-		isLeader : false, // boolean : if the user has authority to create project, return true, else return false
+		permission : 1, // number : 0 ->> "none", 1 ->> "leader", 2 ->> "creator"
 		QRCode : "../../image/qrcode" // string
 	};
 

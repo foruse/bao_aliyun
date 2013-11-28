@@ -424,7 +424,7 @@ this.Todo = (function(ChatListPanel, OverflowPanel, Global){
 			userclick : function(e, targetEl){
 				if(targetEl.between("dt>button").length > 0){
 					CallServer.open("todoCompleted", { id : todo.id }, function(data){
-						console.log(data);
+						Global.history.go("todoList");
 					}, true);
 					return;
 				}
@@ -919,10 +919,6 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 	function Single(data){
 		var single = this, message = new Message(data.message);
-		
-		this.assign({
-			reportId : data.id
-		});
 
 		this.combine(reportHtml.create(data));
 
@@ -952,7 +948,7 @@ this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 
 							CallServer.open(
 								(isDel ? "delete" : "ignore") + "Report",
-								{ id : single.id },
+								{ messageId : data.message.id },
 								function(){
 									single.remove();
 								}
@@ -968,25 +964,22 @@ this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 	};
 	Single = new NonstaticClass(Single, null, Panel.prototype);
 
-	Single.properties({
-		reportId : -1
-	});
-
 
 	function Report(selector){
-		var report = this;
+		var report = this, overflowEl = new OverflowPanel(report.find(">ul"));
 
 		this.attach({
 			beforeshow : function(){
+				overflowEl.innerHTML = "";
+				overflowEl.setTop(0);
+
 				CallServer.open("getReportedInfo", null, function(data){
 					forEach(data, function(dt){
-						new Single.constructor(dt).appendTo(this);
-					}, report.find(">ul")[0]);
+						new Single.constructor(dt).appendTo(overflowEl[0]);
+					});
 				});
 			}
 		});
-
-		new OverflowPanel(this.find(">ul"));
 	};
 	Report = new NonstaticClass(Report, "Bao.Page.Index.Deep.Report", PagePanel.prototype);
 

@@ -407,7 +407,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 		["getReportedInfo",		"",											""],
 		/*
 			params : {
-				id : 1 // report id
+				messageId : 1 // message id
 			},
 			return : null
 		*/
@@ -415,7 +415,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 
 		/*
 			params : {
-				id : 1 // report id
+				messageId : 1 // message id
 			},
 			return : null
 		*/

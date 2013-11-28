@@ -209,6 +209,8 @@ this.SelectImage = (function(Confirm, ImageFile){
 	function SelectImage(_action){
 		var selectImageFile = this, imageFile = new ImageFile();
 		
+		this.footer.innerHTML = "";
+
 		this.classList.add("selectImage");
 		this.addButton("image", "添加图片", false);
 		this.addButton("camera", "相机拍照", false);
@@ -415,6 +417,8 @@ this.SelectionImageArea = (function(Global, Direction, callBack, round, selectio
 			Global.mask.hide();
 		},
 		loadImage : function(src, _callBack){
+			console.log('src!!!!!!!!!!');
+			console.log(src);
 			if(!src){
 				return;
 			}

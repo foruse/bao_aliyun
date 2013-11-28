@@ -21,6 +21,9 @@
 // Added by GBKSoft developer 13.11.13
 function b64ToUint6(e){return e>64&&e<91?e-65:e>96&&e<123?e-71:e>47&&e<58?e+4:e===43?62:e===47?63:0}function base64DecToArr(e,t){var n=e.replace(/[^A-Za-z0-9\+\/]/g,""),r=n.length,i=t?Math.ceil((r*3+1>>2)/t)*t:r*3+1>>2,s=new Uint8Array(i);for(var o,u,a=0,f=0,l=0;l<r;l++){u=l&3;a|=b64ToUint6(n.charCodeAt(l))<<18-6*u;if(u===3||r-l===1){for(o=0;o<3&&f<i;o++,f++){s[f]=a>>>(16>>>o&24)&255}a=0}}return s}function uint6ToB64(e){return e<26?e+65:e<52?e+71:e<62?e-4:e===62?43:e===63?47:65}function base64EncArr(e){var t,n="";for(var r=e.length,i=0,s=0;s<r;s++){t=s%3;if(s>0&&s*4/3%76===0){n+="\r\n"}i|=e[s]<<(16>>>t&24);if(t===2||e.length-s===1){n+=String.fromCharCode(uint6ToB64(i>>>18&63),uint6ToB64(i>>>12&63),uint6ToB64(i>>>6&63),uint6ToB64(i&63));i=0}}return n.replace(/A(?=A$|$)/g,"=")}function UTF8ArrToStr(e){var t="";for(var n,r=e.length,i=0;i<r;i++){n=e[i];t+=String.fromCharCode(n>251&&n<254&&i+5<r?(n-252)*1073741824+(e[++i]-128<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>247&&n<252&&i+4<r?(n-248<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>239&&n<248&&i+3<r?(n-240<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>223&&n<240&&i+2<r?(n-224<<12)+(e[++i]-128<<6)+e[++i]-128:n>191&&n<224&&i+1<r?(n-192<<6)+e[++i]-128:n)}return t}function strToUTF8Arr(e){var t,n,r=e.length,i=0;for(var s=0;s<r;s++){n=e.charCodeAt(s);i+=n<128?1:n<2048?2:n<65536?3:n<2097152?4:n<67108864?5:6}t=new Uint8Array(i);for(var o=0,u=0;o<i;u++){n=e.charCodeAt(u);if(n<128){t[o++]=n}else if(n<2048){t[o++]=192+(n>>>6);t[o++]=128+(n&63)}else if(n<65536){t[o++]=224+(n>>>12);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<2097152){t[o++]=240+(n>>>18);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<67108864){t[o++]=248+(n>>>24);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else{t[o++]=252+n/1073741824;t[o++]=128+(n>>>24&63);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}}return t}
 
+// Way to merge arrays @ http://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript/7122370#7122370
+Array.prototype.merge=function(){for(var e=0;e<arguments.length;e++){var t=arguments[e];for(var n=0;n<t.length;n++){if(this.indexOf(t[n])===-1){this.push(t[n])}}}return this}
+
 // // // this file consists of:
 // 1) Models section (AppModel function and inside Models ) - have models and methods to comunicate with server and db
 // 2) server section:
@@ -141,6 +144,43 @@ function onDeviceReady() {
         a.initEvent("appload", true, true); //init event -----------------> see the last line in the App_model--->the event is dispatched there
 
         App_model = function(SERVER) {
+			var html = document.getElementsByTagName('html')[0];
+			html.style.height = '100%';
+			var body = document.getElementsByTagName('body')[0];
+			
+			var background_image = '';
+			
+			body.style.backgroundSize = 'auto';
+			
+			if (window.innerWidth == 320) {
+				background_image = 'url(\'../../common/image/W320H480.gif\')';
+			} else if (window.innerWidth == 640) {
+				if (window.innerHeight <= 1100) {
+					background_image = 'url(\'../../common/image/W640H960.gif\')';
+				} else if (window.innerHeight > 1100) {
+					background_image = 'url(\'../../common/image/W640H1136.gif\')';
+				}
+			} else if (window.innerWidth == 768) {
+				background_image = 'url(\'../../common/image/W768H1004.gif\')';
+			} else {
+				background_image = 'url(\'../../common/image/W640H1136.gif\')';
+				body.style.backgroundSize = '100% auto';
+			}
+			
+			body.style.backgroundImage = background_image;
+			body.style.backgroundRepeat = 'no-repeat';
+			body.style.backgroundPosition = 'center center';
+			//body.style.backgroundSize = 'contain';
+			body.style.backgroundColor = '#ffffff';
+			body.style.height = '100%';
+			
+			var main = document.getElementsByClassName('main')[0];
+			main.style.opacity = 0;
+			
+			setTimeout(function() {
+				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
+			
+			
             /* Private */
             var API = SERVER.API,  //redefine all the stuff here for more simple usage
                     DB = SERVER.DB,
@@ -202,11 +242,11 @@ function onDeviceReady() {
 					
 					SOCKET.request("counter", {}, function(result) {
 						if (result) {
-                           callback(result);
-                        } else {
-                           callback({count: 100000, validationImage: "src"});
-                        }
-                    });
+						   callback(result);
+						} else {
+						   callback({count: 100000, validationImage: "src"});
+						}
+					});
                }
 
            };
@@ -550,7 +590,7 @@ function onDeviceReady() {
                         });
                     }else{
                         SOCKET.request("login", data, function(result) {
-							result.user['isLeader'] = 1;
+							//result.user['isLeader'] = 1;
                             // console.log(result);
                             if (result !== false) {
                                 if (result.user) {
@@ -559,14 +599,24 @@ function onDeviceReady() {
 										DB.from("xiao_companies");
 										DB.where("id = '" + result.user.company_id + "'");
 										DB.row(function(company) {
-											if (company && company.creator_id == result.user.id) {
-												result.user.isLeader = true;
+											if (company) {
+												if (company.creator_id == result.user.id) {
+													result.user.permission = 2;
+												} else {
+													if (result.user.poweruser == 1) {
+														result.user.permission = 1;
+													} else {
+														result.user.permission = 0;
+													}
+												}
 											} else {
-												result.user.isLeader = false;
+												result.user.permission = 0;
 											}
+											
+//											alert(JSON.stringify(result.user));
 
-											// SERVER.SESSION._init_storage(1);
-											// SERVER.DB._init_db(1);                   
+//											SERVER.SESSION._init_storage(1);
+//											SERVER.DB._init_db(1);                   
 		//                                    result.user.isNewUser = 0;
 											SESSION.set("saved_user_data", JSON.stringify(result.user));
 											SESSION.set("user_id", result.user.id);
@@ -585,7 +635,7 @@ function onDeviceReady() {
 			//    //                                    alert("cool");
 												   API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
 			//                                    }
-											console .log(result);
+											console.log(result);
 											//                                callback(result);
 										});
 									});
@@ -911,6 +961,8 @@ function onDeviceReady() {
 									invite_data.push({email: emails[i], company_id: company_id})
 								}
 								
+								console.log(invite_data);
+								
 								DB.batch_insert('xiao_invites', invite_data, function() {
 									API._sync(['xiao_invites'], function() {
 										for (var i in invite_data) {
@@ -1113,12 +1165,6 @@ function onDeviceReady() {
                             }
                         });
                     } else {
-						/*Models.AbusedMessages.remove_message('todo', 5, function() {
-							Models.AbusedMessages.get_abused_messages(function(messages) {
-								console.log('------------ABUSED MESSAGES');
-								console.log(messages);
-							});
-						});*/
                         // SELECT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 1 as status  FROM xiao_project_partners AS pp INNER JOIN xiao_projects AS p ON pp.project_id = p.id INNER JOIN xiao_users AS u ON u.id = pp.user_id INNER JOIN xiao_companies AS c ON u.company_id = c.id WHERE pp.user_id = "4" AND p.archived <> "1" GROUP BY p.id UNION SELECT DISTINCT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 2 as status  FROM xiao_projects AS p LEFT JOIN xiao_project_partners AS pp ON pp.project_id = p.id LEFT JOIN xiao_users AS u ON u.id = pp.user_id LEFT JOIN xiao_companies AS c ON u.company_id = c.id WHERE p.archived <> "1" GROUP BY p.id HAVING p.id NOT IN ( SELECT project_id FROM xiao_project_partners WHERE user_id = "4" ) LIMIT 10
                         var result = [], logged_user = SESSION.get("user_id");
                             params.othersOffset = (params.othersOffset ? params.othersOffset : 0);
@@ -1151,11 +1197,11 @@ function onDeviceReady() {
                                             HAVING p.id NOT IN (\n\
                                                 SELECT project_id \n\
                                                 FROM xiao_project_partners \n\
-                                                WHERE user_id = "4" \n\
+                                                WHERE user_id = "' + logged_user + '" \n\
                                             ) ) ORDER BY status',
                                             // ) ) ORDER BY status) LIMIT 10 OFFSET '+ ( (params.pageIndex - 1) * params.pageSize ) + '' ,
                             function(projects){
-
+								console.log(projects);
                                 if (projects.length > 0) {
                                     projects = projects.splice( ((params.pageIndex - 1) * params.pageSize), ( (params.pageIndex - 1) * params.pageSize )+10 );
                                     projects.forEach(function(pr) {
@@ -1411,18 +1457,22 @@ function onDeviceReady() {
 			};
 			Models.AbusedMessages = {
 				get_abused_messages: function(callback) {
-					var abused_messages = {}, abused_pc, abused_tc;
+					var abused_messages = [], abused_pc, abused_tc;
+					
+					var login_user = SESSION.get('user_id');
+					
+					/*SOCKET.request('get_abused_pc', {company_id: SESSION.get('company_id')}, function(messages) {
+						console.log(result);
+					});
+					
+					SOCKET.request('get_abused_tc', {company_id: SESSION.get('company_id')}, function(messages) {
+						console.log(result);
+					});
+					
+					return;*/
 					
 					API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments","xiao_project_comments_likes","xiao_smileys"], function() {
-						DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, pc.abused, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
-						DB.from("xiao_project_comments AS pc");
-						DB.left_join("xiao_users AS u", "u.id = pc.user_id");
-						DB.left_join("xiao_companies AS c", "u.company_id = c.id");
-						DB.left_join("xiao_project_comments_likes AS cl", "cl.comment_id = pc.id");
-						DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-						DB.where('pc.abused > 0 AND pc.company_id = "' + SESSION.get('company_id') + '" AND pc.deleted == 0');
-						DB.order_by('pc.abused DESC');
-						DB.query(function(messages) {
+						SOCKET.request('get_abused_pc', {company_id: SESSION.get('company_id')}, function(messages) {
 							Models.Smileys.get_smileys(function(smileys) {
 								abused_pc = []
 								var unread = 0, indexes = [];
@@ -1436,10 +1486,8 @@ function onDeviceReady() {
 											message = Models.Smileys.convert_smileys(message, null, smileys);
 
 											abused_pc.push({
-												id: mess.id,
-												text: message,
-												abused: mess.abused,
-												poster: {
+												id: 5,
+												reporter: {
 													id: mess.uid,
 													name: mess.name,
 													pinyin: mess.pinyin,
@@ -1450,75 +1498,12 @@ function onDeviceReady() {
 													phoneNum: mess.phoneNum,
 													email: mess.email,
 													adress: mess.adress,
-													isNewUser: mess.isNewUser
+													isNewUser: mess.isNewUser,
+													isLoginUser: login_user == mess.uid
 												},
-												attachment: {
-													id: mess.id,
-													type: mess.type,
-													src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-	//                                                src: mess.server_path,
-													from: "project"
-												},
-												praise: [],
-												time: new Date(websql_date_to_number(mess.time)).getTime(),
-												type: mess.type
-											});
-
-											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
-												abused_pc[abused_pc.length-1].praise.push({
-													id: mess.cl_uid,
-													name: mess.cl_name,
-													pinyin: mess.cl_pinyin,
-	//                                                avatar: mess.cl_avatar,
-													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-													company: mess.cl_company,
-													companyAdress: mess.cl_companyAdress,
-													position: mess.cl_position,
-													phoneNum: mess.cl_phoneNum,
-													email: mess.cl_email,
-													adress: mess.cl_adress,
-													isNewUser: mess.cl_isNewUser
-												});
-										}else{
-											abused_pc[abused_pc.length-1].praise.push({
-												id: mess.cl_uid,
-												name: mess.cl_name,
-												pinyin: mess.cl_pinyin,
-												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-												company: mess.cl_company,
-												companyAdress: mess.cl_companyAdress,
-												position: mess.cl_position,
-												phoneNum: mess.cl_phoneNum,
-												email: mess.cl_email,
-												adress: mess.cl_adress,
-												isNewUser: mess.cl_isNewUser
-											});
-										}
-									});
-								}
-
-								abused_messages.abused_pc = abused_pc;
-
-								DB.select("tc.id, tc.content, tc.type, tc.server_path, tc.local_path, tc.todo_id, tc.user_id, strftime('%d %m %Y %H:%M:%S', tc.time) as time, tc.read, tc.abused, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
-								DB.from("xiao_todo_comments AS tc");
-								DB.left_join("xiao_users AS u", "u.id = tc.user_id");
-								DB.left_join("xiao_companies AS c", "u.company_id = c.id");
-								DB.left_join("xiao_todo_comments_likes AS cl", "cl.comment_id = tc.id");
-								DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-								DB.where('tc.abused > 0 AND tc.company_id = "' + SESSION.get('company_id') + '" AND tc.deleted == 0');
-								DB.order_by('tc.time, tc.id');
-								DB.query(function(messages) {
-									abused_tc = []
-									var unread = 0, indexes = [];
-									if (messages.length > 0) {
-										messages.forEach(function(mess) {
-											if(indexes.lastIndexOf(mess.id) === -1){
-												indexes.push(mess.id);
-
-												var message = mess.content;
-												message = Models.Smileys.convert_smileys(message, null, smileys);
-
-												abused_tc.push({
+												source: mess.parent_title,
+												time: mess.time,
+												message: {
 													id: mess.id,
 													text: message,
 													abused: mess.abused,
@@ -1534,16 +1519,115 @@ function onDeviceReady() {
 														email: mess.email,
 														adress: mess.adress,
 														isNewUser: mess.isNewUser,
+														isLoginUser: login_user == mess.uid
 													},
 													attachment: {
 														id: mess.id,
 														type: mess.type,
 														src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-														from: "todo"
+		//                                                src: mess.server_path,
+														from: "project"
 													},
-													praise: [],
+													//praise: [],
 													time: new Date(websql_date_to_number(mess.time)).getTime(),
 													type: mess.type
+												}
+											});
+
+											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
+												abused_pc[abused_pc.length-1].praise.push({
+													id: mess.cl_uid,
+													name: mess.cl_name,
+													pinyin: mess.cl_pinyin,
+	//                                                avatar: mess.cl_avatar,
+													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+													company: mess.cl_company,
+													companyAdress: mess.cl_companyAdress,
+													position: mess.cl_position,
+													phoneNum: mess.cl_phoneNum,
+													email: mess.cl_email,
+													adress: mess.cl_adress,
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.uid
+												});
+										}else{
+											abused_pc[abused_pc.length-1].praise.push({
+												id: mess.cl_uid,
+												name: mess.cl_name,
+												pinyin: mess.cl_pinyin,
+												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+												company: mess.cl_company,
+												companyAdress: mess.cl_companyAdress,
+												position: mess.cl_position,
+												phoneNum: mess.cl_phoneNum,
+												email: mess.cl_email,
+												adress: mess.cl_adress,
+												isNewUser: mess.cl_isNewUser,
+												isLoginUser: login_user == mess.uid
+											});
+										}
+									});
+								}
+
+								abused_messages = abused_messages.merge(abused_pc);
+
+								SOCKET.request('get_abused_tc', {company_id: SESSION.get('company_id')}, function(messages) {
+									abused_tc = []
+									var unread = 0, indexes = [];
+									if (messages.length > 0) {
+										messages.forEach(function(mess) {
+											if(indexes.lastIndexOf(mess.id) === -1){
+												indexes.push(mess.id);
+
+												var message = mess.content;
+												message = Models.Smileys.convert_smileys(message, null, smileys);
+
+												abused_tc.push({
+													id: 5,
+													reporter: {
+														id: mess.uid,
+														name: mess.name,
+														pinyin: mess.pinyin,
+														avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
+														company: mess.company,
+														companyAdress: mess.companyAdress,
+														position: mess.position,
+														phoneNum: mess.phoneNum,
+														email: mess.email,
+														adress: mess.adress,
+														isNewUser: mess.isNewUser,
+														isLoginUser: login_user == mess.uid
+													},
+													source: mess.parent_title,
+													time: mess.time,
+													message: {
+														id: mess.id,
+														text: message,
+														abused: mess.abused,
+														poster: {
+															id: mess.uid,
+															name: mess.name,
+															pinyin: mess.pinyin,
+															avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
+															company: mess.company,
+															companyAdress: mess.companyAdress,
+															position: mess.position,
+															phoneNum: mess.phoneNum,
+															email: mess.email,
+															adress: mess.adress,
+															isNewUser: mess.isNewUser,
+															isLoginUser: login_user == mess.uid
+														},
+														attachment: {
+															id: mess.id,
+															type: mess.type,
+															src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+															from: "todo"
+														},
+														praise: [],
+														time: new Date(websql_date_to_number(mess.time)).getTime(),
+														type: mess.type
+													}
 												});
 												if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
 													abused_tc[abused_tc.length-1].praise.push({
@@ -1557,7 +1641,8 @@ function onDeviceReady() {
 														phoneNum: mess.cl_phoneNum,
 														email: mess.cl_email,
 														adress: mess.cl_adress,
-														isNewUser: mess.cl_isNewUser
+														isNewUser: mess.cl_isNewUser,
+														isLoginUser: login_user == mess.uid
 													});
 											}else{
 												abused_tc[abused_tc.length-1].praise.push({
@@ -1572,13 +1657,14 @@ function onDeviceReady() {
 													phoneNum: mess.cl_phoneNum,
 													email: mess.cl_email,
 													adress: mess.cl_adress,
-													isNewUser: mess.cl_isNewUser
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.uid
 												});
 											}
 										});
 									}
 									
-									abused_messages.abused_tc = abused_tc;
+									abused_messages = abused_messages.merge(abused_tc);
 
 									callback(abused_messages);
 								});
@@ -1618,6 +1704,10 @@ function onDeviceReady() {
 				remove_message: function(type, id, callback) {
 					var table = '';
 					
+					if (!type) {
+						type = id.split('_').splice(-2, 1)[0];
+					}
+					
 					switch(type) {
 						case 'project':
 							table = 'xiao_project_comments';
@@ -1627,11 +1717,60 @@ function onDeviceReady() {
 							break;
 					}
 					
-					DB.remove(table, "server_id='" + id + "'", function() {
-						//API._sync(function() {
+					SOCKET.request("remove_message", {
+						type: type,
+						id: id
+					}, function() {
+						API._sync([table], function() {
 							callback();
-						//});
+						});
 					});
+					
+					/*DB.remove(table, "id='" + id + "'", function() {
+						API._sync([table], function() {
+							callback();
+						});
+					});*/
+				},
+						
+				reset_abuse: function(type, id, callback) {
+					var table = '';
+					
+					if (!type) {
+						type = id.split('_').splice(-2, 1)[0];
+					}
+					
+					switch(type) {
+						case 'project':
+							table = 'xiao_project_comments';
+							break;
+						case 'todo':
+							table = 'xiao_todo_comments';
+							break;
+					}
+					
+					console.log(table)
+					console.log({abused: 0});
+					console.log("id = '" + id + "'");
+					
+					SOCKET.request("reset_abuse", {
+						type: type,
+						id: id
+					}, function() {
+						API._sync([table], function() {
+							if (callback) {
+								callback();
+							}
+						});
+					});
+					
+					/*DB.update(table, {abused: 0}, "id = '" + id + "'", function() {
+						API._sync([table], function() {
+							if (callback) {
+								callback();
+							}
+						});
+					});*/
 				},
 						
 				report_abuse: function(type, id, callback) {
@@ -1651,29 +1790,29 @@ function onDeviceReady() {
 					}
 					
 					//API._sync([table], function() {
-						DB.select('m.abused');
-						DB.from(table + ' AS m');
-						DB.where("m.id = '" + id + "'");
-						DB.row(function(row) {
-							console.log('Message to abuse');
-							console.log(row);
-							var abused = parseInt(row.abused);
-							
-							console.log('Data to update');
-							console.log(table);
-							console.log({abused: abused + 1});
-							console.log("id = '" + id + "'");
+					DB.select('m.abused');
+					DB.from(table + ' AS m');
+					DB.where("m.id = '" + id + "'");
+					DB.row(function(row) {
+						console.log('Message to abuse');
+						console.log(row);
+						var abused = parseInt(row.abused);
 
-							DB.update(table, {abused: abused + 1}, "id = '" + id + "'", function() {
-								console.log('abuse updated');
-								API._sync([table], function() {
-									console.log('abuse table synced');
-									if (callback) {
-										callback();
-									}
-								});
+						console.log('Data to update');
+						console.log(table);
+						console.log({abused: abused + 1});
+						console.log("id = '" + id + "'");
+
+						DB.update(table, {abused: abused + 1}, "id = '" + id + "'", function() {
+							console.log('abuse updated');
+							API._sync([table], function() {
+								console.log('abuse table synced');
+								if (callback) {
+									callback();
+								}
 							});
 						});
+					});
 					//});
 				}
 			};
@@ -1690,7 +1829,7 @@ function onDeviceReady() {
                     API._sync(["xiao_project_comments", "xiao_users", "xiao_companies", "xiao_project_comments_likes", "xiao_smileys"], function() {
                         
 //                        DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, pc.time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
-                        DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
+                        DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%s', pc.time) as time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
                         DB.from("xiao_project_comments AS pc");
                         DB.left_join("xiao_users AS u", "u.id = pc.user_id");
                         DB.left_join("xiao_companies AS c", "u.company_id = c.id");
@@ -1704,6 +1843,7 @@ function onDeviceReady() {
                         DB.order_by(' pc.time, pc.id');
     //                    API.read(function(messages) {
                         DB.query(function(messages) {
+							console.log(messages);
 							Models.Smileys.get_smileys(function(smileys) {
 								console.log("__________messages");
 								var mess_result = [], unread = 0, indexes = [];
@@ -1743,7 +1883,7 @@ function onDeviceReady() {
 													from: "project"
 												},
 												praise: [],
-												time: new Date(websql_date_to_number(mess.time)).getTime(),
+												time: parseInt(mess.time) * 1000,
 												type: mess.type
 											});
 
@@ -2599,9 +2739,16 @@ function onDeviceReady() {
             // Models 
 
 
+			setTimeout(function() {
+				body.style.background = 'transparent';
+				body.style.height = 'auto';
+				html.style.height = 'auto';
+				main.style.opacity = 1;
+			}, 2000);
+
             document.dispatchEvent(a);
-            if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
 			
+			}, 700);
         }(
                 // PRIVATE
                         // PRIVATE
@@ -3172,7 +3319,7 @@ function onDeviceReady() {
                                                             console.log("start init");
                                                             db.transaction(createDB, error_create_DB);
                                                             function createDB(tx) {
-                                                                // DON't FORGET TO ADD TABLE TO init_tables     for test
+																// DON't FORGET TO ADD TABLE TO init_tables     for test
                                                                 if (clear) {
                                                                     _this._init_tables.forEach(function(drop_table) {
                                                                         tx.executeSql('DROP TABLE IF EXISTS ' + drop_table);
@@ -3399,7 +3546,7 @@ function onDeviceReady() {
                                                                     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
                                                                     row_id varchar(255) NOT NULL)'
                                                                         );
-                                                                if (clear) {
+																if (clear) {
                                                                     _this._init_tables.forEach(function(cur) { // triggers are used to paste data to sync table
 //                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
                                                                             var sql = 'CREATE TRIGGER update_' + cur + ' AFTER UPDATE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
@@ -3542,8 +3689,8 @@ function onDeviceReady() {
                                                                 sql = 'SELECT * FROM sync as s INNER JOIN ' + table_name + ' as t ON s.row_id = t.id WHERE s.table_name ="' + table_name + '"',
                                                                 sql_del = 'SELECT * FROM sync_delete WHERE table_name ="' + table_name + '"';
                                                         SERVER.DB._executeSQL(sql, function(data) {
-															 console.log('Data to sync in ' + table_name);
-															 console.log(data);
+//															 console.log('Data to sync in ' + table_name);
+//															 console.log(data);
                                                             counter = data.length;
                                                             data.length > 0 ? data.forEach(function(el, i) {
                                                                 
@@ -3644,7 +3791,7 @@ function onDeviceReady() {
 																sync_data.push(data);
 //                                                                console.log("_______data")
 //                                                                console.log(data)
-                                                                console.log("_______sync_data")
+//                                                                console.log("_______sync_data")
 //                                                                console.log(sync_data)
                                                                 if (table_num == (tables.length - 1)) {
 																	console.log("last");

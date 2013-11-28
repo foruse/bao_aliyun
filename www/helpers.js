@@ -101,7 +101,9 @@ function websql_date_to_number(str){
             break
     }
     for(var i in month_ar){
-        result+= (i == 1 ? word : month_ar[i])+" ";
+		if (typeof month_ar[i] != 'object') {
+			result+= (i == 1 ? word : month_ar[i])+" ";
+		}
     }
     return result.trim();
 }

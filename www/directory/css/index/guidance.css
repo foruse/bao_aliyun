@@ -176,15 +176,25 @@
 #demo .navigator > nav {
 	width : 300%;
 	height : 100%;
-	padding-bottom : 90px;
 	-webkit-column-count : 3;
 	-webkit-column-gap : 0;
 }
-#demo .navigator img {
+#demo nav p {
+	width : 100%;
+	height : 100% !important;
+	padding : 1px;
 	background-image : url(../../image/demo_bg_1.jpg);
 	background-size : 100% 100%;
-	height : 100%;
-	width : 100%;
+	display : block !important;
+}
+#demo .navigator img {
+	height : 380px;
+	width : 250px;
+	position : relative;
+	left : 50%;
+	top : 50%;
+	box-shadow : 0 0 10px #fff;
+	margin : -190px 0 0 -125px;
 }
 #demo .navigator img:nth-child(2) {
 	background-image : url(../../image/demo_bg_2.jpg);
@@ -197,7 +207,6 @@
 	top : -90px;
 	z-index : 2;
 	height : 90px;
-	background-color : #e8e8e8;
 	padding : 0 30px;
 }
 #demo .navigator ol {
@@ -220,6 +229,7 @@
 	height : 50px;
 	line-height : 20px;
 	white-space : normal;
+	display : none;
 }
 
 #guidance_footer {

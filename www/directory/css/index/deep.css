@@ -617,6 +617,7 @@
 	padding : 5px 10px;
 	height : 60px;
 	line-height : 48px;
+	display : none;
 }
 #report dt > * {
 	display : inline-block;

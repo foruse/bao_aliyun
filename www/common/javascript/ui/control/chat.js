@@ -1,7 +1,26 @@
 ﻿(function(Chat, NonstaticClass, StaticClass, Panel, CallServer, HTML, Event, Enum, Global, Voice, set){
 this.SmileNames = (function(){
 	return new Enum({
-		YiWen : "疑问"
+		BengKui : "崩溃",
+		BiShi : "鄙视",
+		DeSe : "得瑟",
+		FaHuo : "发火",
+		Han : "汗",
+		HuaXin : "花心",
+		JinQian : "金钱",
+		KouBi : "抠鼻",
+		Kun : "困",
+		KuQi : "哭泣",
+		Leng : "冷",
+		No : "No",
+		ShiHua : "石化",
+		ShuaiQi : "帅气",
+		YingMing : "英明",
+		YiWen : "疑问",
+		Yun : "晕",
+		Zan : "赞",
+		ZhaoDa : "找打",
+		ZhenJing : "震惊"
 	});
 }());
 
@@ -540,6 +559,7 @@ this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumR
 		var dt = new Date(time),
 
 			desc = "今天", t = new Date().setHours(0, 0, 0, 0) - time, hours = dt.getHours();
+	console.log(dt);
 				
 		switch(true){
 			case t < 0 :
@@ -687,7 +707,7 @@ this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEv
 	function Smilies(selector){
 		var smilies = this, navigator = new Drag.Navigator();
 
-		navigator.content(smiliesHtml.render({ SmileNames : SmileNames }));
+		navigator.content(smiliesHtml.render({ SmileNames : SmileNames }), 2);
 		navigator.appendTo(this.find(">nav")[0]);
 
 		this.attach({
@@ -707,6 +727,12 @@ this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEv
 					clickToolsButtonEvent.trigger(targetEl[0]);
 					return;
 				}
+			}
+		});
+
+		navigator.attach({
+			focustab : function(e){
+				e.stopPropagation();
 			}
 		});
 
@@ -1022,7 +1048,7 @@ this.ChatList = (function(ChatListContent, ChatFooter, listPanelHtml){
 	].join(""))
 ));
 
-this.ChatListPanel = (function(ChatList, Global, Confirm, SmiliesStatus){
+this.ChatListPanel = (function(ChatList, Global, SmiliesStatus){
 	function ChatListPanel(from, messageAppendedMethodName, overflowPanel){
 		var chatListPanel = this;
 

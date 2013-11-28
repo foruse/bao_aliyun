@@ -1,7 +1,7 @@
 ﻿(function(Bao, StaticClass, Enum){
 this.Permission = (function(){
 	return new Enum(
-		["None", "Leader"]
+		["None", "Leader", "Creator"]
 	);
 }());
 
@@ -41,11 +41,11 @@ this.Global = (function(Fixed, Management, HTML, Permission, windowEl){
 				history.go("login").tryLogin();
 			},
 			login : function(e){
-				var loginUser = e.loginUser, isLeader = loginUser.isLeader;
+				var loginUser = e.loginUser;
 
 				Global.loginUser = loginUser;
-				jQun(".main").setAttribute("ls", Permission[isLeader ? "Leader" : "None"]);
 
+				jQun(".main").setAttribute("permission", loginUser.permission);
 				// Global.history.go("report");
 			}
 		});
