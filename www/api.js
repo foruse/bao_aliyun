@@ -177,7 +177,7 @@ function onDeviceReady() {
 //			var main = document.getElementsByClassName('main')[0];
 //			main.style.opacity = 0;
 			
-			setTimeout(function() {
+			//setTimeout(function() {
 				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
 			
 			
@@ -257,7 +257,7 @@ function onDeviceReady() {
                         callback = id;
                         console.log("all partners");
                         // all partners
-                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, u.poweruser AS permission, c.title as company, c.companyAdress");
                         DB.from("xiao_company_partners AS p");
                         DB.join("xiao_users AS u", "u.id = p.user_id");
                         DB.join("xiao_companies AS c", "u.company_id = c.id");
@@ -268,15 +268,16 @@ function onDeviceReady() {
                     } else if (id) {
                         console.log("partner by id");
                         // partner by id
-                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, u.poweruser AS permission, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
                         DB.join("xiao_company_partners AS p", "p.user_id = u.id");
                         DB.join("xiao_companies AS c", "p.company_id = c.id");
                         DB.where('u.id ="' + id + '"');
-						/*API.row(function(data){
-							console.log(data);
-						});*/
-                        API.row(callback);
+						API.row(function(data){
+							//alert(JSON.stringify(data));
+							callback(data);
+						});
+						//API.row(callback);
                     }
                 },
 
@@ -395,9 +396,9 @@ function onDeviceReady() {
 				
 				set_permission: function(user_id, permission, callback) {
 					DB.update('xiao_users', {poweruser: permission}, 'id = "' + user_id + '"', function() {
-						API._sync(['xiao_users'], function() {
+						//API._sync(['xiao_users'], function() {
 							callback();
-						});
+						//});
 					});
 				},
 				
@@ -470,7 +471,7 @@ function onDeviceReady() {
 
                             callback ?
                                 API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
-                                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, u.poweruser AS permission, c.title as company, c.companyAdress");
                                     DB.from("xiao_users AS u");
                                     DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                     DB.where('u.id ="' + SESSION.get("user_id") + '"');
@@ -492,7 +493,7 @@ function onDeviceReady() {
 
                         callback ?
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
-                                DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                                DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, u.poweruser AS permission, c.title as company, c.companyAdress");
                                 DB.from("xiao_users AS u");
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                 DB.where('u.id ="' + SESSION.get("user_id") + '"');
@@ -513,7 +514,7 @@ function onDeviceReady() {
                 },
                 read: function(callback) {
                     // get user data
-                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, c.title as company, c.companyAdress");
+                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, u.poweruser AS permission, c.title as company, c.companyAdress");
                     DB.from("xiao_users AS u");
                     DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                     DB.where('u.id ="' + SESSION.get("user_id") + '"');
@@ -2758,9 +2759,9 @@ function onDeviceReady() {
 //				main.style.opacity = 1;
 //			}, 2000);
 
-            document.dispatchEvent(a);
+            //document.dispatchEvent(a);
 			
-			}, 700);
+			//}, 700);
         }(
                 // PRIVATE
                         // PRIVATE

@@ -134,6 +134,7 @@
 			stopMessagesListener: function(params, complete) {
 				var id = params.id;
 				var type = params.type;
+				//alert('sml');
 				Mdls.Notification.leaveroom(params, complete);
 				// What i need to do here?
 			},
