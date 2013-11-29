@@ -144,20 +144,42 @@ function onDeviceReady() {
         a.initEvent("appload", true, true); //init event -----------------> see the last line in the App_model--->the event is dispatched there
 
         App_model = function(SERVER) {
-			var html = document.getElementsByTagName('html')[0];
-			html.style.height = '100%';
-			var body = document.getElementsByTagName('body')[0];
-			body.style.backgroundImage = 'url(\'../../common/image/W768H1004.gif\')';
-			body.style.backgroundRepeat = 'no-repeat';
-			body.style.backgroundPosition = 'center center';
-			body.style.backgroundSize = 'contain';
-			body.style.backgroundColor = '#ffffff';
-			body.style.height = '100%';
+//			var html = document.getElementsByTagName('html')[0];
+//			html.style.height = '100%';
+//			var body = document.getElementsByTagName('body')[0];
+//			
+//			var background_image = '';
+//			
+//			body.style.backgroundSize = 'auto';
+//			
+//			if (window.innerWidth == 320) {
+//				background_image = 'url(\'../../common/image/W320H480.gif\')';
+//			} else if (window.innerWidth == 640) {
+//				if (window.innerHeight <= 1100) {
+//					background_image = 'url(\'../../common/image/W640H960.gif\')';
+//				} else if (window.innerHeight > 1100) {
+//					background_image = 'url(\'../../common/image/W640H1136.gif\')';
+//				}
+//			} else if (window.innerWidth == 768) {
+//				background_image = 'url(\'../../common/image/W768H1004.gif\')';
+//			} else {
+//				background_image = 'url(\'../../common/image/W640H1136.gif\')';
+//				body.style.backgroundSize = '100% auto';
+//			}
+//			
+//			body.style.backgroundImage = background_image;
+//			body.style.backgroundRepeat = 'no-repeat';
+//			body.style.backgroundPosition = 'center center';
+//			//body.style.backgroundSize = 'contain';
+//			body.style.backgroundColor = '#ffffff';
+//			body.style.height = '100%';
+//			
+//			var main = document.getElementsByClassName('main')[0];
+//			main.style.opacity = 0;
 			
-			var main = document.getElementsByClassName('main')[0];
-			main.style.opacity = 0;
+			setTimeout(function() {
+				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
 			
-			if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
 			
             /* Private */
             var API = SERVER.API,  //redefine all the stuff here for more simple usage
@@ -941,13 +963,19 @@ function onDeviceReady() {
 								
 								console.log(invite_data);
 								
+								var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+								
 								DB.batch_insert('xiao_invites', invite_data, function() {
 									API._sync(['xiao_invites'], function() {
 										for (var i in invite_data) {
-											SOCKET.request("invite_email", {
-												email: invite_data[i].email,
-												id: invite_data[i].company_id
-											});
+											if (!invite_data[i].email || !re.test(invite_data[i].email)) {
+												continue;
+											} else {
+												SOCKET.request("invite_email", {
+													email: invite_data[i].email,
+													id: invite_data[i].company_id
+												});
+											}
 										}
 										
 										callback({
@@ -2465,7 +2493,13 @@ function onDeviceReady() {
                         callback(data);
                         // PHONE.MessageNotification.play();
                     });
-                }
+                },
+						
+				leaveroom: function(data, callback) {
+					SOCKET.leaveroom(data, function() {
+						
+					});
+				}
 
             }
 
@@ -2717,14 +2751,16 @@ function onDeviceReady() {
             // Models 
 
 
-			setTimeout(function() {
-				body.style.background = 'transparent';
-				body.style.height = 'auto';
-				html.style.height = 'auto';
-				main.style.opacity = 1;
-			}, 2000);
+//			setTimeout(function() {
+//				body.style.background = 'transparent';
+//				body.style.height = 'auto';
+//				html.style.height = 'auto';
+//				main.style.opacity = 1;
+//			}, 2000);
 
             document.dispatchEvent(a);
+			
+			}, 700);
         }(
                 // PRIVATE
                         // PRIVATE
@@ -2792,6 +2828,13 @@ function onDeviceReady() {
                                                             callback(new_data);
                                                         });
                                                     },
+															
+													leaveroom: function(id, type, callback) {
+														this.socket.emit('leaveroom', {id: id, type: type});
+														if (callback) {
+															callback();
+														}
+													},
 
                                                     updatechat: function(connect_data, callback) { // another method used to update chat
                                                         // in data we specify id and type

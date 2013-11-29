@@ -581,7 +581,11 @@ this.SendTodo = (function(UserManagementList, Validation, Attachment, Alert, Glo
 
 	SendTodo.override({
 		isNoTraces : true,
-		restore : function(){
+		restore : function(isBack){
+			if(isBack){
+				return;
+			}
+
 			var dateValidation = this.dateValidation;
 
 			this.userManagementList.clearUsers();

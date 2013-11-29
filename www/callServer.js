@@ -132,6 +132,9 @@
             },
 					
 			stopMessagesListener: function(params, complete) {
+				var id = params.id;
+				var type = params.type;
+				Mdls.Notification.leaveroom(params, complete);
 				// What i need to do here?
 			},
             

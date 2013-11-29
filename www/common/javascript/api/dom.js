@@ -248,15 +248,18 @@ this.PagePanel = (function(Panel, TitleBarColor, beforeShowEvent, afterShowEvent
 			afterHideEvent.trigger(this[0]);
 			return this;
 		},
-		show : function(_display){
+		show : function(_display, _isBack){
 			this.parent().show();
 
+			_isBack = !!_isBack;
+
 			if(this.isNoTraces){
-				this.restore();
+				this.restore(_isBack);
 			}
 
 			beforeShowEvent.setEventAttrs({
-				currentPanel : this
+				currentPanel : this,
+				isBack : _isBack
 			});
 			beforeShowEvent.trigger(this[0]);
 

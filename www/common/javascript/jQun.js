@@ -1,8 +1,8 @@
 ﻿/*
  *  类库名称 ：jQun
  *  中文释义 ：骥群(聚集在一起的千里马)
- *  文档状态 ：1.0.7.0
- *  本次修改 ：本类库结构大改及优化。
+ *  文档状态 ：1.0.7.1
+ *  本次修改 ：1. 将NonstaticClass改为Class，而NonstaticClass也将保留，指向Class。 2. 向安卓(4.0.2)webview提供更多兼容
  *  开发浏览器信息 ：firefox 20.0+ 、 chrome 26.0+、基于webkit的手机浏览器
  */
 
@@ -456,16 +456,16 @@ this.Namespace = (function(){
 	return Namespace.constructor;
 }());
 
-this.NonstaticClass = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructor){
-	function AnonymousNonstaticClass(){ };
+this.Class = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructor){
+	function AnonymousClass(){ };
 
-	function NonstaticClass(_constructor, _name, _ParentClass){
+	function Class(_constructor, _name, _ParentClass){
 		///	<summary>
-		///	派生出一个非静态类。
+		///	派生出一个类。
 		///	</summary>
 		///	<param name="_constructor" type="Function">源构造函数。</param>
 		///	<param name="_name" type="String">构造函数的名称。</param>
-		///	<param name="_ParentClass" type="jQun.NonstaticClass">需要继承的父类</param>
+		///	<param name="_ParentClass" type="jQun.Class">需要继承的父类</param>
 		var constructor = _constructor ? _constructor : AnonymousNonstaticClass;
 
 		return new jQun(
@@ -477,18 +477,18 @@ this.NonstaticClass = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructo
 			_ParentClass || this.getOwnClass()
 		);
 	};
-	NonstaticClass = new jQun(NonstaticClass);
+	Class = new jQun(Class);
 
-	NonstaticClass.override({
+	Class.override({
 		toString : function(){
 			///	<summary>
 			///	对象字符串。
 			///	</summary>
-			return "[NonstaticClass " + this.constructor.name + "]";
+			return "[Class " + this.constructor.name + "]";
 		}
 	});
 
-	NonstaticClass.properties({
+	Class.properties({
 		base : function(args){
 			///	<summary>
 			///	子类访问父类。
@@ -499,7 +499,7 @@ this.NonstaticClass = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructo
 				ParentClass = this.getParentClass();
 
 			while(ParentClass){
-				if(ParentClass === NonstaticClass)
+				if(ParentClass === Class)
 					break;
 
 				parentList.unshift(ParentClass);
@@ -527,7 +527,7 @@ this.NonstaticClass = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructo
 		}
 	});
 
-	return NonstaticClass.constructor;
+	return Class.constructor;
 }(
 	// ARG_LIST_REGX
 	/function[^\(]*\(([^\)]*)/,
@@ -556,6 +556,8 @@ this.NonstaticClass = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructo
 		return constructor;
 	}
 ));
+
+this.NonstaticClass = this.Class;
 
 this.StaticClass = (function(getConstructor){
 	function AnonymousStaticClass(){ };
@@ -621,7 +623,7 @@ defineProperties(jQun, this);
 	所有参数所用之处必须只能一次性使用(如需闭包使用需再次引用)，
 	确保本闭包资源在使用后能合理释放掉
 */
-(function(jQun, NonstaticClass, StaticClass, Enum, defineProperties, forEach){
+(function(jQun, Class, StaticClass, Enum, defineProperties, forEach){
 
 // 一些独立的基础类
 (function(forEach){
@@ -675,14 +677,14 @@ this.Browser = (function(RegExp, MOBILE_VERSION_STRING, userAgent){
 	navigator.userAgent
 ));
 
-this.List = (function(ArrayClass, define, hasOwnProperty){
+this.List = (function(ArrayClass, define, toArray, hasOwnProperty){
 	function List(){
 		///	<summary>
 		///	对列表进行管理、操作的类。
 		///	</summary>
 		this.override({ length : 0 });
 	};
-	List = new NonstaticClass(List, "jQun.List");
+	List = new Class(List, "jQun.List");
 
 	List.properties({
 		alternate : function(num, _remainder){
@@ -713,8 +715,8 @@ this.List = (function(ArrayClass, define, hasOwnProperty){
 			///	<summary>
 			///	合并另一个集合。
 			///	</summary>
-			///	<param name="list" type="Array">另一个集合。</param>
-			this.push.apply(this, list);
+			///	<param name="list" type="List, Array">另一个集合。</param>
+			this.push.apply(this, toArray(list));
 			return this;
 		},
 		contains : function(item){
@@ -775,6 +777,7 @@ this.List = (function(ArrayClass, define, hasOwnProperty){
 }(
 	Array.prototype,
 	jQun.define,
+	jQun.toArray,
 	Object.prototype.hasOwnProperty
 ));
 
@@ -836,7 +839,7 @@ this.Text = (function(Array, T_REGX, encodeURIComponent){
 			text : text instanceof Array ? text.join("") : text
 		});
 	};
-	Text = new NonstaticClass(Text, "jQun.Text");
+	Text = new Class(Text, "jQun.Text");
 
 	Text.properties({
 		removeSpace : function(){
@@ -945,7 +948,7 @@ this.ElementPropertyCollection = (function(){
 			this.push(element[name]);
 		}, this);
 	};
-	ElementPropertyCollection = new NonstaticClass(ElementPropertyCollection, "jQun.ElementPropertyCollection", List.prototype);
+	ElementPropertyCollection = new Class(ElementPropertyCollection, "jQun.ElementPropertyCollection", List.prototype);
 
 	ElementPropertyCollection.properties({
 		propertyName : "",
@@ -975,7 +978,7 @@ this.AttributeCollection = (function(){
 		///	元素特性类。
 		///	</summary>
 	};
-	AttributeCollection = new NonstaticClass(AttributeCollection, "jQun.AttributeCollection", ElementPropertyCollection.prototype);
+	AttributeCollection = new Class(AttributeCollection, "jQun.AttributeCollection", ElementPropertyCollection.prototype);
 
 	AttributeCollection.override({
 		propertyName : "attributes"
@@ -1062,7 +1065,7 @@ this.CSSPropertyCollection = (function(isNaN, hasOwnProperty){
 		///	元素CSS属性类。
 		///	</summary>
 	};
-	CSSPropertyCollection = new NonstaticClass(CSSPropertyCollection, "jQun.CSSPropertyCollection", ElementPropertyCollection.prototype);
+	CSSPropertyCollection = new Class(CSSPropertyCollection, "jQun.CSSPropertyCollection", ElementPropertyCollection.prototype);
 
 	CSSPropertyCollection.override({
 		propertyName : "style"
@@ -1130,7 +1133,7 @@ this.ChildrenCollection = (function(){
 		///	children类。
 		///	</summary>
 	};
-	ChildrenCollection = new NonstaticClass(ChildrenCollection, "jQun.ChildrenCollection", ElementPropertyCollection.prototype);
+	ChildrenCollection = new Class(ChildrenCollection, "jQun.ChildrenCollection", ElementPropertyCollection.prototype);
 
 	ChildrenCollection.override({
 		propertyName : "children"
@@ -1186,7 +1189,7 @@ this.ClassListCollection = (function(){
 		///	classList类。
 		///	</summary>
 	};
-	ClassListCollection = new NonstaticClass(ClassListCollection, "jQun.ClassListCollection", ElementPropertyCollection.prototype);
+	ClassListCollection = new Class(ClassListCollection, "jQun.ClassListCollection", ElementPropertyCollection.prototype);
 
 	ClassListCollection.override({
 		propertyName : "classList"
@@ -1269,7 +1272,7 @@ this.NodeList = (function(AttributeCollection, toArray){
 		///	节点列表类。
 		///	</summary>
 	};
-	NodeList = new NonstaticClass(NodeList, "jQun.NodeList", List.prototype);
+	NodeList = new Class(NodeList, "jQun.NodeList", List.prototype);
 
 	NodeList.override({
 		createList : function(){
@@ -1472,7 +1475,7 @@ this.ElementList = (function(
 			return;
 		}
 	};
-	ElementList = new NonstaticClass(ElementList, "jQun.ElementList", NodeList.prototype);
+	ElementList = new Class(ElementList, "jQun.ElementList", NodeList.prototype);
 
 	ElementList.override({
 		createList : function(_selector, _parent){
@@ -1506,7 +1509,8 @@ this.ElementList = (function(
 					}
 					
 					element = element.parentElement;
-				} while(element)
+				}
+				while(element)
 			});
 
 			return list;
@@ -1768,7 +1772,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 		///	<param name="_selector" type="String, Element">选择器或dom元素。</param>
 		///	<param name="_parent" type="Element">指定查询的父元素。</param>
 	};
-	HTMLElementList = new NonstaticClass(HTMLElementList, "jQun.HTMLElementList", ElementList.prototype);
+	HTMLElementList = new Class(HTMLElementList, "jQun.HTMLElementList", ElementList.prototype);
 
 	// firefox 把id、innerHTML归为了Element的属性，但是w3c与IE9都归为了HTMLElement的属性
 	forEach(
@@ -1897,7 +1901,9 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 }.call(
 	this,
 	this.List,
-	window.Window || window.constructor,
+	// Window
+	window.constructor,
+	// emptyAttrCollection
 	new this.AttributeCollection([]),
 	forEach,
 	jQun.define
@@ -1906,7 +1912,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 // 与HTMLElementList相关的类
 (function(HTMLElementList, forEach){
 
-this.Event = (function(Node, EventTarget, window, document, define, set, toArray){
+this.Event = (function(eventTargetClasses, document, attach, define, set){
 	function Event(name, _init, _type, _initEventArgs){
 		///	<summary>
 		///	DOM事件类。
@@ -1914,8 +1920,9 @@ this.Event = (function(Node, EventTarget, window, document, define, set, toArray
 		///	<param name="name" type="String">事件名称。</param>
 		///	<param name="_init" type="Function">事件初始化函数。</param>
 		///	<param name="_type" type="String">事件类型(MouseEvent、UIEvent、WheelEvent等)。</param>
+		///	<param name="_initEventArgs" type="Array">初始化事件的其他参数列表。</param>
 		this.assign({
-			initEventArgs : [name].concat(_initEventArgs ? toArray(arguments, 3) : [true, true]),
+			initEventArgs : [name].concat(_initEventArgs || [true, true]),
 			name : name,
 			type : _type
 		});
@@ -1925,7 +1932,7 @@ this.Event = (function(Node, EventTarget, window, document, define, set, toArray
 		
 		_init.call(this);
 	};
-	Event = new NonstaticClass(Event, "jQun.Event");
+	Event = new Class(Event, "jQun.Event");
 
 	Event.properties({
 		attachTo : function(target){
@@ -1933,18 +1940,11 @@ this.Event = (function(Node, EventTarget, window, document, define, set, toArray
 			///	应该附加该事件的标签。
 			///	</summary>
 			///	<param name="target" type="String, Node">标签名称。</param>
-			var t = [], name = this.name, attach = HTMLElementList.prototype.attach;
+			var t = [], name = this.name;
 
 			if(typeof target === "string"){
 				if(target === "*"){
-					if(EventTarget){
-						t.push(EventTarget.prototype);
-					}
-					else {
-						t.push(Node.prototype, window.constructor.prototype);
-					}
-
-					t.push(HTMLElementList.prototype);
+					t = eventTargetClasses;
 				}
 				else {
 					t.push(document.createElement(target).constructor.prototype);
@@ -1991,7 +1991,7 @@ this.Event = (function(Node, EventTarget, window, document, define, set, toArray
 			///	触发事件。
 			///	</summary>
 			///	<param name="target" type="Node">触发该事件的节点。</param>
-			var type = this.type, event = new window[type](this.name);
+			var type = this.type, event = document.createEvent(type);
 
 			event["init" + type].apply(event, this.initEventArgs);
 			set(event, this.eventAttrs);
@@ -2003,13 +2003,14 @@ this.Event = (function(Node, EventTarget, window, document, define, set, toArray
 
 	return Event.constructor;
 }(
-	Node,
-	window.EventTarget,
-	window,
+	// eventTargetClasses
+	[HTMLElementList.prototype].concat(
+		"EventTarget" in window ? [EventTarget.prototype] : [Node.prototype, window.constructor.prototype]
+	),
 	document,
+	HTMLElementList.prototype.attach,
 	jQun.define,
-	jQun.set,
-	jQun.toArray
+	jQun.set
 ));
 
 this.HTML = (function(Function, SPACEREGX, FORREGX, replaceMethod, document){
@@ -2084,7 +2085,7 @@ this.HTML = (function(Function, SPACEREGX, FORREGX, replaceMethod, document){
 			template : arr.join("")
 		});
 	};
-	HTML = new NonstaticClass(HTML, "jQun.HTML");
+	HTML = new Class(HTML, "jQun.HTML");
 
 	HTML.properties({
 		create : function(_data){
@@ -2176,7 +2177,7 @@ this.SessionCache = (function(sessionStorage){
 			name : name
 		});
 	};
-	SessionCache = new NonstaticClass(SessionCache, "jQun.SessionCache");
+	SessionCache = new Class(SessionCache, "jQun.SessionCache");
 
 	SessionCache.properties({
 		del : function(key){
@@ -2228,7 +2229,7 @@ this.SessionCache = (function(sessionStorage){
 
 this.Storage = (function(forEach){
 	function Storage(){ };
-	Storage = new NonstaticClass(Storage, "jQun.Storage");
+	Storage = new Class(Storage, "jQun.Storage");
 
 	Storage.properties({
 		clear : function(){
@@ -2303,7 +2304,7 @@ this.RequestConnection = (function(Text, SessionCache, toUpperCase, getEncodedPa
 			handler : _handler
 		});
 	};
-	RequestConnection = new NonstaticClass(RequestConnection, "jQun.RequestConnection");
+	RequestConnection = new Class(RequestConnection, "jQun.RequestConnection");
 
 	RequestConnection.properties({
 		cache : undefined,
@@ -2545,7 +2546,7 @@ defineProperties(jQun, this);
 }.call(
 	{},
 	jQun,
-	jQun.NonstaticClass,
+	jQun.Class,
 	jQun.StaticClass,
 	jQun.Enum,
 	jQun.defineProperties,

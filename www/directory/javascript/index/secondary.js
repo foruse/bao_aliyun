@@ -64,7 +64,11 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 
 	AddProject.override({
 		isNoTraces : true,
-		restore : function(){
+		restore : function(isBack){
+			if(isBack){
+				return;
+			}
+
 			// 还原标题
 			this.find(">section input").value = "";
 			// 清空已选择的用户

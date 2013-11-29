@@ -183,9 +183,6 @@ this.History = (function(List, Loader, redirectEvent){
 					this.splice(idx, 1);
 					this.push(name);
 				}
-
-				// 显示当前的panel
-				panel.show();
 			}
 			else {
 				// 加载、初始化新panel信息
@@ -193,9 +190,12 @@ this.History = (function(List, Loader, redirectEvent){
 
 				this.push(name);
 
-				panel.show();
+				
 			}
 			
+			// 显示当前的panel
+			panel.show(null, _isBack);
+
 			return panel;
 		},
 		homePage : "project"
