@@ -147,39 +147,17 @@ function onDeviceReady() {
 			var html = document.getElementsByTagName('html')[0];
 			html.style.height = '100%';
 			var body = document.getElementsByTagName('body')[0];
-			
-			var background_image = '';
-			
-			body.style.backgroundSize = 'auto';
-			
-			if (window.innerWidth == 320) {
-				background_image = 'url(\'../../common/image/W320H480.gif\')';
-			} else if (window.innerWidth == 640) {
-				if (window.innerHeight <= 1100) {
-					background_image = 'url(\'../../common/image/W640H960.gif\')';
-				} else if (window.innerHeight > 1100) {
-					background_image = 'url(\'../../common/image/W640H1136.gif\')';
-				}
-			} else if (window.innerWidth == 768) {
-				background_image = 'url(\'../../common/image/W768H1004.gif\')';
-			} else {
-				background_image = 'url(\'../../common/image/W640H1136.gif\')';
-				body.style.backgroundSize = '100% auto';
-			}
-			
-			body.style.backgroundImage = background_image;
+			body.style.backgroundImage = 'url(\'../../common/image/W768H1004.gif\')';
 			body.style.backgroundRepeat = 'no-repeat';
 			body.style.backgroundPosition = 'center center';
-			//body.style.backgroundSize = 'contain';
+			body.style.backgroundSize = 'contain';
 			body.style.backgroundColor = '#ffffff';
 			body.style.height = '100%';
 			
 			var main = document.getElementsByClassName('main')[0];
 			main.style.opacity = 0;
 			
-			setTimeout(function() {
-				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
-			
+			if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
 			
             /* Private */
             var API = SERVER.API,  //redefine all the stuff here for more simple usage
@@ -2747,8 +2725,6 @@ function onDeviceReady() {
 			}, 2000);
 
             document.dispatchEvent(a);
-			
-			}, 700);
         }(
                 // PRIVATE
                         // PRIVATE
