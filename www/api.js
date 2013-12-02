@@ -796,7 +796,8 @@ function onDeviceReady() {
 										} else if (result.error.code == 2) {
 											console.log(result.error.message);
 											callback({
-												status: -1
+												status: -1,
+												error: result.error
 											});
 										} else {
 											console.log(result.error.message);
@@ -2529,7 +2530,7 @@ function onDeviceReady() {
             }
 
             Models.Calendar = {
-                read: function(day, callback) {
+                read: function(month, callback) {
 
                     // we need folowwing here:
                     //      - no need to sync todos table each time
@@ -2537,20 +2538,38 @@ function onDeviceReady() {
                     //      - then we each time just use local db  
 
 
+					var days_grouped_raw = [], days_grouped = [], last_time = 0;
+
                     var logged_user = SESSION.get("user_id");
-                    DB.select("t.title, t.descr as desc, p.color, t.id, p.level, t.user_id, t.creator_id");
+                    DB.select('t.title, t.descr as desc, t.endTime, p.color, t.id, p.level, t.user_id, t.creator_id, strftime("%Y/%m/%d", t.endTime) AS endTime_day');
                     DB.from('xiao_todos as t');
                     DB.join('xiao_projects as p','p.id = t.project_id');
-                    // DB.where('t.endTime = "' + day + '"');
+//                    DB.where('t.endTime = "' + day + '"');
+                    DB.where('t.endTime >= (strftime("%Y", ' + month + ') || "/" || strftime("%m", ' + month + ') || "/01") AND t.endTime <= (strftime("%Y", ' + month + ') || "/" || strftime("%m", ' + month + ') || "/31")');
                     // DB.where('(t.user_id = "' + logged_user + '" OR t.creator_id = "' + logged_user + '" )');
                     DB.where('t.user_id = "' + logged_user + '" OR t.creator_id = "' + logged_user + '" ');
                     API.read(function(data) {
-
-                        data.forEach(function(t){
+						data.forEach(function(t){
                             t.isSendBySelf = (t.creator_id == logged_user ? true : false);
+							
+							if (last_time != t.endTime_day) {
+								days_grouped_raw[t.endTime_day] = {time: new Date(t.endTime_day).getTime(), todos: []};
+								days_grouped_raw[t.endTime_day].todos.push(t);
+								last_time = t.endTime_day;
+							} else {
+								days_grouped_raw[t.endTime_day].todos.push(t);
+							}
                         });
-
-                        callback({time: day, todos: data});
+						
+						for (var i in days_grouped_raw) {
+							if (typeof days_grouped_raw[i] != 'function') {
+								days_grouped.push(days_grouped_raw[i]);
+							}
+						}
+						
+						console.log(days_grouped);
+						
+                        callback(days_grouped);
                     });
                 }
 

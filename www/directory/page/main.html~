@@ -338,9 +338,9 @@
 				<ul></ul>
 				<script id="invitation_html" type="text/html">
 					@for(length ->> i){
-					<li>
-					<input class="lightBdColor smallRadius" type="text" placeholder="请输入邮箱" />
-					</li>
+						<li>
+							<input class="lightBdColor smallRadius" type="text" placeholder="请输入邮箱" />
+						</li>
 					}
 				</script>
 			</article>
@@ -504,7 +504,11 @@
 						<br />
 						<a href="javascript:void(0);">北京视宽加速科技信息有限公司</a>
 						<br />
-						<span>Copyright 2013-2015 Vision Squared Accelerated Media Ltd. All Rights Reserved</span>
+						<span>
+							Copyright 2013-2015
+							<br />
+							Vision Squared Accelerated Media Ltd. All Rights Reserved
+						</span>
 					</nav>
 				</footer>
 			</article>
@@ -554,6 +558,7 @@
 			<article id="archivedProjectView">
 				<header>
 					<ul class="inlineBlock"></ul>
+					<p class="lightBdColor normalRadius grayFont">此归档没有任何附件</p>
 					<script id="archivedProjectView_attachments_html" type="text/html">
 						@for(attachments ->> a){
 							<li attachmentid="{a.id}" attachmenttype="{a.type}">
@@ -622,6 +627,7 @@
 			</article>
 			<article id="report">
 				<ul></ul>
+				<p>目前没有举报信息！</p>
 			</article>
 		</div>
 		<div id="singleProject">
@@ -709,13 +715,13 @@
 	</div>
 
  	<script type="text/javascript" src="../../phonegap.js"></script>
-    <script src="http://debug.build.phonegap.com/target/target-script-min.js#e572579e-4e1a-11e3-8e66-22000a98b3d6"></script>
+    <!--<script src="http://debug.build.phonegap.com/target/target-script-min.js#e572579e-4e1a-11e3-8e66-22000a98b3d6"></script>-->
 	
     <!-- // <script src="http://192.168.0.101/www/helpers.js" type="text/javascript"></script> -->
     <!--<script src="http://192.168.0.101/www/helpers.js" type="text/javascript"></script>-->
     <script src="../../helpers.js" type="text/javascript"></script> 
     <!--<script src="http://192.168.0.101:3000/socket.io/socket.io.js" type="text/javascript"></script>-->
-	 <!--script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script--> 
+	<!--<script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script>-->
     <script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script>
 		<!-- nested main -->
     <!--<script src="http://192.168.0.101/www/api.js" type="text/javascript"></script> nested main -->

@@ -322,7 +322,7 @@
 ////                });
 //             },
             getTodoList: function(params, complete) {
-                console.log(params);
+				console.log(params);
 //                 Mdls.Todo.read({project_id: params.id}, complete);
                 Mdls.Todo.read({project_id: params.id}, function(data) {
                     console.log(data);
@@ -544,22 +544,58 @@
                             return data;
                         },
                         getSchedules: function(data) {
-                            data.todos.forEach(function(d) {
-                                var localDate = new Date(d.time);
+							//console.log(data);
+							for (var i in data) {
+								var d = data[i];
+								
+								/*if (typeof d == 'function') {
+									data[i] = undefined;
+									data.length--;
+								}*/
+								
+								var localDate = new Date(d.time);
 
-                                jQun.set(d, {
-                                    localeDateString: localDate.toLocaleDateString(),
-                                    date: localDate.getDate()
-                                });
+								jQun.set(d, {
+									localeDateString: localDate.toLocaleDateString(),
+									date: localDate.getDate()
+								});
+								
+								for (var j in d.todos) {
+									d.todos[j].key = d.todos[j].id;
+								}
+								
+								/*d.todos.forEach(function(todo) {
+									todo.key = todo.id;
+								});*/
+							}
+							
+							/*data.forEach(function(d) {
+								console.log(typeof d);
+								if (typeof d == 'function') {
+									return false;
+								}
+								
+								var localDate = new Date(d.time);
 
-                                // d.projects.forEach(function(pro) {
-                                //     pro.key = pro.id;
-                                // });
-                            });
+								jQun.set(d, {
+									localeDateString: localDate.toLocaleDateString(),
+									date: localDate.getDate()
+								});
+								
+								for (var i in d.todos) {
+									d.todos[i].key = d.todos[i].id;
+								}
+								
+								d.todos.forEach(function(todo) {
+									todo.key = todo.id;
+								});
+							});*/
+							
+							console.log(data);
 
-                            return {
-                                schedules: data.todos
-                            };
+							return {
+								schedules: data
+							};
                         }
 //                        getMessages: function(data) {
 //                            var id = Bao.Global.loginUser.id;

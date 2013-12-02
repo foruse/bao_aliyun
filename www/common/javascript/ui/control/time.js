@@ -259,7 +259,7 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 		});
 
 		jQun(window).attach({
-			userclick : function(e){
+			continuousgesture : function(e){
 				// 如果点的是在该日历控件上，那么展开，否则收起
 				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
 					if(calendar.isStretched()){
