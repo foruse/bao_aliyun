@@ -142,7 +142,8 @@ this.BusinessCard = (function(Global, Permission, Confirm, Switch, SwitchStatus,
 		var businessCard = this, swt = new Switch();
 
 		this.assign({
-			userInfoHtml : userInfoHtml
+			userInfoHtml : userInfoHtml,
+			swt : swt
 		});
 
 		swt.appendTo(this.find('li[action="authority"]>aside')[0]);
@@ -189,11 +190,14 @@ this.BusinessCard = (function(Global, Permission, Confirm, Switch, SwitchStatus,
 			var businessCard = this;
 
 			CallServer.open("getUser", { id : id }, function(data){
-				if(data.permission === Permission.Creator){
+				var permission = data.permission;
+
+				if(permission === Permission.Creator){
 					businessCard.setAttribute("creator", "");
 				}
 				else {
 					businessCard.removeAttribute("creator");
+					businessCard.swt.focusTab(permission);
 				}
 
 				businessCard.find(">section>dl").innerHTML = businessCard.userInfoHtml.render(data);	
@@ -201,6 +205,7 @@ this.BusinessCard = (function(Global, Permission, Confirm, Switch, SwitchStatus,
 
 			this.userId = id;
 		},
+		swt : undefined,
 		userId : -1,
 		userInfoHtml : undefined
 	});
@@ -352,8 +357,8 @@ this.Invitation = (function(ValidationList, OverflowPanel, Global, Mask, Validat
 
 				return Validation.result(value, "email");
 			}, function(){
-				return "邮箱错误：" + input.value;
-			});
+				return "邮箱错误：<br/>" + input.value;
+			}, "emailValidation");
 		}
 	});
 
@@ -426,7 +431,7 @@ this.Invitation = (function(ValidationList, OverflowPanel, Global, Mask, Validat
 
 						CallServer.open("invitation", { emails : emails.join(",") }, function(data){
 							if(data.status === -1){
-								new Mask.Alert(data.error).show();
+								new Mask.Alert(data.error, "emailValidation").show();
 
 								return;
 							}

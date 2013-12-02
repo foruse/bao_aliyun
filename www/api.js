@@ -268,14 +268,35 @@ function onDeviceReady() {
                     } else if (id) {
                         console.log("partner by id");
                         // partner by id
-                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, u.poweruser AS permission, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
                         DB.join("xiao_company_partners AS p", "p.user_id = u.id");
                         DB.join("xiao_companies AS c", "p.company_id = c.id");
                         DB.where('u.id ="' + id + '"');
 						API.row(function(data){
-							//alert(JSON.stringify(data));
-							callback(data);
+							API._sync(['xiao_companies'], function() {
+								DB.select("creator_id");
+								DB.from("xiao_companies");
+								DB.where("id = '" + data.company_id + "'");
+								DB.row(function(company) {
+									if (company) {
+										if (company.creator_id == data.id) {
+											data.permission = 2;
+										} else {
+											if (data.poweruser == 1) {
+												data.permission = 1;
+											} else {
+												data.permission = 0;
+											}
+										}
+									} else {
+										data.permission = 0;
+									}
+									
+									//alert(JSON.stringify(data));
+									callback(data);
+								});
+							});
 						});
 						//API.row(callback);
                     }
@@ -1535,12 +1556,14 @@ function onDeviceReady() {
 		//                                                src: mess.server_path,
 														from: "project"
 													},
-													//praise: [],
+													praise: [],
 													time: new Date(websql_date_to_number(mess.time)).getTime(),
 													type: mess.type
-												}
+												},
+												praise: [],
 											});
 
+											console.log(abused_pc[abused_pc.length-1]);
 											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
 												abused_pc[abused_pc.length-1].praise.push({
 													id: mess.cl_uid,
@@ -1634,7 +1657,8 @@ function onDeviceReady() {
 														praise: [],
 														time: new Date(websql_date_to_number(mess.time)).getTime(),
 														type: mess.type
-													}
+													},
+													praise: [],
 												});
 												if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
 													abused_tc[abused_tc.length-1].praise.push({

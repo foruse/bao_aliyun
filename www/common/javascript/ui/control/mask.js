@@ -69,7 +69,7 @@ this.Confirm = (function(MaskButton, defaultButtons, bodyHtml){
 			Global.mask.hide();
 			Panel.prototype.hide.call(this);
 		},
-		show : function(text, _buttons){
+		show : function(){
 			var mask = Global.mask;
 
 			mask.fillBody(this[0]);
@@ -105,7 +105,7 @@ this.Confirm = (function(MaskButton, defaultButtons, bodyHtml){
 ));
 
 this.Alert = (function(Confirm, MaskButton){
-	function Alert(text){
+	function Alert(text, _action){
 		this.classList.add("alert");
 	};
 	Alert = new NonstaticClass(Alert, "Bao.UI.Control.Mask.Alert", Confirm.prototype);

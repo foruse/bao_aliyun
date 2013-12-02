@@ -107,6 +107,7 @@
 	height : 90px;
 	margin-left : 20px;
 	float : right;
+	display : none;
 }
 #businessCard aside > img {
 	width : 100%;
@@ -271,4 +272,7 @@
 }
 #invitation > ul > input:focus {
 	border : 1px solid #6f6966;
+}
+.alert[action="emailValidation"] > article {
+	line-height : 25px;
 }

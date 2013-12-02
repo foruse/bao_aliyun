@@ -448,7 +448,7 @@ this.Validation = (function(ValidationBase, ValidationRegExpString, Mask, RegExp
 	};
 	OverrideValidationBase = new StaticClass(OverrideValidationBase);
 
-	function Validation(validationEl, handler, errorText){
+	function Validation(validationEl, handler, errorText, _action){
 		///	<summary>
 		///	验证元素。
 		///	</summary>
@@ -457,6 +457,7 @@ this.Validation = (function(ValidationBase, ValidationRegExpString, Mask, RegExp
 		var validation = this;
 
 		this.assign({
+			action : _action,
 			validationEl : validationEl,
 			handler : handler,
 			errorText : errorText
@@ -465,6 +466,7 @@ this.Validation = (function(ValidationBase, ValidationRegExpString, Mask, RegExp
 	Validation = new NonstaticClass(Validation, "Bao.API.DOM.Validation");
 
 	Validation.properties({
+		action : undefined,
 		errorText : "",
 		handler : undefined,
 		showError : function(){
@@ -474,7 +476,7 @@ this.Validation = (function(ValidationBase, ValidationRegExpString, Mask, RegExp
 				text = text();
 			}
 
-			new Mask.Alert(text).show();
+			new Mask.Alert(text, this.action).show();
 		},
 		validate : function(){
 			///	<summary>
@@ -503,11 +505,11 @@ this.ValidationList = (function(List, Validation){
 	ValidationList = new NonstaticClass(ValidationList, "Bao.API.DOM.ValidationList", List.prototype);
 
 	ValidationList.properties({
-		addValidation : function(validationEl, handler, errorText){
+		addValidation : function(validationEl, handler, errorText, _action){
 			///	<summary>
 			///	添加验证。
 			///	</summary>
-			this.push(new Validation(validationEl, handler, errorText));
+			this.push(new Validation(validationEl, handler, errorText, _action));
 		},
 		validate : function(){
 			///	<summary>

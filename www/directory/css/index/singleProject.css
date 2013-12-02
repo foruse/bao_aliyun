@@ -17,7 +17,7 @@
 	background-color : #fff;
 	margin : 0 2px;
 	height : 26px;
-	-webkit-column-count : 3;
+	-webkit-column-count : 2;
 	-webkit-column-gap : 0;
 }
 #singleProjectHeader > ul > li {
@@ -30,6 +30,10 @@
 	border-bottom : 0 none;
 }
 #singleProjectHeader > ul > li:last-child {
+	border : 0 none;
+	display : none;
+}
+#singleProjectHeader > ul > li:not(:first-child) {
 	border : 0 none;
 }
 #singleProjectHeader > ul > li.focused {

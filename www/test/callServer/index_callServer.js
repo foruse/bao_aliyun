@@ -356,7 +356,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		invitation : function(data, params){
 			data = {
 				status : -1,
-				error : params.emails.split(",")[0] + "已存在"
+				error : "邮箱已存在：<br />" + params.emails.split(",")[0]
 			};
 
 			return data;

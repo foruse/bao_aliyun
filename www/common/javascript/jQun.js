@@ -789,17 +789,28 @@ this.List = (function(ArrayClass, define, toArray, hasOwnProperty){
 // 与字符串处理有关的类
 (function(){
 
-this.ValidationRegExpString = (function(){
+this.ValidationRegExpString = (function(EMAILS, WEB_URLS, toPerfectMatchString){
 	return new Enum({
 		Chinese : "[\\u4e00-\\u9fa5]",
-		Email : "(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*)\\.(\\w+(?:[-.]\\w+)*)",
+		Email : toPerfectMatchString(EMAILS),
+		Emails : EMAILS,
 		Empty : "^$",
 		NotEmpty : "[\\s\\S]",
 		UserInfo : "^\\w{6,16}$",
 		Telephone : "^(\\d{3}|\\d{4})?-(\\d{7,8}|\\d{11})$",
-		WebURL : "http:\\/\\/([\\w-]+)\\.+([\\w-]+)(?:\\/([\\w- .\\/?%&=]*))?"
+		WebURL : toPerfectMatchString(WEB_URLS),
+		WebURLs : WEB_URLS
 	});
-}());
+}(
+	// EMAILS
+	"(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*)\\.(\\w+(?:[-.]\\w+)*)",
+	// WEB_URLS
+	"http:\\/\\/([\\w-]+)\\.+([\\w-]+)(?:\\/([\\w- .\\/?%&=]*))?",
+	// toPerfectMatchString
+	function(str){
+		return "^" + str + "$";
+	}
+));
 
 this.JSON = (function(JSONBase){
 	function JSON(){
