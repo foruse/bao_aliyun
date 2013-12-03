@@ -221,7 +221,7 @@
 	left : 0;
 	bottom : 0;
 	width : 100%;
-	background-color : #564d48;
+	background-color : #362a24;
 }
 .chatList > footer > * {
 	padding : 5px;
@@ -294,6 +294,13 @@
 }
 .chatList_smilies {
 	display : none;
+	padding : 0 !important;
+}
+.chatList_smilies > * {
+	padding : 5px;
+}
+.chatList_smilies > nav {
+	background-color : #564d48;
 }
 .chatList_smilies .navigator {
 	height : 166px;
@@ -328,7 +335,6 @@
 }
 .chatList_smilies li[action="BaoPiQiSmilies"] img {
 	margin : 0 auto;
-	background-color : #fff;
 	width : 60px;
 	height : 60px;
 }
@@ -339,9 +345,9 @@
 	width : 30px;
 	height : 30px;
 	float : left;
-	border : 3px solid #362a24;
+	border : 3px solid transparent;
 	margin-right : 5px;
-	background : #362a24 url(../../common/image/width24.png) 2px -1173px no-repeat content-box content-box;
+	background : transparent url(../../common/image/width24.png) 2px -1173px no-repeat content-box content-box;
 }
 .chatList_smilies figcaption > button[action="0"],
 .chatList_smilies figcaption > button[action="1"] {

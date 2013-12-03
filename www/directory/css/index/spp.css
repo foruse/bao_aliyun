@@ -56,7 +56,16 @@
 	width : 5px;
 	height : 10px;
 }
-
+#schedule .anchorList li {
+	padding-left : 0;
+}
+#schedule .anchorList dt {
+	padding-left : 28px;
+	background : url(../../../common/image/width24.png) 5px -1323px no-repeat;
+}
+#schedule .anchorList li[extra="true"] dt {
+	background : url(../../../common/image/width24.png) 5px -1297px no-repeat;
+}
 
 #project {
 	

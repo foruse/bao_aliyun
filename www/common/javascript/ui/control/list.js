@@ -44,7 +44,7 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 		'<div class="anchorList" descriptstatus="{descriptstatus}">',
 			'<ul class="themeBdColor normalRadius">',
 				'@for(listData ->> data){',
-					'<li key="{data.key}" class="lightBdColor onlyBorderBottom inlineBlock">',
+					'<li class="lightBdColor onlyBorderBottom inlineBlock" key="{data.key}" extra={?~data.extra}>',
 						'<nav>',
 							'<aside>',
 								'<dl>',

@@ -26,6 +26,7 @@
 .anchorList aside dt {
 	font-size : 15px;
 	height : 20px;
+	line-height : 20px;
 }
 .anchorList aside dt > span {
 	vertical-align : top;

@@ -122,7 +122,7 @@ this.LoginInfoManagement = (function(loginButtonClickedEvent, registerButtonClic
 	new Event("registerbuttonclicked")
 ));
 
-this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEvent){
+this.Login = (function(OverflowPanel, LoginInfoManagement, Alert, localStorage, loginEvent){
 	function Login(selector){
 		///	<summary>
 		///	登陆页。
@@ -183,7 +183,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 			}, function(data){
 				// 如果后台验证有错误
 				if(data.status === -1){
-					loginInfoManagement.showInfoErrorByIndex(data.error.idx);
+					new Alert(data.error.desc).show();
 					return;
 				}
 
@@ -218,7 +218,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 			}, function(data){
 				// 如果后台验证有错误
 				if(data.status === -1){
-					loginInfoManagement.showInfoErrorByIndex(data.error.idx);
+					new Alert(data.error.desc).show();
 					return;
 				}
 
@@ -247,6 +247,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 }(
 	Bao.API.DOM.OverflowPanel,
 	this.LoginInfoManagement,
+	Bao.UI.Control.Mask.Alert,
 	localStorage,
 	// loginEvent
 	new Event("login")

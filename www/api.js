@@ -113,22 +113,24 @@ function onDeviceReady() {
     // APPLICATION CONFIGS
     // APPLICATION CONFIGS
     // APPLICATION CONFIGS
-    var CONFIG = {
+    // var CONFIG = {
+    CONFIG = {
         routes: {
             sync: "sync",
             sync_chat: "syncchat",
             file_upload_url: "upload",
+            file_download_url: "uploads",
             sockets: ""
         },
       server_url: "http://115.28.131.52:3000",
 //      server_url: "http://212.8.40.254:5959",
-//		 server_url: "http://gbksoft.com:5959",
-//		server_url: "http://192.168.0.101:3000",
+//		  server_url: "http://gbksoft.com:5959",
+//		server_url: "http://192.168.0.103:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
         default_user_avatar: "../../common/image/avatar_default.jpg",
-        new_message_sound: "./sounds/top_choice.mp3"
+        new_message_sound: "topchoice.mp3" // no slash at the start and do it from root www /
     };
 	
 	FlurryAgent.logEvent('Application started');
@@ -144,50 +146,23 @@ function onDeviceReady() {
         a.initEvent("appload", true, true); //init event -----------------> see the last line in the App_model--->the event is dispatched there
 
         App_model = function(SERVER) {
-//			var html = document.getElementsByTagName('html')[0];
-//			html.style.height = '100%';
-//			var body = document.getElementsByTagName('body')[0];
-//			
-//			var background_image = '';
-//			
-//			body.style.backgroundSize = 'auto';
-//			
-//			if (window.innerWidth == 320) {
-//				background_image = 'url(\'../../common/image/W320H480.gif\')';
-//			} else if (window.innerWidth == 640) {
-//				if (window.innerHeight <= 1100) {
-//					background_image = 'url(\'../../common/image/W640H960.gif\')';
-//				} else if (window.innerHeight > 1100) {
-//					background_image = 'url(\'../../common/image/W640H1136.gif\')';
-//				}
-//			} else if (window.innerWidth == 768) {
-//				background_image = 'url(\'../../common/image/W768H1004.gif\')';
-//			} else {
-//				background_image = 'url(\'../../common/image/W640H1136.gif\')';
-//				body.style.backgroundSize = '100% auto';
-//			}
-//			
-//			body.style.backgroundImage = background_image;
-//			body.style.backgroundRepeat = 'no-repeat';
-//			body.style.backgroundPosition = 'center center';
-//			//body.style.backgroundSize = 'contain';
-//			body.style.backgroundColor = '#ffffff';
-//			body.style.height = '100%';
-//			
-//			var main = document.getElementsByClassName('main')[0];
-//			main.style.opacity = 0;
-			
-			//setTimeout(function() {
-				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
-			
-			
-            /* Private */
+			/* Private */
             var API = SERVER.API,  //redefine all the stuff here for more simple usage
                     DB = SERVER.DB,
                     SESSION = SERVER.SESSION,
                     PHONE = SERVER.PHONE,
                     SOCKET = SERVER.SOCKET;
-			
+
+			if (!BROWSER_TEST_VERSION) {
+				if (SESSION.get("sound_file")) {
+					CONFIG.notig_audio_path = SESSION.get("sound_file");
+				} else {
+					PHONE.Files.download(ROUTE('file_download_url') + "/" + CONFIG.new_message_sound, function(local_path) {
+						CONFIG.notig_audio_path = local_path;
+						SESSION.set("sound_file", local_path);
+					});
+				}
+			}
 			
 			/* Private */
 			
@@ -237,16 +212,26 @@ function onDeviceReady() {
 				   console.log('++++++++++++++++++++++++++++++++++++Saved user data');
                     if(!SESSION.get("saved_user_data")){
                         SESSION._init_storage(1);
-                        DB._init_db(1);  
-                    }
+						setTimeout(function() {
+							DB._init_db(1);
+							SOCKET.request("counter", {}, function(result) {
+								if (result) {
+								   callback(result);
+								} else {
+								   callback({count: 100000, validationImage: "src"});
+								}
+							});
+						}, 1000);
+                    } else {
 					
-					SOCKET.request("counter", {}, function(result) {
-						if (result) {
-						   callback(result);
-						} else {
-						   callback({count: 100000, validationImage: "src"});
-						}
-					});
+						SOCKET.request("counter", {}, function(result) {
+							if (result) {
+							   callback(result);
+							} else {
+							   callback({count: 100000, validationImage: "src"});
+							}
+						});
+					}
                }
 
            };
@@ -616,7 +601,7 @@ function onDeviceReady() {
                             // console.log(result);
                             if (result !== false) {
                                 if (result.user) {
-									API._sync(['xiao_companies'], function() {
+									/*API._sync(['xiao_companies'], function() {
 										DB.select("creator_id");
 										DB.from("xiao_companies");
 										DB.where("id = '" + result.user.company_id + "'");
@@ -633,7 +618,7 @@ function onDeviceReady() {
 												}
 											} else {
 												result.user.permission = 0;
-											}
+											}*/
 											
 //											alert(JSON.stringify(result.user));
 
@@ -659,8 +644,8 @@ function onDeviceReady() {
 			//                                    }
 											console.log(result);
 											//                                callback(result);
-										});
-									});
+										/*});
+									});*/
                                 } else if (result.error) {
                                     console.log(result);
                                     callback(result);
@@ -797,7 +782,11 @@ function onDeviceReady() {
 											console.log(result.error.message);
 											callback({
 												status: -1,
-												error: result.error
+												error : {
+													code: result.error.code,
+													type: "email", // string : "pwd", "email"
+													desc: "此邮箱已经存在！" // string : description of the error
+												}
 											});
 										} else {
 											console.log(result.error.message);
@@ -2068,7 +2057,7 @@ function onDeviceReady() {
 										}
 									});
 									callback(mess_result);
-                                    // PHONE.MessageNotification.play();
+                                    PHONE.MessageNotification.play();
 								});
                             });
 
@@ -2484,7 +2473,7 @@ function onDeviceReady() {
                                     }
                                 });
                                 callback(mess_result);
-                                // PHONE.MessageNotification.play();
+                                PHONE.MessageNotification.play();
                             });
 
                         });
@@ -2517,7 +2506,7 @@ function onDeviceReady() {
 						console.log("notif res");
                         console.log(data);
                         callback(data);
-                        // PHONE.MessageNotification.play();
+                        PHONE.MessageNotification.play();
                     });
                 },
 						
@@ -2795,16 +2784,50 @@ function onDeviceReady() {
             // Models 
 
 
-//			setTimeout(function() {
-//				body.style.background = 'transparent';
-//				body.style.height = 'auto';
-//				html.style.height = 'auto';
-//				main.style.opacity = 1;
-//			}, 2000);
+			setTimeout(function() {
+				var html = document.getElementsByTagName('html')[0];
+				html.style.height = '100%';
+				var body = document.getElementsByTagName('body')[0];
 
-            //document.dispatchEvent(a);
+				var background_image = '';
+
+				body.style.backgroundSize = 'auto';
+
+				if (window.innerWidth == 320) {
+					background_image = 'url(\'../../common/image/W320H480.gif\')';
+				} else if (window.innerWidth == 640) {
+					if (window.innerHeight <= 1100) {
+						background_image = 'url(\'../../common/image/W640H960.gif\')';
+					} else if (window.innerHeight > 1100) {
+						background_image = 'url(\'../../common/image/W640H1136.gif\')';
+					}
+				} else if (window.innerWidth == 768) {
+					background_image = 'url(\'../../common/image/W768H1004.gif\')';
+				} else {
+					background_image = 'url(\'../../common/image/W640H1136.gif\')';
+					body.style.backgroundSize = '100% auto';
+				}
+
+				body.style.backgroundImage = background_image;
+				body.style.backgroundRepeat = 'no-repeat';
+				body.style.backgroundPosition = 'center center';
+				//body.style.backgroundSize = 'contain';
+				body.style.backgroundColor = '#ffffff';
+				body.style.height = '100%';
+
+				var main = document.getElementsByClassName('main')[0];
+				main.style.opacity = 0;
 			
-			//}, 700);
+				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
+				
+				setTimeout(function() {
+					body.style.background = 'transparent';
+					body.style.height = 'auto';
+					html.style.height = 'auto';
+					main.style.opacity = 1;
+				}, 2000);
+			}, 200);
+			document.dispatchEvent(a);
         }(
                 // PRIVATE
                         // PRIVATE
@@ -3383,232 +3406,251 @@ function onDeviceReady() {
                                                             db.transaction(createDB, error_create_DB);
                                                             function createDB(tx) {
 																// DON't FORGET TO ADD TABLE TO init_tables     for test
+																
+																
                                                                 if (clear) {
-                                                                    _this._init_tables.forEach(function(drop_table) {
-                                                                        tx.executeSql('DROP TABLE IF EXISTS ' + drop_table);
+																	var delete_tables_query = '';
+																	
+																	_this._init_tables.forEach(function(drop_table) {
+																		delete_tables_query += 'DROP TABLE IF EXISTS ' + drop_table + ';\n';
+																		
+//                                                                        tx.executeSql('DROP TABLE IF EXISTS ' + drop_table);
                                                                     });
+																	
+																	delete_tables_query += 'DROP TABLE IF EXISTS sync;\n';
+																	delete_tables_query += 'DROP TABLE IF EXISTS sync_delete;\n';
+																	
+																	tx.executeSql(delete_tables_query, [], function() {
+																		callback();
+																	});
+																	
+//																	tx.executeSql('DROP TABLE IF EXISTS sync');
+//                                                                    tx.executeSql('DROP TABLE IF EXISTS sync_delete');
+                                                                } else {
+																	callback();
+																}
+																
+																var callback = function() {
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_partners(\n\
+																		server_id VARCHAR(255) NULL,\n\
+																		id VARCHAR(255) NOT NULL, \n\
+																		project_id VARCHAR(255) NOT NULL,\n\
+																		user_id INTEGER NOT NULL,\n\
+																		isLeader INTEGER NULL DEFAULT 0,\n\
+																		update_time varchar(255) NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			); 
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_companies(\n\
+																		id INTEGER NULL,\n\
+																		title VARCHAR(255) NOT NULL,\n\
+																		descr TEXT NULL,\n\
+																		creator_id INTEGER NOT NULL,\n\
+																		companyAdress VARCHAR(255) NOT NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		update_time varchar(255) NULL,\n\
+																		UNIQUE(id))'
+																			); 
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_projects (\n\
+																		server_id VARCHAR(255) NULL,\n\
+																		id VARCHAR(255) NOT NULL,\n\
+																		creator_id INTEGER NULL,\n\
+																		title VARCHAR(255) NOT NULL,\n\
+																		descr TEXT NULL,\n\
+																		color INTEGER NULL,\n\
+																		level INTEGER NULL DEFAULT 0,\n\
+																		archived INTEGER DEFAULT 0,\n\
+																		update_time varchar(255) NULL,\n\
+																		creationTime varchar(255) NULL,\n\
+																		completeDate DATETIME NULL DEFAULT CURRENT_TIMESTAMP,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);   
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_company_partners(\n\
+																		server_id VARCHAR(255) NULL,\n\
+																		id INTEGER PRIMARY KEY NOT NULL,\n\
+																		user_id INTEGER NOT NULL,\n\
+																		update_time varchar(255) NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			); 
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_users(\n\
+																		id INTEGER NULL,\n\
+																		name varchar(255) NULL,\n\
+																		email varchar(100) NOT NULL,\n\
+																		server_path TEXT NULL,\n\
+																		local_path varchar(255) NULL DEFAULT "'+CONFIG.default_user_avatar+'",\n\
+																		pinyin varchar(255) NULL,\n\
+																		QRCode varchar(255) NULL,\n\
+																		adress varchar(255) NULL,\n\
+																		phoneNum varchar(255) NULL,\n\
+																		position varchar(255) NULL,\n\
+																		create_projects INTEGER NULL DEFAULT 10,\n\
+																		avatar_update INTEGER NULL DEFAULT 0,\n\
+																		update_time VARCHAR(255) NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		isNewUser INTEGER NULL,\n\
+																		poweruser INTEGER NULL DEFAULT 0,\n\
+																		UNIQUE(id))'
+																			);   
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_groups (\n\
+																		server_id VARCHAR(255) NULL,\n\
+																		id varchar(255) NOT NULL,\n\
+																		name varchar(255) NOT NULL,\n\
+																		creator_id VARCHAR(255) NOT NULL,\n\
+																		update_time VARCHAR(255) NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);    
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_group_users (\n\
+																		server_id VARCHAR(255) NULL,\n\
+																		id varchar(255) NOT NULL,\n\
+																		group_id varchar(255) NOT NULL,\n\
+																		user_id INTEGER NOT NULL,\n\
+																		update_time VARCHAR(255) NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);   
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments (\n\
+																		server_id VARCHAR(255) NULL,\n\
+																		id varchar(255) NOT NULL,\n\
+																		content TEXT NULL,\n\
+																		type VARCHAR(255) NULL,\n\
+																		server_path TEXT NULL,\n\
+																		local_path TEXT NULL,\n\
+																		project_id VARCHAR(255) NOT NULL,\n\
+																		user_id VARCHAR(255) NOT NULL,\n\
+																		time TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,\n\
+																		update_time VARCHAR(255) NULL,\n\
+																		read INTEGER DEFAULT 0,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		abused INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todos (\n\
+																		server_id VARCHAR(255) NULL,\n\
+																		id VARCHAR(255) NOT NULL ,\n\
+																		title VARCHAR(255) NOT NULL ,\n\
+																		descr TEXT NULL DEFAULT NULL,\n\
+																		finished INTEGER DEFAULT 0,\n\
+																		endTime DATETIME DEFAULT NULL,\n\
+																		color INTEGER NULL DEFAULT NULL,\n\
+																		user_id INTEGER NOT NULL ,\n\
+																		creator_id INTEGER NOT NULL ,\n\
+																		project_id VARCHAR(255) NOT NULL ,\n\
+																		update_time TIMESTAMP NULL DEFAULT NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments (\n\
+																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+																		id VARCHAR(255) NOT NULL,\n\
+																		content VARCHAR(255) NULL DEFAULT NULL,\n\
+																		type VARCHAR(255) NOT NULL,\n\
+																		server_path TEXT NULL,\n\
+																		local_path TEXT NULL,\n\
+																		todo_id VARCHAR(255) NOT NULL,\n\
+																		user_id INTEGER NOT NULL,\n\
+																		time TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,\n\
+																		update_time VARCHAR(255) NULL,\n\
+																		read INTEGER DEFAULT 0,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		abused INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);
+	//                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_attachments (\n\
+	//                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+	//                                                                    id VARCHAR(255) NOT NULL,\n\
+	//                                                                    type VARCHAR(255) DEFAULT NULL,\n\
+	//                                                                    server_path MEDIUMTEXT DEFAULT NULL,\n\
+	//                                                                    local_path MEDIUMTEXT DEFAULT NULL,\n\
+	//                                                                    project_id VARCHAR(255) DEFAULT NULL,\n\
+	//                                                                    update_time TIMESTAMP NULL DEFAULT NULL,\n\
+	//                                                                    deleted INTEGER DEFAULT 0,\n\
+	//                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+	//                                                                    UNIQUE(id))'
+	//                                                                        ); 
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_attachments (\n\
+																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+																		id VARCHAR(255) NOT NULL,\n\
+																		type VARCHAR(255) DEFAULT NULL,\n\
+																		server_path MEDIUMTEXT DEFAULT NULL,\n\
+																		local_path MEDIUMTEXT DEFAULT NULL,\n\
+																		todo_id VARCHAR(255) DEFAULT NULL,\n\
+																		update_time TIMESTAMP NULL DEFAULT NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);  
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments_likes (\n\
+																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+																		id VARCHAR(255) NOT NULL,\n\
+																		comment_id VARCHAR(255) NOT NULL,\n\
+																		user_id INTEGER NOT NULL ,\n\
+																		update_time TIMESTAMP NULL DEFAULT NULL,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																			);
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments_likes (\n\
+																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+																		id VARCHAR(255) NOT NULL,\n\
+																		comment_id VARCHAR(255) NOT NULL,\n\
+																		user_id INTEGER NOT NULL ,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		update_time TIMESTAMP NULL DEFAULT NULL,\n\
+																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+																		UNIQUE(id))'
+																	);
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_smileys (\n\
+																		id VARCHAR(255) NULL,\n\
+																		code VARCHAR(20) NOT NULL,\n\
+																		image VARCHAR(20) NOT NULL,\n\
+																		sort INTEGER NOT NULL,\n\
+																		update_time TIMESTAMP NULL DEFAULT NULL,\n\
+																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+																		company_id INTEGER NOT NULL DEFAULT 0,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		UNIQUE(id))'
+																	);
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_invites (\n\
+																		id VARCHAR(255) NULL,\n\
+																		email VARCHAR(255) NOT NULL,\n\
+																		update_time TIMESTAMP NULL DEFAULT NULL,\n\
+																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+																		company_id INTEGER NOT NULL DEFAULT 0,\n\
+																		deleted INTEGER DEFAULT 0,\n\
+																		UNIQUE(id))'
+																	);
 
-                                                                    tx.executeSql('DROP TABLE IF EXISTS sync');
-                                                                    tx.executeSql('DROP TABLE IF EXISTS sync_delete');
-                                                                }
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_partners(\n\
-                                                                    server_id VARCHAR(255) NULL,\n\
-                                                                    id VARCHAR(255) NOT NULL, \n\
-                                                                    project_id VARCHAR(255) NOT NULL,\n\
-                                                                    user_id INTEGER NOT NULL,\n\
-                                                                    isLeader INTEGER NULL DEFAULT 0,\n\
-                                                                    update_time varchar(255) NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        ); 
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_companies(\n\
-                                                                    id INTEGER NULL,\n\
-                                                                    title VARCHAR(255) NOT NULL,\n\
-                                                                    descr TEXT NULL,\n\
-                                                                    creator_id INTEGER NOT NULL,\n\
-                                                                    companyAdress VARCHAR(255) NOT NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    update_time varchar(255) NULL,\n\
-                                                                    UNIQUE(id))'
-                                                                        ); 
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_projects (\n\
-                                                                    server_id VARCHAR(255) NULL,\n\
-                                                                    id VARCHAR(255) NOT NULL,\n\
-                                                                    creator_id INTEGER NULL,\n\
-                                                                    title VARCHAR(255) NOT NULL,\n\
-                                                                    descr TEXT NULL,\n\
-                                                                    color INTEGER NULL,\n\
-                                                                    level INTEGER NULL DEFAULT 0,\n\
-                                                                    archived INTEGER DEFAULT 0,\n\
-                                                                    update_time varchar(255) NULL,\n\
-                                                                    creationTime varchar(255) NULL,\n\
-                                                                    completeDate DATETIME NULL DEFAULT CURRENT_TIMESTAMP,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );   
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_company_partners(\n\
-																	server_id VARCHAR(255) NULL,\n\
-                                                                    id INTEGER PRIMARY KEY NOT NULL,\n\
-                                                                    user_id INTEGER NOT NULL,\n\
-                                                                    update_time varchar(255) NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        ); 
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_users(\n\
-                                                                    id INTEGER NULL,\n\
-                                                                    name varchar(255) NULL,\n\
-                                                                    email varchar(100) NOT NULL,\n\
-                                                                    server_path TEXT NULL,\n\
-                                                                    local_path varchar(255) NULL DEFAULT "'+CONFIG.default_user_avatar+'",\n\
-                                                                    pinyin varchar(255) NULL,\n\
-                                                                    QRCode varchar(255) NULL,\n\
-                                                                    adress varchar(255) NULL,\n\
-                                                                    phoneNum varchar(255) NULL,\n\
-                                                                    position varchar(255) NULL,\n\
-                                                                    create_projects INTEGER NULL DEFAULT 10,\n\
-                                                                    avatar_update INTEGER NULL DEFAULT 0,\n\
-                                                                    update_time VARCHAR(255) NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    isNewUser INTEGER NULL,\n\
-																	poweruser INTEGER NULL DEFAULT 0,\n\
-                                                                    UNIQUE(id))'
-                                                                        );   
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_groups (\n\
-                                                                    server_id VARCHAR(255) NULL,\n\
-                                                                    id varchar(255) NOT NULL,\n\
-                                                                    name varchar(255) NOT NULL,\n\
-                                                                    creator_id VARCHAR(255) NOT NULL,\n\
-                                                                    update_time VARCHAR(255) NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );    
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_group_users (\n\
-                                                                    server_id VARCHAR(255) NULL,\n\
-                                                                    id varchar(255) NOT NULL,\n\
-                                                                    group_id varchar(255) NOT NULL,\n\
-                                                                    user_id INTEGER NOT NULL,\n\
-                                                                    update_time VARCHAR(255) NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );   
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments (\n\
-                                                                    server_id VARCHAR(255) NULL,\n\
-                                                                    id varchar(255) NOT NULL,\n\
-                                                                    content TEXT NULL,\n\
-                                                                    type VARCHAR(255) NULL,\n\
-                                                                    server_path TEXT NULL,\n\
-                                                                    local_path TEXT NULL,\n\
-                                                                    project_id VARCHAR(255) NOT NULL,\n\
-                                                                    user_id VARCHAR(255) NOT NULL,\n\
-                                                                    time TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,\n\
-                                                                    update_time VARCHAR(255) NULL,\n\
-                                                                    read INTEGER DEFAULT 0,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    abused INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todos (\n\
-                                                                    server_id VARCHAR(255) NULL,\n\
-                                                                    id VARCHAR(255) NOT NULL ,\n\
-                                                                    title VARCHAR(255) NOT NULL ,\n\
-                                                                    descr TEXT NULL DEFAULT NULL,\n\
-                                                                    finished INTEGER DEFAULT 0,\n\
-                                                                    endTime DATETIME DEFAULT NULL,\n\
-                                                                    color INTEGER NULL DEFAULT NULL,\n\
-                                                                    user_id INTEGER NOT NULL ,\n\
-                                                                    creator_id INTEGER NOT NULL ,\n\
-                                                                    project_id VARCHAR(255) NOT NULL ,\n\
-                                                                    update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments (\n\
-                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
-                                                                    id VARCHAR(255) NOT NULL,\n\
-                                                                    content VARCHAR(255) NULL DEFAULT NULL,\n\
-                                                                    type VARCHAR(255) NOT NULL,\n\
-                                                                    server_path TEXT NULL,\n\
-                                                                    local_path TEXT NULL,\n\
-                                                                    todo_id VARCHAR(255) NOT NULL,\n\
-                                                                    user_id INTEGER NOT NULL,\n\
-                                                                    time TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,\n\
-                                                                    update_time VARCHAR(255) NULL,\n\
-                                                                    read INTEGER DEFAULT 0,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    abused INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );
-//                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_attachments (\n\
-//                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
-//                                                                    id VARCHAR(255) NOT NULL,\n\
-//                                                                    type VARCHAR(255) DEFAULT NULL,\n\
-//                                                                    server_path MEDIUMTEXT DEFAULT NULL,\n\
-//                                                                    local_path MEDIUMTEXT DEFAULT NULL,\n\
-//                                                                    project_id VARCHAR(255) DEFAULT NULL,\n\
-//                                                                    update_time TIMESTAMP NULL DEFAULT NULL,\n\
-//                                                                    deleted INTEGER DEFAULT 0,\n\
-//                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-//                                                                    UNIQUE(id))'
-//                                                                        ); 
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_attachments (\n\
-                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
-                                                                    id VARCHAR(255) NOT NULL,\n\
-                                                                    type VARCHAR(255) DEFAULT NULL,\n\
-                                                                    server_path MEDIUMTEXT DEFAULT NULL,\n\
-                                                                    local_path MEDIUMTEXT DEFAULT NULL,\n\
-                                                                    todo_id VARCHAR(255) DEFAULT NULL,\n\
-                                                                    update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );  
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments_likes (\n\
-                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
-                                                                    id VARCHAR(255) NOT NULL,\n\
-                                                                    comment_id VARCHAR(255) NOT NULL,\n\
-                                                                    user_id INTEGER NOT NULL ,\n\
-                                                                    update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-                                                                        );
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments_likes (\n\
-                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
-                                                                    id VARCHAR(255) NOT NULL,\n\
-                                                                    comment_id VARCHAR(255) NOT NULL,\n\
-                                                                    user_id INTEGER NOT NULL ,\n\
-                                                                    deleted INTEGER DEFAULT 0,\n\
-                                                                    update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
-                                                                    UNIQUE(id))'
-																);
-																tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_smileys (\n\
-																	id VARCHAR(255) NULL,\n\
-                                                                    code VARCHAR(20) NOT NULL,\n\
-                                                                    image VARCHAR(20) NOT NULL,\n\
-																	sort INTEGER NOT NULL,\n\
-																	update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT 0,\n\
-																	deleted INTEGER DEFAULT 0,\n\
-																	UNIQUE(id))'
-																);
-																tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_invites (\n\
-																	id VARCHAR(255) NULL,\n\
-                                                                    email VARCHAR(255) NOT NULL,\n\
-																	update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT 0,\n\
-																	deleted INTEGER DEFAULT 0,\n\
-																	UNIQUE(id))'
-																);
-                                                                            
-                                                                //  very important to add each new table to this._init_tables array
-                                                                //  very important to add each new table to this._init_tables array
-                                                                //  very important to add each new table to this._init_tables array
-                                                                //  very important to add each new table to this._init_tables array
+																	//  very important to add each new table to this._init_tables array
+																	//  very important to add each new table to this._init_tables array
+																	//  very important to add each new table to this._init_tables array
+																	//  very important to add each new table to this._init_tables array
 
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS sync_delete (\n\
-                                                                    `sid` INTEGER NOT NULL PRIMARY KEY,\n\
-                                                                    `table_name` VARCHAR( 255 ) NOT NULL,\n\
-                                                                    `time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
-                                                                    `row_id` varchar(255) NOT NULL )'
-                                                                        );
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS sync (\n\
-                                                                    sid INTEGER NOT NULL PRIMARY KEY,\n\
-                                                                    table_name VARCHAR( 255 ) NOT NULL,\n\
-                                                                    time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
-                                                                    row_id varchar(255) NOT NULL)'
-                                                                        );
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS sync_delete (\n\
+																		`sid` INTEGER NOT NULL PRIMARY KEY,\n\
+																		`table_name` VARCHAR( 255 ) NOT NULL,\n\
+																		`time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
+																		`row_id` varchar(255) NOT NULL )'
+																			);
+																	tx.executeSql('CREATE TABLE IF NOT EXISTS sync (\n\
+																		sid INTEGER NOT NULL PRIMARY KEY,\n\
+																		table_name VARCHAR( 255 ) NOT NULL,\n\
+																		time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
+																		row_id varchar(255) NOT NULL)'
+																			);
+																};
+                                                                
 																if (clear) {
                                                                     _this._init_tables.forEach(function(cur) { // triggers are used to paste data to sync table
 //                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
@@ -3631,7 +3673,7 @@ function onDeviceReady() {
                                                             return this;
                                                         }
                                                     };
-                                                }(window.openDatabase("BaoPiQi", "1.0", "xiao_db3", 200000)),
+                                                }(window.openDatabase("BaoPiQi2", "1.0", "xiao_db3", 2000000)),
                                                 // DB        
                                                 // DB        
                                                 // DB        
@@ -4021,6 +4063,7 @@ function onDeviceReady() {
 //                                                                var old_user = JSON.parse(this.get("saved_user_data"));
 //                                                            }
 
+															localStorage.clear();
                                                             this.clear();
 //                                                            if(old_user)this.set("saved_user_data", JSON.stringify(old_user));
                                                             this.set("user_id", test_user_id);
@@ -4103,11 +4146,16 @@ function onDeviceReady() {
                                                             var _this = this, new_file_name = _random(5, file_obj.name);
 //                                                            new_file_name += (/\.[A-Za-z0-9]+$/.test(after) ? "" : "." + CONFIG.audio_format);
                                                             new_file_name = (function(){
-                                                                if((!"format" in file_obj) || file_obj.format === ""){
-                                                                    return new_file_name;
-                                                                }else{
+                                                                if(file_obj.format && ("format" in file_obj) && file_obj.format !== ""){
                                                                     return new_file_name+"."+file_obj.format;
+                                                                }else{
+                                                                    return new_file_name;
                                                                 }
+                                                                // if((!"format" in file_obj) || file_obj.format === ""){
+                                                                //     return new_file_name;
+                                                                // }else{
+                                                                //     return new_file_name+"."+file_obj.format;
+                                                                // }
                                                             }());
                                                             
                                                             if(this.fs === null){
@@ -4141,7 +4189,6 @@ function onDeviceReady() {
                                                         };
 
                                                         this.download = function(server_path, callback) {
-
                                                             var fileTransfer = new FileTransfer(),
                                                                     uri = encodeURI(server_path),
                                                                     new_file_name = server_path.substring(server_path.lastIndexOf('/') + 1);
@@ -4159,6 +4206,7 @@ function onDeviceReady() {
                                                                             callback(download_entry.fullPath);
                                                                         },
                                                                         function(error) {
+																			alert(JSON.stringify(error));
                                                                             console.log("download error source " + error.source);
                                                                             console.log("download error target " + error.target);
                                                                             console.log("upload error code" + error.code);
@@ -4591,18 +4639,94 @@ function onDeviceReady() {
 
 
                                                     function MessageNotification(){
-                                                        MessageNotification.superclass.constructor.call(this);
+                                                        // MessageNotification.superclass.constructor.call(this);
 
-                                                        this.audio = null;
+                                                        // this.audio_file = null;
+                                                        // this._audio_path = "/var/mobile/Applications/C642FE6E-19FD-4905-B181-65028294B969/Documents/BAO/20131202232126l7190topchoice.mp3";
+                                                        // this._audio_path = null;
+
+                                                        // var _this = this;
+                                                        // if(SERVER.SESSION.get("sound_file") != "1"){
+                                                            // var get_audio_file = (function(){
+
+                                                            //     _this.download(ROUTE('file_upload_url')+"/"+CONFIG.new_message_sound, function(local_path){
+                                                            //         _this._audio_path = local_path;
+                                                            //         // SERVER.SESSION.set("sound_file","1");
+                                                            //     });
+                                                            // }())
+                                                        // }
+
 
                                                         this.play = function(){
-                                                            if(this.audio === null) this.audio = new Media(CONFIG.new_message_sound, this.log_success, this.log_error);
-                                                            this.audio.play();
+//                                                            if(SESSION.get("sound_file")){
+//                                                                if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
+//                                                                _this.audio_file.play();
+//                                                            }else{
+//                                                                _this.download(ROUTE('file_download_url')+"/"+CONFIG.new_message_sound, function(local_path){
+//                                                                    console.log(local_path);
+//                                                                    _this._audio_path = local_path;
+//                                                                    SERVER.SESSION.set("sound_file","1");
+//                                                                    if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
+                                                                    var audio_file = new Media(CONFIG.notig_audio_path);
+                                                                    audio_file.play();
+//                                                                });
+//                                                            }
+                                                        }
+
+                                                            // var _this = this;
+                                                            // if(_this._audio_path === null){
+                                                            //     // alert("sss")
+                                                            //     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
+                                                            //         fs.root.getDirectory(CONFIG.root_dir, {create: true, exclusive: false}, function(dir) {
+                                                            //             // _this.fs = dir;
+                                                            //             // console.log(dir);
+                                                            //             // alert("ss");
+                                                            //             // dir.getFile(CONFIG.new_message_sound, {create: false, exclusive: true}, function(fileEntry) {
+                                                            //                 console.log(dir);
+                                                            //                 _this._audio_path = dir.fullPath+"/"+CONFIG.new_message_sound;
+                                                            //                 alert(_this._audio_path);
+                                                            //                 console.log(_this._audio_path);
+                                                            //                 // _this._audio_path = fileEntry.fullPath;
+                                                            //                 play_function(_this._audio_path);
+                                                            //             // }, _this.log_error);
+
+                                                            //         }, function(err1) {
+                                                            //             console.log(err1);
+                                                            //         });
+                                                            //     }, function(err1) {
+                                                            //         console.log(err1);
+                                                            //     });
+                                                                
+                                                            // }else{
+                                                            //     play_function(_this._audio_path);
+                                                            // }
+                                                            // function getPhoneGapPath() {
+
+                                                                // var path = window.location.pathname;
+                                                                // path = path.substr( path, path.length - 10 );
+                                                                // // return 'file://' + path;
+                                                                // path = 'file://' + path;
+                                                                // console.log(path);
+
+                                                            // };
+
+                                                            // var snd = new Media( getPhoneGapPath() + 'test.wav' );
+
+                                                            // function play_function(file_to_play){
+                                                            //     if(_this.audio_file === null) _this.audio_file = new Media(file_to_play, _this.log_success, _this.log_error);
+                                                            //     _this.audio.play();
+                                                            // }
+
+                                                            // var sound_path = window.location.pathname.replace("directory/page/main.html","");
+                                                            // sound_path = this.fs+CONFIG.new_message_sound;
+                                                            // console.log(sound_path);
+                                                            // if(this.audio === null) this.audio = new Media(sound_path, this.log_success, this.log_error);
+                                                            // this.audio.play();
                                                             // console.log(this);
                                                             // alert("hi")
-                                                        }
+                                                        // }
                                                     }
-                                                    extend(MessageNotification, Phone);
+                                                    // extend(MessageNotification, Files);
 
                                                     return {
                                                         VoiceMessage: new VoiceMessage(),

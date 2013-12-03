@@ -1,11 +1,17 @@
 ﻿(function(SPP, NonstaticClass, Panel, PagePanel, OverflowPanel, Control, LoadingBar, BatchLoad, Global, TitleBarColor){
 this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 	function Grouping(data){
+		var todos = data.todos;
+
 		this.combine(groupingHtml.create({
 			dateData : data
 		}));
 
-		new LevelAnchorList(data.todos).appendTo(this.find("dd")[0]);
+		todos.forEach(function(todo){
+			todo.extra = todo.isSendBySelf;
+		});
+
+		new LevelAnchorList(todos).appendTo(this.find("dd")[0]);
 	};
 	Grouping = new NonstaticClass(Grouping, null, Panel.prototype);
 
@@ -214,7 +220,7 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 			'</dt>',
 			'<dd></dd>',
 		'</li>'
-	].join(""))				
+	].join(""))
 ));
 
 this.Project = (function(CallServer, Confirm){

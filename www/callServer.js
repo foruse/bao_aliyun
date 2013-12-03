@@ -237,11 +237,11 @@
             },
             getProjects: function(params, complete) {
                 console.log(params)
-                Mdls.Project.read(params, function(data){
-                    console.log("getProjects data")
-                    console.log(data);
-                    complete(data);
-                });
+				Mdls.Project.read(params, function(data){
+					console.log("getProjects data")
+					console.log(data);
+					complete(data);
+				});
             },
             editProjectInfo: function(params, complete){
                 console.log(params);

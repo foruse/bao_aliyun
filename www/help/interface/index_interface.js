@@ -135,7 +135,6 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				return : {
 					error : {
 						type : "name", // string : "name", "pwd", "email" or "validation"
-						idx : 0, // number : "name" -> 0, "email" -> 1, "pwd" -> 2, "validation" -> 4
 						desc : "The name already exist." // string : description of the error
 					},
 					status : -1 // number : -1 -> error, 0 -> ok; if status is 0 and the error will be undefined, or you can only return an attribute.
@@ -152,8 +151,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				},
 				return : {
 					error : {
-						type : "email", // string : "pwd", "email" or "validation"
-						idx : 1, // number : "email" -> 1, "pwd" -> 2
+						type : "email", // string : "pwd", "email"
 						desc : "The email is exist." // string : description of the error
 					},
 					user : DS_user,
