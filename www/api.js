@@ -3403,35 +3403,44 @@ function onDeviceReady() {
                                                         _init_db: function(clear) {
                                                             var _this = this;
                                                             console.log("start init");
-                                                            db.transaction(createDB, error_create_DB);
+															
+															db.transaction(createDB, error_create_DB);
                                                             function createDB(tx) {
 																// DON't FORGET TO ADD TABLE TO init_tables     for test
 																
-																
-                                                                if (clear) {
-																	var delete_tables_query = '';
-																	
-																	_this._init_tables.forEach(function(drop_table) {
-																		delete_tables_query += 'DROP TABLE IF EXISTS ' + drop_table + ';\n';
-																		
-//                                                                        tx.executeSql('DROP TABLE IF EXISTS ' + drop_table);
-                                                                    });
-																	
-																	delete_tables_query += 'DROP TABLE IF EXISTS sync;\n';
-																	delete_tables_query += 'DROP TABLE IF EXISTS sync_delete;\n';
-																	
-																	tx.executeSql(delete_tables_query, [], function() {
-																		callback();
-																	});
-																	
-//																	tx.executeSql('DROP TABLE IF EXISTS sync');
-//                                                                    tx.executeSql('DROP TABLE IF EXISTS sync_delete');
-                                                                } else {
-																	callback();
-																}
+																var total_tables = _this._init_tables.length + 2;
+																var counter = 0;
 																
 																var callback = function() {
-																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_partners(\n\
+																	counter++;
+																	
+																	if (counter < total_tables) {
+																		return;
+																	}
+																	
+																	counter = 0;
+																	
+																	var init_triggers = function(tx, res) {
+																		counter++;
+																		
+																		if (counter != total_tables) {
+																			return;
+																		}
+																		
+																		_this._init_tables.forEach(function(cur) { // triggers are used to paste data to sync table
+	//                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
+																				var sql = 'CREATE TRIGGER update_' + cur + ' AFTER UPDATE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
+																				tx.executeSql(sql);
+	//                                                                        }
+																			var sql = 'CREATE TRIGGER insert_' + cur + ' AFTER INSERT ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
+																			tx.executeSql(sql);
+	//                                                                        var sql = 'CREATE TRIGGER delete_' + cur + ' BEFORE DELETE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id, deleted_flag) VALUES("' + cur + '", OLD.id, "1"); END; ';
+																			var sql = 'CREATE TRIGGER delete_' + cur + ' BEFORE DELETE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync_delete(table_name, row_id) VALUES("' + cur + '", OLD.id); END; ';
+																			tx.executeSql(sql);
+																		});
+																	}
+																	
+																	tx.executeSql('CREATE TABLE xiao_project_partners(\n\
 																		server_id VARCHAR(255) NULL,\n\
 																		id VARCHAR(255) NOT NULL, \n\
 																		project_id VARCHAR(255) NOT NULL,\n\
@@ -3441,7 +3450,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			); 
+																			, [], init_triggers); 
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_companies(\n\
 																		id INTEGER NULL,\n\
 																		title VARCHAR(255) NOT NULL,\n\
@@ -3451,7 +3460,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		update_time varchar(255) NULL,\n\
 																		UNIQUE(id))'
-																			); 
+																			, [], init_triggers); 
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_projects (\n\
 																		server_id VARCHAR(255) NULL,\n\
 																		id VARCHAR(255) NOT NULL,\n\
@@ -3467,7 +3476,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);   
+																			, [], init_triggers);   
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_company_partners(\n\
 																		server_id VARCHAR(255) NULL,\n\
 																		id INTEGER PRIMARY KEY NOT NULL,\n\
@@ -3476,7 +3485,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			); 
+																			, [], init_triggers); 
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_users(\n\
 																		id INTEGER NULL,\n\
 																		name varchar(255) NULL,\n\
@@ -3496,7 +3505,7 @@ function onDeviceReady() {
 																		isNewUser INTEGER NULL,\n\
 																		poweruser INTEGER NULL DEFAULT 0,\n\
 																		UNIQUE(id))'
-																			);   
+																			, [], init_triggers);   
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_groups (\n\
 																		server_id VARCHAR(255) NULL,\n\
 																		id varchar(255) NOT NULL,\n\
@@ -3506,7 +3515,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);    
+																			, [], init_triggers);    
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_group_users (\n\
 																		server_id VARCHAR(255) NULL,\n\
 																		id varchar(255) NOT NULL,\n\
@@ -3516,7 +3525,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);   
+																			, [], init_triggers);   
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments (\n\
 																		server_id VARCHAR(255) NULL,\n\
 																		id varchar(255) NOT NULL,\n\
@@ -3533,7 +3542,7 @@ function onDeviceReady() {
 																		abused INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);
+																			, [], init_triggers);
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todos (\n\
 																		server_id VARCHAR(255) NULL,\n\
 																		id VARCHAR(255) NOT NULL ,\n\
@@ -3549,7 +3558,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);
+																			, [], init_triggers);
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments (\n\
 																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
 																		id VARCHAR(255) NOT NULL,\n\
@@ -3566,7 +3575,7 @@ function onDeviceReady() {
 																		abused INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);
+																			, [], init_triggers);
 	//                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_attachments (\n\
 	//                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
 	//                                                                    id VARCHAR(255) NOT NULL,\n\
@@ -3578,7 +3587,7 @@ function onDeviceReady() {
 	//                                                                    deleted INTEGER DEFAULT 0,\n\
 	//                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 	//                                                                    UNIQUE(id))'
-	//                                                                        ); 
+	//                                                                        , [], init_triggers); 
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_attachments (\n\
 																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
 																		id VARCHAR(255) NOT NULL,\n\
@@ -3590,7 +3599,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);  
+																			, [], init_triggers);  
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments_likes (\n\
 																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
 																		id VARCHAR(255) NOT NULL,\n\
@@ -3600,7 +3609,7 @@ function onDeviceReady() {
 																		deleted INTEGER DEFAULT 0,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																			);
+																			, [], init_triggers);
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments_likes (\n\
 																		server_id VARCHAR(255) NULL DEFAULT NULL,\n\
 																		id VARCHAR(255) NOT NULL,\n\
@@ -3610,7 +3619,7 @@ function onDeviceReady() {
 																		update_time TIMESTAMP NULL DEFAULT NULL,\n\
 																		company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
 																		UNIQUE(id))'
-																	);
+																	, [], init_triggers);
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_smileys (\n\
 																		id VARCHAR(255) NULL,\n\
 																		code VARCHAR(20) NOT NULL,\n\
@@ -3621,7 +3630,7 @@ function onDeviceReady() {
 																		company_id INTEGER NOT NULL DEFAULT 0,\n\
 																		deleted INTEGER DEFAULT 0,\n\
 																		UNIQUE(id))'
-																	);
+																	, [], init_triggers);
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_invites (\n\
 																		id VARCHAR(255) NULL,\n\
 																		email VARCHAR(255) NOT NULL,\n\
@@ -3630,7 +3639,7 @@ function onDeviceReady() {
 																		company_id INTEGER NOT NULL DEFAULT 0,\n\
 																		deleted INTEGER DEFAULT 0,\n\
 																		UNIQUE(id))'
-																	);
+																	, [], init_triggers);
 
 																	//  very important to add each new table to this._init_tables array
 																	//  very important to add each new table to this._init_tables array
@@ -3642,38 +3651,67 @@ function onDeviceReady() {
 																		`table_name` VARCHAR( 255 ) NOT NULL,\n\
 																		`time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
 																		`row_id` varchar(255) NOT NULL )'
-																			);
+																			, [], init_triggers);
 																	tx.executeSql('CREATE TABLE IF NOT EXISTS sync (\n\
 																		sid INTEGER NOT NULL PRIMARY KEY,\n\
 																		table_name VARCHAR( 255 ) NOT NULL,\n\
 																		time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
 																		row_id varchar(255) NOT NULL)'
-																			);
+																			, [], init_triggers);
 																};
-                                                                
+																
 																if (clear) {
-                                                                    _this._init_tables.forEach(function(cur) { // triggers are used to paste data to sync table
-//                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
-                                                                            var sql = 'CREATE TRIGGER update_' + cur + ' AFTER UPDATE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
-                                                                            tx.executeSql(sql);
-//                                                                        }
-                                                                        var sql = 'CREATE TRIGGER insert_' + cur + ' AFTER INSERT ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
-                                                                        tx.executeSql(sql);
-//                                                                        var sql = 'CREATE TRIGGER delete_' + cur + ' BEFORE DELETE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id, deleted_flag) VALUES("' + cur + '", OLD.id, "1"); END; ';
-                                                                        var sql = 'CREATE TRIGGER delete_' + cur + ' BEFORE DELETE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync_delete(table_name, row_id) VALUES("' + cur + '", OLD.id); END; ';
-                                                                        tx.executeSql(sql);
-                                                                    });
-                                                                }
+																	tx.executeSql("SELECT * FROM sqlite_master", [], function(tx, results) {
+																		var len = results.rows.length;
+																		var tables_available = [];
+
+																		for (var i = 0; i < len; i++) {
+																			if (results.rows.item(i).type == 'table') {
+																				tables_available.push(results.rows.item(i).tbl_name);
+																			}
+																		}
+																		
+																		var existing_tables = 0;
+
+																		_this._init_tables.forEach(function(drop_table) {
+																			if (tables_available.indexOf(drop_table) !== -1) {
+																				existing_tables++;
+																				tx.executeSql('DROP TABLE IF EXISTS ' + drop_table, [], callback, function(tx, err) {
+																					alert(JSON.stringify(err));
+																				});
+																			} else {
+																				counter++;
+																			}
+																		});
+																		
+																		if (tables_available.indexOf('sync') !== -1) {
+																			existing_tables++;
+																			tx.executeSql('DROP TABLE IF EXISTS sync');
+																		}
+																		
+																		if (tables_available.indexOf('sync_delete') !== -1) {
+																			existing_tables++;
+																			tx.executeSql('DROP TABLE IF EXISTS sync_delete');
+																		}
+																		
+																		if (existing_tables == 0) {
+																			counter = total_tables;
+																			callback();
+																		}
+																	});
+                                                                } else {
+																	callback();
+																}
                                                             }
                                                             function error_create_DB(tx, err) {
-                                                                console.log(tx);
-                                                                console.log(err);
+																console.log(tx);
+                                                                //console.log(err);
                                                             }
                                                             console.log("inited");
                                                             return this;
                                                         }
                                                     };
-                                                }(window.openDatabase("BaoPiQi2", "1.0", "xiao_db3", 2000000)),
+                                                }(window.openDatabase("BaoPiQi", "1.0", "xiao_db3", 2000000)),
                                                 // DB        
                                                 // DB        
                                                 // DB        
