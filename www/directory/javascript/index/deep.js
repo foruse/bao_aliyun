@@ -420,6 +420,12 @@ this.Todo = (function(ChatListPanel, OverflowPanel, Global){
 
 		chatListPanel.appendTo(overflowPanel.find(">figure")[0]);
 
+		this.attach({
+			beforehide : function(){
+				chatListPanel.stopListen();
+			}
+		});
+
 		this.find(">section>header").attach({
 			userclick : function(e, targetEl){
 				if(targetEl.between("dt>button").length > 0){

@@ -152,7 +152,6 @@ function onDeviceReady() {
                     SESSION = SERVER.SESSION,
                     PHONE = SERVER.PHONE,
                     SOCKET = SERVER.SOCKET;
-
 			if (!BROWSER_TEST_VERSION) {
 				if (SESSION.get("sound_file")) {
 					CONFIG.notig_audio_path = SESSION.get("sound_file");
@@ -2510,11 +2509,17 @@ function onDeviceReady() {
                     });
                 },
 						
+				leaveroom_n: function(callback) {
+					SOCKET.leaveroom({id: SESSION.get("company_id"), type: 'company'}, function() {
+						
+					});
+				},
+						
 				leaveroom: function(data, callback) {
 					SOCKET.leaveroom(data, function() {
 						
 					});
-				}
+				},
 
             }
 
@@ -2896,8 +2901,8 @@ function onDeviceReady() {
                                                         });
                                                     },
 															
-													leaveroom: function(id, type, callback) {
-														this.socket.emit('leaveroom', {id: id, type: type});
+													leaveroom: function(data, callback) {
+														this.socket.emit('leaveroom', data);
 														if (callback) {
 															callback();
 														}

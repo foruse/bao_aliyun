@@ -113,6 +113,9 @@ this.Discussion = (function(ProjectPanel, ChatListPanel, SmiliesStatus){
 				overflowPanel.find(">header>dl").innerHTML = infoHtml.render(project);
 
 				chatListPanel.reset(project.id, project.color);
+			},
+			beforehide : function(){
+				chatListPanel.stopListen();
 			}
 		});
 	};

@@ -466,12 +466,12 @@ this.Class = (function(ARG_LIST_REGX, ARG_REGX, toString, getConstructor){
 		///	<param name="_constructor" type="Function">源构造函数。</param>
 		///	<param name="_name" type="String">构造函数的名称。</param>
 		///	<param name="_ParentClass" type="jQun.Class">需要继承的父类</param>
-		var constructor = _constructor ? _constructor : AnonymousNonstaticClass;
+		var constructor = _constructor ? _constructor : AnonymousClass;
 
 		return new jQun(
 			getConstructor(
 				constructor,
-				_name ? _name : (constructor.name || AnonymousNonstaticClass.name),
+				_name ? _name : (constructor.name || AnonymousClass.name),
 				toString.call(constructor).match(ARG_LIST_REGX)[1].match(ARG_REGX)
 			),
 			_ParentClass || this.getOwnClass()

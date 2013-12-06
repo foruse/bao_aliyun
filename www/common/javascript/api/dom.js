@@ -127,7 +127,7 @@ this.EventCollection = (function(Timer, IntervalTimer, isMobile, childGestureCon
 					isKeepPress = false;
 				},
 				continuousgesture : function(e){
-					if(e.gestureOffsetX > 5 || e.gestureOffsetY > 5){
+					if(e.gestureOffsetX > 0 || e.gestureOffsetY > 0){
 						isKeepPress = false;
 					}
 				}

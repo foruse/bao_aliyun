@@ -260,6 +260,13 @@ this.Project = (function(CallServer, Confirm){
 		this.attach({
 			beforeshow : function(){
 				project.load(true);
+				
+				CallServer.open("messagesListener", { id : Infinity, type : "project" }, function(data){
+					project.addUnreadMessages(data.id, data.messagesCount);
+				});
+			},
+			beforehide : function(){
+				CallServer.open("stopMessagesListener", { id : Infinity, type : "project" });
 			},
 			leaveborder : function(e){
 				if(e.direction !== "bottom")
@@ -331,10 +338,6 @@ this.Project = (function(CallServer, Confirm){
 
 				confirm.show();
 			}
-		});
-
-		CallServer.open("messagesListener", { id : Infinity, type : "project" }, function(data){
-			project.addUnreadMessages(data.id, data.messagesCount);
 		});
 	};
 	Project = new NonstaticClass(Project, null, PagePanel.prototype);

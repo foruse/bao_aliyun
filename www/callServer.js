@@ -102,6 +102,7 @@
             //  copy of messagesListener
 
             messagesListener: function(params, complete) {
+//				alert('Start ML ' + params.id);
 				console.log("_______________________messagesListener");
 				// console.log(params);
 				// console.log('params');
@@ -132,10 +133,14 @@
             },
 					
 			stopMessagesListener: function(params, complete) {
-				var id = params.id;
-				var type = params.type;
-				//alert('sml');
-				Mdls.Notification.leaveroom(params, complete);
+//				alert('Stop ML ' + params.id);
+				if (params.id === window.Infinity) {
+					Mdls.Notification.leaveroom_n(complete);
+					console.log("init_notif")
+				} else {
+					Mdls.Notification.leaveroom(params, complete);
+				}
+				
 				// What i need to do here?
 			},
             

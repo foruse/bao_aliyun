@@ -1114,28 +1114,35 @@ this.ChatListPanel = (function(ChatList, Global, SmiliesStatus){
 	ChatListPanel.properties({
 		from : "",
 		fromId : -1,
-		overflowPanel : undefined,
-		reset : function(fromId, color){
-			var oldFromId = this.fromId, from = this.from,
-			
-				chatListContent = this.chatListContent;
+		listen : function(fromId){
+			var chatListContent = this.chatListContent;
 
-			if(oldFromId !== -1){
-				CallServer.open("stopMessagesListener", { id : oldFromId, type : from });
-			}
-
-			this.fromId = fromId;
-
-			this.overflowPanel.setTop(0);
-			chatListContent.clearAllMessages();
-			chatListContent.resetColor(color);
-
-			CallServer.open("messagesListener", { id : fromId, type : from }, function(messages){
+			CallServer.open("messagesListener", { id : fromId, type : this.from }, function(messages){
 				// 添加聊天信息
 				messages.forEach(function(msg){
 					chatListContent.appendMessageToGroup(msg);
 				});
 			});
+		},
+		overflowPanel : undefined,
+		reset : function(fromId, color){
+			var chatListContent = this.chatListContent;
+
+			this.fromId = fromId;
+
+			chatListContent.clearAllMessages();
+			chatListContent.resetColor(color);
+
+			this.overflowPanel.setTop(0);
+			this.listen(fromId);
+		},
+		stopListen : function(){
+			var oldFromId = this.fromId;
+
+			if(oldFromId === -1)
+				return;
+			
+			CallServer.open("stopMessagesListener", { id : oldFromId, type : this.from });
 		}
 	});
 
